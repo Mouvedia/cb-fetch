@@ -10,16 +10,8 @@
     - [Planned Features](#planned-features)
   - [License](#license)
 
-####Inner Workings
-Use [fetch method](https://fetch.spec.whatwg.org/#fetch-method) else fallbacks on XHR or XDR—if appropriate.
-
-####Behind the Name
-cb in **cb**-fetch stands for:
-- the core feature: cross-browser
-- the pattern used: callback
-
-####Rationale
-I wanted a *truly* cross-browser *and* forward-compatible library to do asynchronous HTTP request.
+---
+A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous HTTP requests that follows the **c**all**b**ack pattern. If supported, it relies on the [fetch method](https://fetch.spec.whatwg.org/#fetch-method), else fallbacks on XHR or XDR.
 
 ## Installation
 ## Examples
