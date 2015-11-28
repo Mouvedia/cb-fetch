@@ -24,3 +24,4 @@ fallbacks on XHR or XDR.
 ###Implemented Features
 ###Planned Features
 ## License
+This project is licensed under the terms of the MIT license.
