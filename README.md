@@ -6,6 +6,8 @@ fallbacks on XHR or XDR.
 
 ## Table of Contents
   - [Installation](#installation)
+    - [NPM](#npm)
+    - [JSPM](#jspm)
   - [Examples](#examples)
   - [API](#api)
     - [Rtype](#rtype)
@@ -16,6 +18,14 @@ fallbacks on XHR or XDR.
   - [License](#license)
 
 ## Installation
+###NPM
+```sh
+npm install --save cb-fetch
+```
+###JSPM
+```sh
+jspm install cb-fetch=npm:cb-fetch
+```
 ## Examples
 ## API
 ###Rtype
