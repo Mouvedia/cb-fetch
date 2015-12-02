@@ -1,8 +1,6 @@
 # cb-fetch
 
 A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous HTTP requests that follows the **c**all**b**ack pattern.
-If supported, it relies on the [fetch method](https://fetch.spec.whatwg.org/#fetch-method), else
-fallbacks on XHR or XDR.
 
 ## Table of Contents
   - [Installation](#installation)
@@ -25,11 +23,35 @@ npm install --save cb-fetch
 jspm install cb-fetch=npm:cb-fetch
 ```
 ## Examples
+```js
+var request = require('cb-fetch');
+
+// this looks too easy
+request()
+  .get('http://www.example.com?key1=value1&key2=value2')
+  .done(onSuccessCallback);
+
+// chain those methods!
+request()
+  .get('http://www.example.com')
+  .query('key1=value1&key2=value2')
+  .done(onSuccessCallback);
+  
+// is it explicit enough?
+request({
+          url:        'http://www.example.com',
+          parameters: new URLSearchParams('key1=value1&key2=value2'),
+          method:     'get',
+          headers:    {},
+          credentials:'same-origin',
+          etc:        '…'
+        }).done(onSuccessCallback, onFailCallback);
+```
 ## API
 ###Rtype
 ###Documentation
 ## Features
-- [x] fetch
+- [x] [fetch method](https://fetch.spec.whatwg.org/#fetch-method)
 - [x] XHR
 - [ ] XDR
 - [ ] Request
