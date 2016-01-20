@@ -8,8 +8,6 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
     - [JSPM](#jspm)
   - [Examples](#examples)
   - [API](#api)
-    - [Rtype](#rtype)
-    - [Documentation](#documentation)
   - [Features](#features)
   - [License](#license)
 
@@ -48,14 +46,28 @@ request({
         }).done(onSuccessCallback, onFailCallback);
 ```
 ## API
-###Rtype
-###Documentation
+```
+interface Options {
+  body: FormData | String,
+  credentials: 'omit' | 'same-origin' | 'include',
+  headers: Headers | Object,
+  mediaType: String,
+  method: 'GET' | 'HEAD' | 'DELETE' | 'POST' | 'PUT' | 'PATCH',
+  mode: 'same-origin' | 'no-cors' | 'cors',
+  parameters: URLSearchParams | Object | String,
+  responseType: 'text' | 'json' | 'blob' | 'document' | 'arraybuffer' | 'formdata',
+  timeout: ℕ,
+  url: String
+}
+```
 ## Features
-- [x] [fetch method](https://fetch.spec.whatwg.org/#fetch-method)
+- [x] [fetch](https://fetch.spec.whatwg.org/#fetch-method)
 - [x] XHR
 - [ ] XDR
 - [ ] Request
 - [x] URLSearchParams
+- [ ] FormData
+- [ ] Headers
 - [x] UMD
 - [x] chained methods
 - [ ] caching
