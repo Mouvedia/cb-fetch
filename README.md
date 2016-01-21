@@ -52,7 +52,7 @@ interface Options {
   credentials: 'omit' | 'same-origin' | 'include',
   headers: Headers | Object,
   mediaType: String,
-  method: 'GET' | 'HEAD' | 'DELETE' | 'POST' | 'PUT' | 'PATCH',
+  method: /GET|HEAD|DELETE|POST|PUT|PATCH/i,
   mode: 'same-origin' | 'no-cors' | 'cors',
   parameters: URLSearchParams | Object | String,
   responseType: 'text' | 'json' | 'blob' | 'document' | 'arraybuffer' | 'formdata',
