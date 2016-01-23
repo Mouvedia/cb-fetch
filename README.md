@@ -49,15 +49,15 @@ request({
 ```
 interface Options {
   body: FormData | String,
-  credentials: 'omit' | 'same-origin' | 'include',
+  credentials = 'same-origin': 'include' | 'omit' | 'same-origin',
   headers: Headers | Object,
   mediaType: String,
-  method: /GET|HEAD|DELETE|POST|PUT|PATCH/i,
-  mode: 'same-origin' | 'no-cors' | 'cors',
+  method = 'GET': /GET|HEAD|DELETE|POST|PUT|PATCH/i,
+  mode = 'same-origin': 'cors' | 'no-cors' | 'same-origin',
   parameters: URLSearchParams | Object | String,
   responseType: 'text' | 'json' | 'blob' | 'document' | 'arraybuffer' | 'formdata',
   timeout: ℕ,
-  url: String
+  url = location.href: String
 }
 ```
 ## Features
