@@ -1,0 +1,16 @@
+{
+  "name": "cb-fetch",
+  "version": "0.0.0-readme.0",
+  "description": "Work In Progress",
+  "repository": "Mouvedia/cb-fetch",
+  "keywords": [
+    "fetch",
+    "xhr",
+    "XMLHttpRequest",
+    "Cross-Domain Request",
+    "cross-browser",
+    "callback"
+  ],
+  "license": "MIT",
+  "bugs": "https://github.com/Mouvedia/cb-fetch/issues"
+}
