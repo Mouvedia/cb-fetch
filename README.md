@@ -48,7 +48,7 @@ request({
 ## API
 ```
 interface Options {
-  body: FormData | String,
+  body = '': ArrayBuffer | Blob | Document | FormData | String,
   credentials = 'same-origin': 'include' | 'omit' | 'same-origin',
   headers: Headers | Object,
   mediaType: String,
@@ -59,6 +59,39 @@ interface Options {
   timeout: ℕ,
   url = location.href: String
 }
+
+request(?: Options | Request)
+request#done(onSuccess: Function, onFail = new Function)
+
+request#del(Options.url)
+request#del#done(onSuccess: Function, onFail = new Function)
+request#del#query(Options.parameters)
+request#del#query#done(onSuccess: Function, onFail = new Function)
+
+request#head(Options.url)
+request#head#done(onSuccess: Function, onFail = new Function)
+request#head#query(Options.parameters)
+request#head#query#done(onSuccess: Function, onFail = new Function)
+
+request#get(Options.url)
+request#get#done(onSuccess: Function, onFail = new Function)
+request#get#query(Options.parameters)
+request#get#query#done(onSuccess: Function, onFail = new Function)
+
+request#patch(Options.url)
+request#patch#done(onSuccess: Function, onFail = new Function)
+request#patch#body(Options.body)
+request#patch#body#done(onSuccess: Function, onFail = new Function)
+
+request#post(Options.url)
+request#post#done(onSuccess: Function, onFail = new Function)
+request#post#body(Options.body)
+request#post#body#done(onSuccess: Function, onFail = new Function)
+
+request#put(Options.url)
+request#put#done(onSuccess: Function, onFail = new Function)
+request#put#body(Options.body)
+request#put#body#done(onSuccess: Function, onFail = new Function)
 ```
 ## Features
 - [x] [fetch](https://fetch.spec.whatwg.org/#fetch-method)
