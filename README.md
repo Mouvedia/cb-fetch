@@ -34,7 +34,7 @@ request()
   .get('http://www.example.com')
   .query('key1=value1&key2=value2')
   .done(onSuccessCallback);
-  
+
 // is it explicit enough?
 request({
           url:        'http://www.example.com',
@@ -61,37 +61,15 @@ interface Options {
 }
 
 request(?: Options | Request)
-request#done(onSuccess: Function, onFail = new Function)
-
-request#del(Options.url)
-request#del#done(onSuccess: Function, onFail = new Function)
-request#del#query(Options.parameters)
-request#del#query#done(onSuccess: Function, onFail = new Function)
-
-request#head(Options.url)
-request#head#done(onSuccess: Function, onFail = new Function)
-request#head#query(Options.parameters)
-request#head#query#done(onSuccess: Function, onFail = new Function)
-
-request#get(Options.url)
-request#get#done(onSuccess: Function, onFail = new Function)
-request#get#query(Options.parameters)
-request#get#query#done(onSuccess: Function, onFail = new Function)
-
-request#patch(Options.url)
-request#patch#done(onSuccess: Function, onFail = new Function)
-request#patch#body(Options.body)
-request#patch#body#done(onSuccess: Function, onFail = new Function)
-
-request#post(Options.url)
-request#post#done(onSuccess: Function, onFail = new Function)
-request#post#body(Options.body)
-request#post#body#done(onSuccess: Function, onFail = new Function)
-
-request#put(Options.url)
-request#put#done(onSuccess: Function, onFail = new Function)
-request#put#body(Options.body)
-request#put#body#done(onSuccess: Function, onFail = new Function)
+  .done(onSuccess: Function, onFail?: Function) => Void
+  .del|head|get(Options.url)
+    .done(onSuccess: Function, onFail?: Function) => Void
+    .query(Options.parameters)
+      .done(onSuccess: Function, onFail?: Function) => Void
+  .patch|post|put(Options.url)
+    .done(onSuccess: Function, onFail?: Function) => Void
+    .body(Options.body)
+      .done(onSuccess: Function, onFail?: Function) => Void
 ```
 ## Features
 - [x] [fetch](https://fetch.spec.whatwg.org/#fetch-method)
