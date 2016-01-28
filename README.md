@@ -48,16 +48,16 @@ request({
 ## API
 ```
 interface Options {
-  body = '': ArrayBuffer | Blob | Document | FormData | String,
-  credentials = 'same-origin': 'include' | 'omit' | 'same-origin',
-  headers: Headers | Object,
-  mediaType: String,
-  method = 'GET': /^(delete|get|head|patch|post|put)$/i,
-  mode = 'same-origin': 'cors' | 'no-cors' | 'same-origin',
-  parameters: URLSearchParams | Object | String,
-  responseType: 'text' | 'json' | 'blob' | 'document' | 'arraybuffer' | 'formdata',
-  timeout: ℕ,
-  url = location.href: String
+             '' = body: ArrayBuffer | Blob | Document | FormData | String,
+  'same-origin' = credentials: 'include' | 'omit' | 'same-origin',
+                  headers: Headers | Object,
+                  mediaType: String,
+          'GET' = method: /^(delete|get|head|patch|post|put)$/i,
+  'same-origin' = mode: 'cors' | 'no-cors' | 'same-origin',
+                  parameters: URLSearchParams | Object | String,
+                  responseType: 'text' | 'json' | 'blob' | 'document' | 'arraybuffer' | 'formdata',
+                  timeout: ℕ,
+  location.href = url: String
 }
 
 request(?: Options | Request)
