@@ -64,16 +64,21 @@ request({
 ║ location.href ║ url          ║ String                                                             ║
 ╚═══════════════╩══════════════╩════════════════════════════════════════════════════════════════════╝
 
+done(onSuccess: Function, onFail?: Function) => Void
+verb(Options.url) => Void
+query(Options.parameters) => Void
+send(Options.body) => Void
+
 request(?: Options | Request)
-  .done(onSuccess: Function, onFail?: Function) => Void
-  .del|head|get(Options.url)
-    .done(onSuccess: Function, onFail?: Function) => Void
-    .query(Options.parameters)
-      .done(onSuccess: Function, onFail?: Function) => Void
-  .patch|post|put(Options.url)
-    .done(onSuccess: Function, onFail?: Function) => Void
-    .body(Options.body)
-      .done(onSuccess: Function, onFail?: Function) => Void
+  .done
+  .verb: delete, head, get
+    .done
+    .query
+      .done
+  .verb: patch, post, put
+    .done
+    .send
+      .done
 ```
 ## Features
 - [x] [fetch](https://fetch.spec.whatwg.org/#fetch-method)
