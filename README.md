@@ -8,6 +8,7 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
     - [JSPM](#jspm)
   - [Examples](#examples)
   - [API](#api)
+  - [Gotchas](#gotchas)
   - [Features](#features)
   - [License](#license)
 
@@ -37,39 +38,43 @@ request()
 
 // is it explicit enough?
 request({
-          url:        'http://www.example.com',
-          parameters: new URLSearchParams('key1=value1&key2=value2'),
-          method:     'get',
-          headers:    {},
-          credentials:'same-origin',
-          etc:        '…'
-        }).done(onSuccessCallback, onFailCallback);
+  url:        'http://www.example.com',
+  parameters: new URLSearchParams('key1=value1&key2=value2'),
+  method:     'get',
+  headers:    {},
+  credentials:'same-origin',
+  etc:        '…'
+}).done(onSuccessCallback, onFailCallback);
 ```
 ## API
 ```
-╔═══════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                              Options                                              ║
-╠═══════════════╦══════════════╦════════════════════════════════════════════════════════════════════╣
-║    Default    ║   Property   ║                               Value                                ║
-╠═══════════════╬══════════════╬════════════════════════════════════════════════════════════════════╣
-║ ''            ║ body         ║ ArrayBuffer | Blob | Document | FormData | String                  ║
-║ 'same-origin' ║ credentials  ║ 'include' | 'omit' | 'same-origin'                                 ║
-║               ║ headers      ║ Headers | Object                                                   ║
-║               ║ mediaType    ║ String                                                             ║
-║ 'GET'         ║ method       ║ /^(delete|get|head|patch|post|put)$/i                              ║
-║ 'same-origin' ║ mode         ║ 'cors' | 'no-cors' | 'same-origin'                                 ║
-║               ║ parameters   ║ URLSearchParams | Object | String                                  ║
-║               ║ responseType ║ 'text' | 'json' | 'blob' | 'document' | 'arraybuffer' | 'formdata' ║
-║               ║ timeout      ║ ℕ                                                                  ║
-║ location.href ║ url          ║ String                                                             ║
-╚═══════════════╩══════════════╩════════════════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                Options                                                 ║
+╠═══════════════╦══════════════╦═════════════════════════════════════════════════════════════════════════╣
+║    Default    ║   Property   ║                                 Value(s)                                ║
+╠═══════════════╬══════════════╬═════════════════════════════════════════════════════════════════════════╣
+║ ''            ║ body         ║ ArrayBuffer|Blob|Document²|FormData|String|URLSearchParams¹             ║
+║ 'default'     ║ cache        ║ 'default'|'no-store'|'reload'|'no-cache'|'force-cache'|'only-if-cached' ║
+║ 'same-origin' ║ credentials  ║ 'include'|'omit'¹|'same-origin'                                         ║
+║               ║ headers      ║ Headers|Object                                                          ║
+║               ║ mediaType²   ║ String                                                                  ║
+║ 'GET'         ║ method       ║ /^(delete|get|head|patch|post|put)$/i                                   ║
+║ 'same-origin' ║ mode¹        ║ 'cors'|'no-cors'|'same-origin'                                          ║
+║               ║ parameters   ║ URLSearchParams|Object|String                                           ║
+║               ║ responseType ║ 'text'|'json'|'blob'|'document'²|'arraybuffer'|'formdata'               ║
+║               ║ timeout      ║ ℕ                                                                       ║
+║ location.href ║ url          ║ String                                                                  ║
+╚═══════════════╩══════════════╩═════════════════════════════════════════════════════════════════════════╝
+¹ fetch only
+² XHR only
 
+request(?: Options | Request) => Object
 done(onSuccess: Function, onFail?: Function) => Void
 verb(Options.url) => Object
 query(Options.parameters) => Object
 send(Options.body) => Object
 
-request(?: Options | Request)
+request
   .done
   .verb: delete, head, get
     .done
@@ -80,6 +85,10 @@ request(?: Options | Request)
     .send
       .done
 ```
+## Gotchas
+#### Delete
+In pre-ES5 environments, the delete method requires the use of the bracket notation.
+#### XDR limitations
 ## Features
 - [x] [fetch](https://fetch.spec.whatwg.org/#fetch-method)
 - [x] XHR
