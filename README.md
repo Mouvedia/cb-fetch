@@ -65,9 +65,9 @@ request({
 ╚═══════════════╩══════════════╩════════════════════════════════════════════════════════════════════╝
 
 done(onSuccess: Function, onFail?: Function) => Void
-verb(Options.url) => Void
-query(Options.parameters) => Void
-send(Options.body) => Void
+verb(Options.url) => Object
+query(Options.parameters) => Object
+send(Options.body) => Object
 
 request(?: Options | Request)
   .done
