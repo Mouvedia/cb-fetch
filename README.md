@@ -89,6 +89,11 @@ request
 #### Delete
 In pre-ES5 environments, the delete method requires the use of the bracket notation.
 #### XDR limitations
+- only support GET and POST methods
+- cannot set request headers
+- no credentials
+- same scheme restriction
+
 ## Features
 - [x] [fetch](https://fetch.spec.whatwg.org/#fetch-method)
 - [x] XHR
