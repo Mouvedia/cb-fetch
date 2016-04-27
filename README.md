@@ -11,11 +11,11 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
   - [License](#license)
 
 ## Installation
-####NPM
+#### NPM
 ```sh
 npm install --save cb-fetch
 ```
-####JSPM
+#### JSPM
 ```sh
 jspm install cb-fetch=npm:cb-fetch
 ```
@@ -50,27 +50,24 @@ request({
 }).done(onSuccessCallback, onFailCallback);
 ```
 ## API
-```
-╔════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                                Options                                                 ║
-╠══════════════╦═══════════════╦═════════════════════════════════════════════════════════════════════════╣
-║   Property   ║    Default    ║                                 Value(s)                                ║
-╠══════════════╬═══════════════╬═════════════════════════════════════════════════════════════════════════╣
-║ body         ║ ''            ║ ArrayBuffer|Blob|Document²|FormData|String|URLSearchParams¹             ║
-║ cache        ║ 'default'     ║ 'default'|'no-store'|'reload'|'no-cache'|'force-cache'|'only-if-cached' ║
-║ credentials  ║ 'same-origin' ║ 'include'|'omit'¹|'same-origin'                                         ║
-║ headers      ║               ║ Headers|Object                                                          ║
-║ mediaType²   ║               ║ String                                                                  ║
-║ method       ║ 'GET'         ║ /^(delete|get|head|patch|post|put)$/i                                   ║
-║ mode¹        ║ 'same-origin' ║ 'cors'|'no-cors'|'same-origin'                                          ║
-║ parameters   ║               ║ URLSearchParams|Object|String                                           ║
-║ responseType ║               ║ 'text'|'json'|'blob'|'document'²|'arraybuffer'|'formdata'               ║
-║ timeout      ║ 0             ║ ℕ                                                                       ║
-║ url          ║ location.href ║ String                                                                  ║
-╚══════════════╩═══════════════╩═════════════════════════════════════════════════════════════════════════╝
-¹ fetch only
-² XHR only
+#### Options
+Property | Default | Value(s)
+---------| ------- | --------
+body         | ''            | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams¹
+cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached' 
+credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
+mediaType²   |               | String
+method       | 'GET'         | `/^(delete|get|head|patch|post|put)$/i`
+mode¹        | 'same-origin' | 'cors', 'no-cors', 'same-origin'
+parameters   |               | URLSearchParams, Object, String
+responseType |               | 'text', 'json', 'blob', 'document'², 'arraybuffer', 'formdata'
+timeout      | 0             | ℕ
+url          | location.href | String
 
+<sup>¹ fetch only
+² XHR only</sup>
+#### Signatures
+```
 request(?: Options | Request) => Object
 done(onSuccess: Function, onFail?: Function) => Void
 verb(Options.url) => Object
