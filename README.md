@@ -4,8 +4,6 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
 
 ## Table of Contents
   - [Installation](#installation)
-    - [NPM](#npm)
-    - [JSPM](#jspm)
   - [Examples](#examples)
   - [API](#api)
   - [Gotchas](#gotchas)
@@ -13,11 +11,11 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
   - [License](#license)
 
 ## Installation
-###NPM
+####NPM
 ```sh
 npm install --save cb-fetch
 ```
-###JSPM
+####JSPM
 ```sh
 jspm install cb-fetch=npm:cb-fetch
 ```
@@ -26,23 +24,28 @@ jspm install cb-fetch=npm:cb-fetch
 var request = require('cb-fetch');
 
 // this looks too easy
+request('http://www.example.com?key1=value1&key2=value2')
+  .done(onSuccessCallback);
+
+// being more expressive won't hurt though
 request()
   .get('http://www.example.com?key1=value1&key2=value2')
   .done(onSuccessCallback);
 
-// chain those methods!
+// is it explicit enough?
 request()
   .get('http://www.example.com')
   .query('key1=value1&key2=value2')
   .done(onSuccessCallback);
 
-// is it explicit enough?
+// granularity overkill!
 request({
   url:        'http://www.example.com',
   parameters: new URLSearchParams('key1=value1&key2=value2'),
   method:     'get',
-  headers:    {},
   credentials:'same-origin',
+  cache:      'default',
+  timeout:    0,
   etc:        '…'
 }).done(onSuccessCallback, onFailCallback);
 ```
@@ -50,21 +53,21 @@ request({
 ```
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                                Options                                                 ║
-╠═══════════════╦══════════════╦═════════════════════════════════════════════════════════════════════════╣
-║    Default    ║   Property   ║                                 Value(s)                                ║
-╠═══════════════╬══════════════╬═════════════════════════════════════════════════════════════════════════╣
-║ ''            ║ body         ║ ArrayBuffer|Blob|Document²|FormData|String|URLSearchParams¹             ║
-║ 'default'     ║ cache        ║ 'default'|'no-store'|'reload'|'no-cache'|'force-cache'|'only-if-cached' ║
-║ 'same-origin' ║ credentials  ║ 'include'|'omit'¹|'same-origin'                                         ║
-║               ║ headers      ║ Headers|Object                                                          ║
-║               ║ mediaType²   ║ String                                                                  ║
-║ 'GET'         ║ method       ║ /^(delete|get|head|patch|post|put)$/i                                   ║
-║ 'same-origin' ║ mode¹        ║ 'cors'|'no-cors'|'same-origin'                                          ║
-║               ║ parameters   ║ URLSearchParams|Object|String                                           ║
-║               ║ responseType ║ 'text'|'json'|'blob'|'document'²|'arraybuffer'|'formdata'               ║
-║               ║ timeout      ║ ℕ                                                                       ║
-║ location.href ║ url          ║ String                                                                  ║
-╚═══════════════╩══════════════╩═════════════════════════════════════════════════════════════════════════╝
+╠══════════════╦═══════════════╦═════════════════════════════════════════════════════════════════════════╣
+║   Property   ║    Default    ║                                 Value(s)                                ║
+╠══════════════╬═══════════════╬═════════════════════════════════════════════════════════════════════════╣
+║ body         ║ ''            ║ ArrayBuffer|Blob|Document²|FormData|String|URLSearchParams¹             ║
+║ cache        ║ 'default'     ║ 'default'|'no-store'|'reload'|'no-cache'|'force-cache'|'only-if-cached' ║
+║ credentials  ║ 'same-origin' ║ 'include'|'omit'¹|'same-origin'                                         ║
+║ headers      ║               ║ Headers|Object                                                          ║
+║ mediaType²   ║               ║ String                                                                  ║
+║ method       ║ 'GET'         ║ /^(delete|get|head|patch|post|put)$/i                                   ║
+║ mode¹        ║ 'same-origin' ║ 'cors'|'no-cors'|'same-origin'                                          ║
+║ parameters   ║               ║ URLSearchParams|Object|String                                           ║
+║ responseType ║               ║ 'text'|'json'|'blob'|'document'²|'arraybuffer'|'formdata'               ║
+║ timeout      ║ 0             ║ ℕ                                                                       ║
+║ url          ║ location.href ║ String                                                                  ║
+╚══════════════╩═══════════════╩═════════════════════════════════════════════════════════════════════════╝
 ¹ fetch only
 ² XHR only
 
@@ -101,8 +104,8 @@ In pre-ES5 environments, the delete method requires the use of the bracket notat
 - [ ] Request
 - [x] URLSearchParams
 - [ ] FormData
-- [ ] Headers
-- [x] UMD
+- [x] Headers
+- [x] Universal Module Definition
 - [x] chained methods
 - [ ] caching
 
