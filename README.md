@@ -52,15 +52,16 @@ request({
 ## API
 #### Options
 Property | Default | Value(s)
----------| ------- | --------
+-------- | ------- | --------
 body         | ''            | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams¹
-cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached' 
+cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
 credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
+headers      | {}            | Headers, Object
 mediaType²   |               | String
 method       | 'GET'         | `/^(delete|get|head|patch|post|put)$/i`
 mode¹        | 'same-origin' | 'cors', 'no-cors', 'same-origin'
 parameters   |               | URLSearchParams, Object, String
-responseType |               | 'text', 'json', 'blob', 'document'², 'arraybuffer', 'formdata'
+responseType |               | 'text', 'json', 'blob', 'document'², 'arraybuffer', 'formdata'¹
 timeout      | 0             | ℕ
 url          | location.href | String
 

@@ -1,15 +1,19 @@
 {
   "name": "cb-fetch",
-  "version": "0.0.0-readme.3",
+  "version": "0.0.0-readme.4",
   "description": "Normalize fetch, XMLHttpRequest and XDomainRequest using an easy-to-use API",
   "repository": "Mouvedia/cb-fetch",
   "keywords": [
     "fetch",
-    "xhr",
+    "XHR",
     "XMLHttpRequest",
+    "XDR",
     "Cross-Domain Request",
     "cross-browser",
-    "callback"
+    "callback",
+    "AJAX",
+    "AJAH",
+    "AJAJ"
   ],
   "license": "MIT",
   "bugs": "https://github.com/Mouvedia/cb-fetch/issues"
