@@ -1,4 +1,4 @@
-# cb-fetch
+# cb-fetch <sup><small style="font-size:small">0.9.0 α4</small></sup>
 
 A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous HTTP requests that follows the **c**all**b**ack pattern.
 
@@ -124,6 +124,7 @@ By passing an URL to one of the HTTP verb methods you can effectively reset the 
 - [x] Universal Module Definition
 - [x] fluent API
 - [ ] [caching](../../issues/4)
+- [ ] [normalized response](../../issues/9)
 
 ## License
 This project is licensed under the terms of the MIT license.

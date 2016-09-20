@@ -67,7 +67,7 @@
     "newline-after-var": 1,
     "computed-property-spacing": 1,
     "no-negated-condition": 1,
-    "new-cap": 1,
+    "new-cap": [1, { "capIsNew": false }],
     "operator-assignment": [1, "always"],
     "no-trailing-spaces": [1, { "skipBlankLines": true }],
     "object-shorthand": 1,
