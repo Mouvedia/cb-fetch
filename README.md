@@ -1,4 +1,4 @@
-# cb-fetch <sup><small style="font-size:small">0.9.0 α4</small></sup>
+# cb-fetch
 
 A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous HTTP requests that follows the **c**all**b**ack pattern.
 
@@ -12,11 +12,11 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
   - [License](#license)
 
 ## Installation
-#### NPM
+#### <del>NPM</del>
 ```sh
 npm install --save cb-fetch
 ```
-#### JSPM
+#### <del>JSPM</del>
 ```sh
 jspm install cb-fetch=npm:cb-fetch
 ```
