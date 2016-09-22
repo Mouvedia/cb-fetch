@@ -7,7 +7,7 @@
     else
         exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('request', factory, '0.9.0-alpha.4');
+    YUI.add('request', factory, '0.9.0-alpha.5');
   else
     root.request = factory();
 })((function () {
@@ -40,7 +40,7 @@
     while (options.url.endsWith('?'))
       options.url = options.url.substring(0, options.url.length - 1);
     var prefix  = options.url.has('?') ? '&' : '?',
-        EURIC   = self.EURICURIComponent;
+        EURIC   = self.encodeURIComponent;
 
     if (self.URLSearchParams && Object.prototype.toString.call(options.parameters) === '[object URLSearchParams]')
       options.parameters = options.parameters.toString();
