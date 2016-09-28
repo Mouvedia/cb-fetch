@@ -73,6 +73,7 @@
     "object-shorthand": 1,
     "max-len": [1, 80],
     "max-params": [1, 4],
+    "quotes": [2, "single", { "avoidEscape": true }],
 
     "no-new-require": 2,
     "global-require": 1,

@@ -5,18 +5,18 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
 ## Table of Contents
   - [Installation](#installation)
   - [Examples](#examples)
-  - [Signatures](#signatures)
+  - [API](#api)
   - [Options](#options)
   - [Gotchas](#gotchas)
   - [Features](#features)
   - [License](#license)
 
 ## Installation
-#### <del>NPM</del>
+#### NPM
 ```sh
 npm install --save cb-fetch
 ```
-#### <del>JSPM</del>
+#### JSPM
 ```sh
 jspm install cb-fetch=npm:cb-fetch
 ```
@@ -38,48 +38,85 @@ request()
 request()
   .get('http://www.example.com')
   .query('key1=value1&key2=value2')
-  .done(onSuccessCallback);
+  .done(onSuccessCallback, onFailCallback);
 
 // granularity overkill!
 request({
-  url:        'http://www.example.com',
+  url:        new URL('http://www.example.com'),
   parameters: new URLSearchParams('key1=value1&key2=value2'),
   method:     'get',
   credentials:'same-origin',
   cache:      'default',
   timeout:    0,
   etc:        '…'
-}).done(onSuccessCallback, onFailCallback);
+}).done({
+  success: onSuccessCallback,
+  error:   onFailCallback,
+  process: false
+});
 ```
 
-## Signatures
+## API
+
+### Map
+
 ```
-(?: Options | Request | Options.url) => Object
-  .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-  .get(Options.url) => Object
-    .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-    .query(Options.parameters) => Object
-      .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-  .head(Options.url) => Object
-    .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-    .query(Options.parameters) => Object
-      .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-  ['delete'](Options.url) => Object
-    .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-    .query(Options.parameters) => Object
-      .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-  .patch(Options.url) => Object
-    .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-    .send(Options.body) => Object
-      .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-  .post(Options.url) => Object
-    .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-    .send(Options.body) => Object
-      .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-  .put(Options.url) => Object
-    .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
-    .send(Options.body) => Object
-      .done(onSuccess: Function, onFail?: Function) => Void, throws: TypeError
+(?: Options | Request | Options.url)
+ => Object
+    ├── done
+    ├── get
+    │   ├─ done
+    │   └─ query
+    │      └─ done
+    ├── head
+    │   ├─ done
+    │   └─ query
+    │      └─ done
+    ├── delete
+    │   ├─ done
+    │   └─ query
+    │      └─ done
+    ├── patch
+    │   ├─ done
+    │   └─ send
+    │      └─ done
+    ├── post
+    │   ├─ done
+    │   └─ send
+    │      └─ done
+    └── put
+        ├─ done
+        └─ send
+           └─ done
+```
+
+### Method Signatures
+
+#### HTTP verbs
+
+```
+(Options.url) => Object
+```
+
+#### query
+
+```
+(Options.parameters) => Object
+```
+
+#### send
+
+```
+(Options.body) => Object
+```
+
+#### done
+
+```
+{
+  (onSuccess: Function, onFail?: Function),
+  ({success: Function, error?: Function, process?: !!Any})
+} => Void, throws: TypeError
 ```
 
 ## Options
@@ -97,7 +134,7 @@ parameters   |               | URLSearchParams, Object, String
 responseType |               | 'text', 'json', 'blob', 'document'², 'arraybuffer', 'formdata'¹
 timeout      | 0             | ℕ
 username     | null          | String
-url          | location.href | String
+url          | location.href | String, URL
 
 <sup>¹ fetch only
 ² XHR only</sup>
@@ -106,7 +143,7 @@ url          | location.href | String
 #### Delete reserved keyword
 In pre-ES5 environments, the delete method requires the use of the bracket notation.
 #### URL override
-By passing an URL to one of the HTTP verb methods you can effectively reset the `url` property.
+By passing an URL to one of the HTTP verb methods you effectively reset the `url` property.
 #### XDR limitations
 - only support GET and POST methods
 - cannot set request headers
@@ -119,6 +156,7 @@ By passing an URL to one of the HTTP verb methods you can effectively reset the 
 - [ ] [XDR](../../issues/2)
 - [ ] [Request](../../issues/5)
 - [x] URLSearchParams
+- [ ] URL
 - [ ] [FormData](../../issues/3)
 - [x] Headers
 - [x] Universal Module Definition

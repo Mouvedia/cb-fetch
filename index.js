@@ -7,7 +7,7 @@
     else
         exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('request', factory, '0.9.0-alpha.5');
+    YUI.add('request', factory, '0.9.0-alpha.6');
   else
     root.request = factory();
 })((function () {
@@ -44,7 +44,7 @@
 
     if (self.URLSearchParams && Object.prototype.toString.call(options.parameters) === '[object URLSearchParams]')
       options.parameters = options.parameters.toString();
-    if (typeof options.parameters === "string") {
+    if (String.isString(options.parameters)) {
       var pairs  = options.parameters.split('&'),
           len    = pairs.length,
           pair, i;
@@ -53,7 +53,7 @@
         pair = pairs[i].split('=');
         options.url += (i ? '&' : prefix) + EURIC(pair[0]) + '=' + EURIC(pair[1]);
       }
-    } else if (typeof options.parameters === "object") {
+    } else if (typeof options.parameters === 'object') {
       for (var key in options.parameters) {
           options.url += prefix + EURIC(key) + '=' + EURIC(options.parameters[key]);
           prefix = '&';
@@ -109,7 +109,7 @@
         return !!xhr.responseXML;
       return !!xhr.response;
     }
-    if (typeof xhr.responseText === "string")
+    if (typeof xhr.responseText === 'string')
       return !!xhr.responseText;
     if (typeof xhr.responseXML === 'object')
       return !!xhr.responseXML;
@@ -228,10 +228,10 @@
     // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
     options.url         = inputIsStr ? input : options.url || self.location.href;
     options.method      = (options.method && options.method.toUpperCase()) || 'GET';
-    options.mode        = options.mode || "same-origin";
-    options.credentials = options.credentials || "same-origin";
+    options.mode        = options.mode || 'same-origin';
+    options.credentials = options.credentials || 'same-origin';
     options.headers     = options.headers || {};
-    options.username    = typeof options.username === 'string' ? options.username : null;
+    options.username    = String.isString(options.username) ? options.username : null;
     options.password    = options.password || null;
     options.mediaType   = options.mediaType || options.contentType || options.MIMEType;
 
@@ -239,10 +239,15 @@
   };
 
   request.done = function (onSuccess, onFail) {
+    var config = onSuccess === Object(onSuccess) ? onSuccess : {
+      success: onSuccess,
+      error:   onFail
+    };
+
     /*@cc_on@if(@_jscript_version>=5)@*/
-    if (typeof onSuccess !== 'function')
+    if (typeof config.success !== 'function')
       throw new TypeError('A success callback must be provided.');
-    if (typeof onFail !== 'undefined' && typeof onFail !== 'function')
+    if (typeof config.error !== 'undefined' && typeof config.error !== 'function')
       throw new TypeError('The failure callback must be a function.');
     /*@end@*/
 
@@ -255,9 +260,9 @@
       self.fetch(options.url, options)
         .then(processStatus)
         .then(consumeBody)
-        .then(onSuccess, onFail);
+        .then(config.success, config.error);
     else
-      xhrPath(onSuccess, onFail);
+      xhrPath(config.success, config.error);
   };
 
   function addVerb(verb) {
