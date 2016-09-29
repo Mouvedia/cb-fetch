@@ -2,12 +2,12 @@
   if (typeof define === 'function' && define.amd)
     define([], factory);
   else if (typeof exports === 'object' && !!exports && !exports.nodeType) {
-    if (module === Object(module) && module.exports)
+    if (typeof module === 'object' && !!module && module.exports)
         module.exports = factory();
     else
         exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('request', factory, '0.9.0-alpha.6');
+    YUI.add('request', factory, '0.9.0-alpha.7');
   else
     root.request = factory();
 })((function () {
@@ -224,7 +224,7 @@
       init = function (input) {
     var inputIsStr = String.isString(input);
 
-    options             = input === Object(input) && !inputIsStr ? input : {};
+    options             = typeof input === 'object' && !!input && !inputIsStr ? input : {};
     // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
     options.url         = inputIsStr ? input : options.url || self.location.href;
     options.method      = (options.method && options.method.toUpperCase()) || 'GET';
@@ -239,7 +239,7 @@
   };
 
   request.done = function (onSuccess, onFail) {
-    var config = onSuccess === Object(onSuccess) ? onSuccess : {
+    var config = typeof onSuccess === 'object' && !!onSuccess ? onSuccess : {
       success: onSuccess,
       error:   onFail
     };
