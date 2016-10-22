@@ -60,7 +60,7 @@
       }
     } else
       /*@cc_on@if(@_jscript_version>=5)@*/
-      throw new TypeError("Parameters' type is invalid.");
+      throw new TypeError();
       /*@end@*/
   }
 
@@ -81,17 +81,19 @@
 
   function setRequestHeaders(xhr) {
     var headers = {},
-        key;
+        key, separator;
 
     if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]')
       options.headers.forEach && options.headers.forEach(function (value, name) {
+        separator = name === 'Cookie' ? '; ' : ', ';
         if (value)
-          headers[name] = headers[name] ? headers[name] + ', ' + value : value;
+          headers[name] = headers[name] ? headers[name] + separator + value : value;
       });
     else
       for (key in options.headers) {
+        separator = key === 'Cookie' ? '; ' : ', ';
         if (options.headers[key])
-          headers[key] = (headers[key] ? headers[key] + ', ' : '') + options.headers[key];
+          headers[key] = (headers[key] ? headers[key] + separator : '') + options.headers[key];
       }
     for (key in headers) xhr.setRequestHeader(key, headers[key]);
 
@@ -239,15 +241,15 @@
   };
 
   request.done = function (onSuccess, onFail) {
-    var config = typeof onSuccess === 'object' && !!onSuccess ? onSuccess : {
+    var cfg = typeof onSuccess === 'object' && !!onSuccess ? onSuccess : {
       success: onSuccess,
       error:   onFail
     };
 
     /*@cc_on@if(@_jscript_version>=5)@*/
-    if (typeof config.success !== 'function')
+    if (typeof cfg.success !== 'function')
       throw new TypeError('A success callback must be provided.');
-    if (typeof config.error !== 'undefined' && typeof config.error !== 'function')
+    if (typeof cfg.error !== 'undefined' && typeof cfg.error !== 'function')
       throw new TypeError('The failure callback must be a function.');
     /*@end@*/
 
@@ -260,9 +262,9 @@
       self.fetch(options.url, options)
         .then(processStatus)
         .then(consumeBody)
-        .then(config.success, config.error);
+        .then(cfg.success, cfg.error);
     else
-      xhrPath(config.success, config.error);
+      xhrPath(cfg.success, cfg.error);
   };
 
   function addVerb(verb) {

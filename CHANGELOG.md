@@ -1,7 +1,5 @@
 # Change Log
 
-## 0.9.0-alpha.6  <sup>2016-09-28</sup>
-* alternate form of the done method
-
-## 0.9.0-alpha.4 <sup>2016-09-20</sup>
-* initial release
+## 0.9.0-alpha.4–8
+* `;` separator for the Cookie HTTP header field value in accordance with [RFC 2109](https://www.ietf.org/rfc/rfc2109.txt)
+* polymorphic done method
