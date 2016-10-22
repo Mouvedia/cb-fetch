@@ -6,7 +6,7 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
   - [Installation](#installation)
   - [Examples](#examples)
   - [API](#api)
-  - [Options](#options)
+  - [Properties](#properties)
   - [Gotchas](#gotchas)
   - [Features](#features)
   - [License](#license)
@@ -61,33 +61,32 @@ request({
 ### Map
 
 ```
-(?: Options | Request | Options.url)
- => Object
-    ├── done
-    ├── get
-    │   ├─ done
-    │   └─ query
-    │      └─ done
-    ├── head
-    │   ├─ done
-    │   └─ query
-    │      └─ done
-    ├── delete
-    │   ├─ done
-    │   └─ query
-    │      └─ done
-    ├── patch
-    │   ├─ done
-    │   └─ send
-    │      └─ done
-    ├── post
-    │   ├─ done
-    │   └─ send
-    │      └─ done
-    └── put
-        ├─ done
-        └─ send
-           └─ done
+(?: Options | Request | Options.url) => Object
+                                        ├── done
+                                        ├── get
+                                        │   ├─ done
+                                        │   └─ query
+                                        │      └─ done
+                                        ├── head
+                                        │   ├─ done
+                                        │   └─ query
+                                        │      └─ done
+                                        ├── delete
+                                        │   ├─ done
+                                        │   └─ query
+                                        │      └─ done
+                                        ├── patch
+                                        │   ├─ done
+                                        │   └─ send
+                                        │      └─ done
+                                        ├── post
+                                        │   ├─ done
+                                        │   └─ send
+                                        │      └─ done
+                                        └── put
+                                            ├─ done
+                                            └─ send
+                                               └─ done
 ```
 
 ### Method Signatures
@@ -115,13 +114,15 @@ request({
 ```
 {
   (onSuccess: Function, onFail?: Function),
-  ({success: Function, error?: Function, process?: !!Any})
+  (config: Settings)
 } => Void, throws: TypeError
 ```
 
-## Options
-Property | Default | Value(s)
--------- | ------- | --------
+## Properties
+
+### Options
+Property     | Default       | Value(s)
+--------     | -------       | --------
 body         | null          | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams¹
 cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
 credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
@@ -135,9 +136,17 @@ responseType |               | 'text', 'json', 'blob', 'document'², 'arraybuffe
 timeout      | 0             | ℕ
 username     | null          | String
 url          | location.href | String, URL
-
 <sup>¹ fetch only
 ² XHR only</sup>
+
+### Settings
+Property     | Default       | Type
+--------     | -------       | ----
+success      |               | Function
+error        |               | Function
+process      | false         | Boolean
+mozAnon      | false         | Boolean
+mozSystem    | false         | Boolean
 
 ## Gotchas
 #### Delete reserved keyword
@@ -156,7 +165,7 @@ By passing an URL to one of the HTTP verb methods you effectively reset the `url
 - [ ] [XDR](../../issues/2)
 - [ ] [Request](../../issues/5)
 - [x] URLSearchParams
-- [ ] URL
+- [x] URL
 - [ ] [FormData](../../issues/3)
 - [x] Headers
 - [x] Universal Module Definition

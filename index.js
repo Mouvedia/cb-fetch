@@ -7,7 +7,7 @@
     else
         exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('request', factory, '0.9.0-alpha.7');
+    YUI.add('request', factory, '0.9.0-alpha.8');
   else
     root.request = factory();
 })((function () {
@@ -221,19 +221,39 @@
     }
   }
 
-  var request = {},
-      options,
-      init = function (input) {
-    var inputIsStr = String.isString(input);
+  function processURL(url) {
+    options.url = url.href;
+    options.username = options.username || url.username;
+    options.password = options.password || url.password;
+  }
 
-    options             = typeof input === 'object' && !!input && !inputIsStr ? input : {};
+  function processInput(input) {
+    if (String.isString(input))
+      options.url = input;
+    else if (self.URL && Object.prototype.toString.call(input) === '[object URL]')
+      processURL(input);
+    else if (typeof input === 'object' && !!input) {
+      options = input;
+      if (self.URL && Object.prototype.toString.call(options.url) === '[object URL]')
+        processURL(options.url);
+    } else
+      /*@cc_on@if(@_jscript_version>=5)@*/
+      throw new TypeError();
+      /*@end@*/
+  }
+
+  var request = {},
+      options = {},
+      init = function (input) {
+    processInput(input);
+
     // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
-    options.url         = inputIsStr ? input : options.url || self.location.href;
+    options.url         = options.url || self.location.href;
     options.method      = (options.method && options.method.toUpperCase()) || 'GET';
     options.mode        = options.mode || 'same-origin';
     options.credentials = options.credentials || 'same-origin';
     options.headers     = options.headers || {};
-    options.username    = String.isString(options.username) ? options.username : null;
+    options.username    = options.username || null;
     options.password    = options.password || null;
     options.mediaType   = options.mediaType || options.contentType || options.MIMEType;
 
