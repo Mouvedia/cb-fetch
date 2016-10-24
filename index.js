@@ -81,15 +81,21 @@
 
   function setRequestHeaders(xhr) {
     var headers = {},
-        key, separator;
+        key, entries, pair, name, value, separator;
 
-    if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]')
-      options.headers.forEach && options.headers.forEach(function (value, name) {
-        separator = name === 'Cookie' ? '; ' : ', ';
-        if (value)
-          headers[name] = headers[name] ? headers[name] + separator + value : value;
-      });
-    else
+    if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]') {
+      // exclude Firefox 34–43
+      if (options.headers.entries) {
+        entries = options.headers.entries();
+        while (!(pair = entries.next()).done) {
+          name      = pair.value[0];
+          value     = pair.value[1];
+          separator = name === 'Cookie' ? '; ' : ', ';
+          if (value)
+            headers[name] = headers[name] ? headers[name] + separator + value : value;
+        }
+      }
+    } else
       for (key in options.headers) {
         separator = key === 'Cookie' ? '; ' : ', ';
         if (options.headers[key])
