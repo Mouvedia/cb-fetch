@@ -114,13 +114,13 @@ request({
 ```
 {
   (onSuccess: Function, onFail?: Function),
-  (config: Settings)
+  ({success: Function, error?: Function, process?: Boolean, XHR?: Settings})
 } => Void, throws: TypeError
 ```
 
 ## Properties
 
-### Options
+### Request Options
 Property     | Default       | Value(s)
 --------     | -------       | --------
 body         | null          | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams¹
@@ -139,12 +139,9 @@ url          | location.href | String, URL
 <sup>¹ fetch only
 ² XHR only</sup>
 
-### Settings
+### XHR Settings
 Property     | Default       | Type
 --------     | -------       | ----
-success      |               | Function
-error        |               | Function
-process      | false         | Boolean
 mozAnon      | false         | Boolean
 mozSystem    | false         | Boolean
 

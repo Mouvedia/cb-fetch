@@ -300,7 +300,10 @@
           payload = supportBody ? 'body' : 'parameters',
           context = {};
 
-      options.url = url || options.url;
+      if (self.URL && Object.prototype.toString.call(url) === '[object URL]')
+        processURL(url);
+      else
+        options.url = url || options.url;
       options.method = verb.toUpperCase();
 
       context[action] = function (data) {
