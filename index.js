@@ -7,7 +7,7 @@
     else
         exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('request', factory, '0.9.0-alpha.8');
+    YUI.add('request', factory, '0.9.0-alpha.9');
   else
     root.request = factory();
 })((function () {
@@ -227,21 +227,43 @@
     }
   }
 
+  // https://support.microsoft.com/en-us/kb/834489
+  function stripAuth(url) {
+    var credentials;
+
+    if (url.has('@')) {
+      credentials      = url.split('//')[1].split('@')[0].split(':');
+      options.username = options.username || credentials[0];
+      options.password = options.password || credentials[1];
+      return url.replace(/\/\/.+@/, '//');
+    }
+    return url;
+  }
+
   function processURL(url) {
-    options.url = url.href;
-    options.username = options.username || url.username;
-    options.password = options.password || url.password;
+    if (String.isString(url.href)) {
+      options.username = options.username || url.username;
+      options.password = options.password || url.password;
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1195820
+      url.username = url.password = '';
+      options.url = url.href;
+    } else
+      /*@cc_on@if(@_jscript_version>=5)@*/
+      throw new TypeError();
+      /*@end@*/
   }
 
   function processInput(input) {
     if (String.isString(input))
-      options.url = input;
+      options.url = stripAuth(input);
     else if (self.URL && Object.prototype.toString.call(input) === '[object URL]')
       processURL(input);
     else if (typeof input === 'object' && !!input) {
       options = input;
       if (self.URL && Object.prototype.toString.call(options.url) === '[object URL]')
         processURL(options.url);
+      else if (String.isString(options.url))
+        options.url = stripAuth(options.url);
     } else
       /*@cc_on@if(@_jscript_version>=5)@*/
       throw new TypeError();
@@ -302,8 +324,8 @@
 
       if (self.URL && Object.prototype.toString.call(url) === '[object URL]')
         processURL(url);
-      else
-        options.url = url || options.url;
+      else if (String.isString(url))
+        options.url = stripAuth(url);
       options.method = verb.toUpperCase();
 
       context[action] = function (data) {
