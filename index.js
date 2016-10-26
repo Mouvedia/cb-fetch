@@ -223,8 +223,7 @@
       case 'blob':
       case 'moz-blob':
         // PhantomJS didn't support blobs until version 2.0
-        if (self.Response.prototype.blob)
-          return response.blob();
+        return response[self.Response.prototype.blob ? 'blob' : 'valueOf']();
       case 'formdata':
         // https://bugs.chromium.org/p/chromium/issues/detail?id=455103
         if (self.Response.prototype.formData)
