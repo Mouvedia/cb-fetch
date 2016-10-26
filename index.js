@@ -18,6 +18,19 @@
   }
 })(), function () {
 
+  function errorHandler(error) {
+    self.console && self.console.error && self.console.error(error);
+  }
+
+  function raiseException(msg, type) {
+    type = type || 'TypeError';
+
+    if (self[type])
+      /*@cc_on@if(@_jscript_version>=5)@*/
+      throw new self[type](msg);
+      /*@end@*/
+  }
+
   function XHR() {
     if (self.XMLHttpRequest
     /*@cc_on@if(@_jscript_version<9)
@@ -59,9 +72,7 @@
           prefix = '&';
       }
     } else
-      /*@cc_on@if(@_jscript_version>=5)@*/
-      throw new TypeError();
-      /*@end@*/
+      raiseException();
   }
 
   function setRequestMediaType() {
@@ -122,10 +133,6 @@
     if (typeof xhr.responseXML === 'object')
       return !!xhr.responseXML;
     return false;
-  }
-
-  function errorHandler(error) {
-    self.console && self.console.error && self.console.error(error);
   }
 
   function xhrPath(onSuccess, onFail) {
@@ -235,7 +242,7 @@
       credentials      = url.split('//')[1].split('@')[0].split(':');
       options.username = options.username || credentials[0];
       options.password = options.password || credentials[1];
-      return url.replace(/\/\/.+@/, '//');
+      return url.replace(/\/\/.+?@/, '//');
     }
     return url;
   }
@@ -248,9 +255,7 @@
       url.username = url.password = '';
       options.url = url.href;
     } else
-      /*@cc_on@if(@_jscript_version>=5)@*/
-      throw new TypeError();
-      /*@end@*/
+      raiseException();
   }
 
   function processInput(input) {
@@ -265,9 +270,7 @@
       else if (String.isString(options.url))
         options.url = stripAuth(options.url);
     } else
-      /*@cc_on@if(@_jscript_version>=5)@*/
-      throw new TypeError();
-      /*@end@*/
+      raiseException();
   }
 
   var request = {},
@@ -294,12 +297,10 @@
       error:   onFail
     };
 
-    /*@cc_on@if(@_jscript_version>=5)@*/
     if (typeof cfg.success !== 'function')
-      throw new TypeError('A success callback must be provided.');
+      raiseException('A success callback must be provided.');
     if (typeof cfg.error !== 'undefined' && typeof cfg.error !== 'function')
-      throw new TypeError('The failure callback must be a function.');
-    /*@end@*/
+      raiseException('The failure callback must be a function.');
 
     if (/^(POST|PUT|PATCH)$/.test(options.method))
       setRequestMediaType();
