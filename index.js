@@ -238,11 +238,11 @@
   function stripAuth(url) {
     var credentials;
 
-    if (url.has('@')) {
+    if ((/^([^#?]+:)?\/\/[^\/]+@/).test(url)) {
       credentials      = url.split('//')[1].split('@')[0].split(':');
       options.username = options.username || credentials[0];
       options.password = options.password || credentials[1];
-      return url.replace(/\/\/.+?@/, '//');
+      return url.replace(/\/\/[^\/]+@/, '//');
     }
     return url;
   }
