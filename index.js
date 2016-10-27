@@ -50,10 +50,11 @@
   }
 
   function setQueryString() {
-    while (options.url.endsWith('?'))
-      options.url = options.url.substring(0, options.url.length - 1);
-    var prefix  = options.url.has('?') ? '&' : '?',
-        EURIC   = self.encodeURIComponent;
+    var prefix = (/^[^#?]+\?/).test(options.url) ? '&' : '?',
+        EURIC  = self.encodeURIComponent;
+
+    // https://github.com/w3c/web-platform-tests/commit/d9d33e2
+    options.url = options.url.replace(/#.*$/, '');
 
     if (self.URLSearchParams && Object.prototype.toString.call(options.parameters) === '[object URLSearchParams]')
       options.parameters = options.parameters.toString();

@@ -16,8 +16,6 @@
     "AJAJ"
   ],
   "dependencies": {
-    "string.prototype.endswith": "latest",
-    "@string/prototype.has": "latest",
     "@string/isstring": "latest",
     "Base64": "latest"
   },
