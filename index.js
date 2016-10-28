@@ -31,14 +31,14 @@
       /*@end@*/
   }
 
-  function XHR() {
+  function XHR(flags) {
     if (self.XMLHttpRequest
     /*@cc_on@if(@_jscript_version<9)
       && options.method !== 'PATCH'
     @else
       && options.method !== 'PATCH' && document.documentMode >= 9
     @end@*/)
-      return new self.XMLHttpRequest();
+      return new self.XMLHttpRequest(flags);
     /*@cc_on@if(@_jscript_version>=5)else {
       var progIDs = ['Msxml2.XMLHTTP.6.0', 'Msxml2.XMLHTTP.3.0', 'Microsoft.XMLHTTP'];
 
@@ -54,7 +54,7 @@
         EURIC  = self.encodeURIComponent;
 
     // https://github.com/w3c/web-platform-tests/commit/d9d33e2
-    options.url = options.url.replace(/#.*$/, '');
+    options.url = options.url.split('#')[0];
 
     if (self.URLSearchParams && Object.prototype.toString.call(options.parameters) === '[object URLSearchParams]')
       options.parameters = options.parameters.toString();
@@ -136,8 +136,10 @@
     return false;
   }
 
-  function xhrPath(onSuccess, onFail) {
-    var xhr = XHR(),
+  function xhrPath(cfg) {
+    var xhr     = XHR(cfg.XHR),
+        success = cfg.success,
+        fail    = cfg.error,
         cleanExit;
 
     // https://support.microsoft.com/en-us/kb/2856746
@@ -164,14 +166,14 @@
                 // applicationCache IDLE
                 // Opera status 304
                 (xhr.status === 0 && hasResponse(xhr)))
-              onSuccess(xhr);
-            else if (onFail)
-              onFail(xhr);
+              success(xhr);
+            else if (fail)
+              fail(xhr);
           // Firefox status 408
           // IE9 error c00c023f
           } catch (e) {
             errorHandler(e);
-            onFail && onFail(xhr);
+            fail && fail(xhr);
           }
           /*@end@*/
 
@@ -292,7 +294,7 @@
   };
 
   request.done = function (onSuccess, onFail) {
-    var cfg = typeof onSuccess === 'object' && !!onSuccess ? onSuccess : {
+    var cfg = typeof onSuccess === 'object' && onSuccess || {
       success: onSuccess,
       error:   onFail
     };
@@ -313,7 +315,7 @@
         .then(consumeBody)
         .then(cfg.success, cfg.error);
     else
-      xhrPath(cfg.success, cfg.error);
+      xhrPath(cfg);
   };
 
   function addVerb(verb) {
