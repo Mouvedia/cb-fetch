@@ -242,8 +242,10 @@
 
     if ((/^([^#?]+:)?\/\/[^\/]+@/).test(url)) {
       credentials      = url.split('//')[1].split('@')[0].split(':');
-      options.username = options.username || credentials[0];
-      options.password = options.password || credentials[1];
+      if (!options.username) {
+        options.username = credentials[0];
+        options.password = credentials[1];
+      }
       return url.replace(/\/\/[^\/]+@/, '//');
     }
     return url;
@@ -251,8 +253,10 @@
 
   function processURL(url) {
     if (String.isString(url.href)) {
-      options.username = options.username || url.username;
-      options.password = options.password || url.password;
+      if (!options.username) {
+        options.username = url.username;
+        options.password = url.password;
+      }
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1195820
       url.username = url.password = '';
       options.url = url.href;
