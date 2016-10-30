@@ -25,10 +25,7 @@
   function raiseException(msg, type) {
     type = type || 'TypeError';
 
-    if (self[type])
-      /*@cc_on@if(@_jscript_version>=5)@*/
-      throw new self[type](msg);
-      /*@end@*/
+    throw new (self[type] || self.Error)(msg);
   }
 
   function XHR(flags) {
@@ -158,7 +155,6 @@
           self.detachEvent && self.detachEvent('onunload', cleanExit);
           xhr.onreadystatechange = function () {};
 
-          /*@cc_on@if(@_jscript_version>=5)@*/
           try {
             if ((xhr.status >= 200 && xhr.status < 300) ||
                 (xhr.status == 304 || xhr.status == 1223) ||
@@ -175,7 +171,6 @@
             errorHandler(e);
             fail && fail(xhr);
           }
-          /*@end@*/
 
           xhr = null;
         }
@@ -184,13 +179,11 @@
     xhr.open(options.method, options.url, true, options.username, options.password);
 
     if (options.responseType) {
-        /*@cc_on@if(@_jscript_version>=5)@*/
         try {
           xhr.responseType = options.responseType;
         } catch (e) {
           errorHandler(e);
         }
-        /*@end@*/
     }
 
     if (options.credentials === 'include' && typeof xhr.withCredentials === 'boolean')
