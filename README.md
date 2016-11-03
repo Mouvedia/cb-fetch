@@ -4,6 +4,7 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
 
 ## Table of Contents
   - [Installation](#installation)
+  - [Importation](#importation)
   - [Examples](#examples)
   - [API](#api)
   - [Properties](#properties)
@@ -12,19 +13,46 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
   - [License](#license)
 
 ## Installation
-#### NPM
 ```sh
 npm install --save cb-fetch
 ```
-#### JSPM
-```sh
-jspm install cb-fetch=npm:cb-fetch
-```
+
+## Importation
+
+<details>
+  <summary>AMD</summary>
+  <pre><code>
+  define(function (require) {
+    var request = require('cb-fetch');
+  });
+  </code></pre>
+</details>
+
+<details>
+  <summary>Node.js</summary>
+  <pre><code>
+  var request = require('cb-fetch');
+  </code></pre>
+</details>
+
+<details>
+  <summary>CJS</summary>
+  <pre><code>
+  var request = require('cb-fetch').default;
+  </code></pre>
+</details>
+
+<details>
+  <summary>YUI</summary>
+  <pre><code>
+  YUI().use('cb-fetch', function (Y) {
+    var request = Y.default;
+  });
+  </code></pre>
+</details>
 
 ## Examples
 ```js
-var request = require('cb-fetch');
-
 // this looks too easy
 request('http://www.example.com?key1=value1&key2=value2')
   .done(onSuccessCallback);
@@ -52,7 +80,7 @@ request({
 }).done({
   success: onSuccessCallback,
   error:   onFailCallback,
-  process: false
+  process: true
 });
 ```
 
@@ -114,7 +142,7 @@ request({
 ```
 {
   (onSuccess: Function, onFail?: Function),
-  ({success: Function, error?: Function, process?: Boolean, XHR?: Settings})
+  ({success: Function, error?: Function, process = true: Boolean, XHR?: Settings})
 } => Void, throws: TypeError
 ```
 

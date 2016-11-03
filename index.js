@@ -19,7 +19,7 @@
 })(), function () {
 
   function errorHandler(error) {
-    self.console && self.console.error && self.console.error(error);
+    self.console && self.console.error && self.console.error(error.message || error.description);
   }
 
   function raiseException(msg, type) {
