@@ -7,7 +7,7 @@
     else
         exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('request', factory, '0.9.0-alpha.9');
+    YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '0.9.0-alpha.9');
   else
     root.request = factory();
 })((function () {
