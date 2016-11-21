@@ -151,27 +151,38 @@ request({
 ### Request Options
 Property     | Default       | Value(s)
 --------     | -------       | --------
-body         | null          | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams¹
+body         | null          | ArrayBuffer, Blob, Document[²](#XHR), FormData, String, URLSearchParams[¹](#fetch)
 cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
-credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
+credentials  | 'same-origin' | 'include', 'omit'[¹](#fetch), 'same-origin'
 headers      | {}            | Headers, Object
-mediaType²   |               | String
+mediaType[²](#XHR)|          | String
 method       | 'GET'         | String
-mode¹        | 'same-origin' | 'cors', 'no-cors', 'same-origin'
+mode[¹](#fetch)|'same-origin'| 'cors', 'no-cors', 'same-origin'
 password     | null          | String
 parameters   |               | URLSearchParams, Object, String
-responseType |               | 'text', 'json', 'blob', 'document'², 'arraybuffer', 'formdata'¹
+responseType |               | 'text', 'json', 'blob', 'document'[²](#XHR), 'arraybuffer', 'formdata'[¹](#fetch)
 timeout      | 0             | ℕ
 username     | null          | String
 url          | location.href | String, URL
-<sup>¹ fetch only
-² XHR only</sup>
+
+### Normalized Response
+Property   | Type
+--------   | ----
+body       | Object, String, Document[²](#XHR), ArrayBuffer, Blob, FormData[¹](#fetch), ReadableStream, null
+headers    | Object
+instance   | XMLHttpRequest, XDomainRequest, Response
+statusCode | ℕ
+statusText | String
+url        | String
 
 ### XHR Settings
 Property     | Default       | Type
 --------     | -------       | ----
 mozAnon      | false         | Boolean
 mozSystem    | false         | Boolean
+
+<sup><a name="fetch">¹</a> fetch only<br/>
+<a name="XHR">²</a> XHR only</sup>
 
 ## Gotchas
 #### Delete reserved keyword
