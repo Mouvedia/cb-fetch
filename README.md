@@ -75,12 +75,12 @@ request({
   method:     'get',
   credentials:'same-origin',
   cache:      'default',
+  mode:       'same-origin',
   timeout:    0,
   etc:        '…'
 }).done({
   success: onSuccessCallback,
-  error:   onFailCallback,
-  process: true
+  error:   onFailCallback
 });
 ```
 
@@ -142,7 +142,7 @@ request({
 ```
 {
   (onSuccess: Function, onFail?: Function),
-  ({success: Function, error?: Function, process = true: Boolean, XHR?: Settings})
+  ({success: Function, error?: Function, XHR?: Settings})
 } => Void, throws: TypeError
 ```
 
@@ -151,16 +151,16 @@ request({
 ### Request Options
 Property     | Default       | Value(s)
 --------     | -------       | --------
-body         | null          | ArrayBuffer, Blob, Document[²](#XHR), FormData, String, URLSearchParams[¹](#fetch)
+body         | null          | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams¹
 cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
-credentials  | 'same-origin' | 'include', 'omit'[¹](#fetch), 'same-origin'
-headers      | {}            | Headers, Object
-mediaType[²](#XHR)|          | String
+credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
+headers      | {}            | Object, Headers³
+mediaType²   |               | String
 method       | 'GET'         | String
-mode[¹](#fetch)|'same-origin'| 'cors', 'no-cors', 'same-origin'
+mode         | 'same-origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
 parameters   |               | URLSearchParams, Object, String
-responseType |               | 'text', 'json', 'blob', 'document'[²](#XHR), 'arraybuffer', 'formdata'[¹](#fetch)
+responseType |               | 'text', 'json', 'blob', 'document'², 'arraybuffer', 'formdata'¹
 timeout      | 0             | ℕ
 username     | null          | String
 url          | location.href | String, URL
@@ -168,7 +168,7 @@ url          | location.href | String, URL
 ### Normalized Response
 Property   | Type
 --------   | ----
-body       | Object, String, Document[²](#XHR), ArrayBuffer, Blob, FormData[¹](#fetch), ReadableStream, null
+body       | Object, String, Document², ArrayBuffer, Blob, FormData¹, ReadableStream¹, null
 headers    | Object
 instance   | XMLHttpRequest, XDomainRequest, Response
 statusCode | ℕ
@@ -176,24 +176,42 @@ statusText | String
 url        | String
 
 ### XHR Settings
-Property     | Default       | Type
---------     | -------       | ----
-mozAnon      | false         | Boolean
-mozSystem    | false         | Boolean
+Property                    | Default | Type
+--------                    | ------- | ----
+mozAnon                     | false   | Boolean
+mozSystem                   | false   | Boolean
+[headers](#exposed-headers) |         | Object
 
-<sup><a name="fetch">¹</a> fetch only<br/>
-<a name="XHR">²</a> XHR only</sup>
+<sup>¹ fetch only<br/>
+² XHR only<br/>
+³ except Firefox 34–43</sup>
 
 ## Gotchas
-#### Delete reserved keyword
+
+#### `delete` reserved keyword
 In pre-ES5 environments, the delete method requires the use of the bracket notation.
+
 #### URL override
 By passing an URL to one of the HTTP verb methods you effectively reset the `url` property.
+
 #### XDR limitations
 - only support GET and POST methods
 - cannot set request headers
 - no credentials
 - same scheme restriction
+
+#### Exposed headers
+If the `mode` is set to `cors` and the server returns a non-empty `Access-Control-Expose-Headers` HTTP header, the corresponding exposed headers' field names must be set to `true` explicitly for the normalized response's headers to be properly populated.
+
+```js
+request('http://www.example.com?key1=value1&key2=value2')
+  .done({
+    success: onSuccessCallback,
+    XHR: {
+      headers: { ETag: true }
+    }
+  });
+```
 
 ## Features
 - [x] fetch
