@@ -8,6 +8,10 @@
         exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
     YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '0.9.0-alpha.9');
+  else if (root.request)
+    self.console &&
+    self.console.warn &&
+    self.console.warn('Module registration aborted! %O already exists.', root.request);
   else
     root.request = factory();
 })((function () {
@@ -88,28 +92,37 @@
     }
   }
 
-  function setRequestHeaders(xhr) {
+  function HeadersToObject(instance) {
     var headers = {},
-        key, entries, pair, name, value, separator;
+        entries, pair, name, value, separator;
 
-    if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]') {
-      // exclude Firefox 34–43
-      if (options.headers.entries) {
-        entries = options.headers.entries();
-        while (!(pair = entries.next()).done) {
-          name      = pair.value[0];
-          value     = pair.value[1];
-          separator = name === 'Cookie' ? '; ' : ', ';
-          if (value)
-            headers[name] = headers[name] ? headers[name] + separator + value : value;
-        }
+    // exclude Firefox 34–43
+    if (instance.entries) {
+      entries = instance.entries();
+      while (!(pair = entries.next()).done) {
+        name      = pair.value[0];
+        value     = pair.value[1];
+        separator = name === 'Cookie' ? '; ' : ', ';
+        if (value)
+          headers[name] = headers[name] ? headers[name] + separator + value : value;
       }
-    } else
+    }
+    return headers;
+  }
+
+  function setRequestHeaders(xhr) {
+    var headers, key, separator;
+
+    if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]')
+      headers = headersToObject(options.headers);
+    else {
+      headers = {};
       for (key in options.headers) {
         separator = key === 'Cookie' ? '; ' : ', ';
         if (options.headers[key])
           headers[key] = (headers[key] ? headers[key] + separator : '') + options.headers[key];
       }
+    }
     for (key in headers) xhr.setRequestHeader(key, headers[key]);
 
     // https://bugs.chromium.org/p/chromium/issues/detail?id=128323#c3
@@ -118,19 +131,18 @@
       xhr.setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
   }
 
-  function hasResponse(xhr) {
+  function getResponse(xhr) {
     if (typeof xhr.responseType === 'string') {
       if (xhr.responseType === 'text')
-        return !!xhr.responseText;
+        return xhr.responseText;
       if (xhr.responseType === 'document' || xhr.responseType === 'msxml-document')
-        return !!xhr.responseXML;
-      return !!xhr.response;
+        return xhr.responseXML;
+      return xhr.response;
     }
     if (typeof xhr.responseText === 'string')
-      return !!xhr.responseText;
+      return xhr.responseText;
     if (typeof xhr.responseXML === 'object')
-      return !!xhr.responseXML;
-    return false;
+      return xhr.responseXML;
   }
 
   function xhrPath(cfg) {
@@ -161,7 +173,7 @@
                 // Android status 206
                 // applicationCache IDLE
                 // Opera status 304
-                (xhr.status === 0 && hasResponse(xhr)))
+                (xhr.status === 0 && getResponse(xhr)))
               success(xhr);
             else if (fail)
               fail(xhr);
