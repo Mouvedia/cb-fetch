@@ -3,11 +3,11 @@
     define([], factory);
   else if (typeof exports === 'object' && !!exports && !exports.nodeType) {
     if (typeof module === 'object' && !!module && module.exports)
-        module.exports = factory();
+      module.exports = factory();
     else
-        exports.default = factory();
+      exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '0.9.0-alpha.9');
+    YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '1.0.0-beta.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -23,7 +23,9 @@
 })(), function () {
 
   function errorHandler(error) {
-    self.console && self.console.error && self.console.error(error.message || error.description);
+    self.console &&
+    self.console.error &&
+    self.console.error(error.message || error.description);
   }
 
   function raiseException(msg, type) {
@@ -32,7 +34,12 @@
     throw new (self[type] || self.Error)(msg);
   }
 
-  function XHR(flags) {
+  function XHR() {
+    var flags = cfg.XHR && {
+        mozAnon:   !!cfg.XHR.mozAnon,
+        mozSystem: !!cfg.XHR.mozSystem
+      };
+
     if (self.XMLHttpRequest
     /*@cc_on@if(@_jscript_version<9)
       && options.method !== 'PATCH'
@@ -70,8 +77,8 @@
       }
     } else if (typeof options.parameters === 'object') {
       for (var key in options.parameters) {
-          options.url += prefix + EURIC(key) + '=' + EURIC(options.parameters[key]);
-          prefix = '&';
+        options.url += prefix + EURIC(key) + '=' + EURIC(options.parameters[key]);
+        prefix = '&';
       }
     } else
       raiseException();
@@ -96,7 +103,6 @@
     var headers = {},
         entries, pair, name, value, separator;
 
-    // exclude Firefox 34–43
     if (instance.entries) {
       entries = instance.entries();
       while (!(pair = entries.next()).done) {
@@ -133,11 +139,17 @@
 
   function getResponse(xhr) {
     if (typeof xhr.responseType === 'string') {
-      if (xhr.responseType === 'text')
-        return xhr.responseText;
-      if (xhr.responseType === 'document' || xhr.responseType === 'msxml-document')
-        return xhr.responseXML;
-      return xhr.response;
+      switch (xhr.responseType) {
+        case 'text':
+        case 'moz-chunked-text':
+        case '':
+          return xhr.responseText;
+        case 'document':
+        case 'msxml-document':
+          return xhr.responseXML;
+        default:
+          return xhr.response;
+      }
     }
     if (typeof xhr.responseText === 'string')
       return xhr.responseText;
@@ -145,8 +157,8 @@
       return xhr.responseXML;
   }
 
-  function xhrPath(cfg) {
-    var xhr     = XHR(cfg.XHR),
+  function xhrPath() {
+    var xhr     = XHR(),
         success = cfg.success,
         fail    = cfg.error,
         cleanExit;
@@ -163,39 +175,39 @@
     // since the XHR instance won't be reused
     // the handler can be placed before open
     xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4) {
+      if (xhr.readyState == 4) {
           self.detachEvent && self.detachEvent('onunload', cleanExit);
           xhr.onreadystatechange = function () {};
 
-          try {
-            if ((xhr.status >= 200 && xhr.status < 300) ||
-                (xhr.status == 304 || xhr.status == 1223) ||
-                // Android status 206
-                // applicationCache IDLE
-                // Opera status 304
-                (xhr.status === 0 && getResponse(xhr)))
-              success(xhr);
-            else if (fail)
-              fail(xhr);
-          // Firefox status 408
-          // IE9 error c00c023f
-          } catch (e) {
-            errorHandler(e);
-            fail && fail(xhr);
-          }
-
-          xhr = null;
+        try {
+          if ((xhr.status >= 200 && xhr.status < 300) ||
+              (xhr.status == 304 || xhr.status == 1223) ||
+              // Android status 206
+              // applicationCache IDLE
+              // Opera status 304
+              (xhr.status === 0 && getResponse(xhr)))
+            success(processXHR(xhr));
+          else if (fail)
+            fail(processXHR(xhr));
+        // Firefox status 408
+        // IE9 error c00c023f
+        } catch (e) {
+          errorHandler(e);
+          fail && fail({instance: xhr});
         }
+
+        xhr = null;
+      }
     };
 
     xhr.open(options.method, options.url, true, options.username, options.password);
 
     if (options.responseType) {
-        try {
-          xhr.responseType = options.responseType;
-        } catch (e) {
-          errorHandler(e);
-        }
+      try {
+        xhr.responseType = options.responseType;
+      } catch (e) {
+        errorHandler(e);
+      }
     }
 
     if (options.credentials === 'include' && typeof xhr.withCredentials === 'boolean')
@@ -204,8 +216,8 @@
     if (options.timeout && typeof xhr.timeout === 'number')
       xhr.timeout = options.timeout;
 
-    if (options.mediaType && xhr.overrideMimeType)
-      xhr.overrideMimeType(options.mediaType);
+    if (options.responseMediaType && xhr.overrideMimeType)
+      xhr.overrideMimeType(options.responseMediaType);
 
     if (xhr.setRequestHeader)
       setRequestHeaders(xhr);
@@ -213,15 +225,30 @@
     xhr.send(/^(POST|PUT|PATCH)$/.test(options.method) ? (options.body || '') : null);
   }
 
-  function processStatus(response) {
-    return Promise[(response.ok || response.status == 304) ? 'resolve' : 'reject'](response);
+  function processStatus(instance) {
+    return self.Promise[instance.ok || instance.status == 304 ? 'resolve' : 'reject'](processedResponse);
   }
 
-  function consumeBody(response) {
+  function storeBody(body) {
+    if (options.responseType === 'document' || options.responseType === 'msxml-document') {
+      var MIMEType = options.responseMediaType ||
+                     processedResponse.headers['content-type'] ||
+                     'text/xml',
+          parser   = new self.DOMParser();
+
+      processedResponse.body = parser.parseFromString(body, MIMEType);
+    } else
+      processedResponse.body = body;
+    return processedResponse.instance;
+  }
+
+  function extractBody(response) {
     switch (options.responseType) {
       case 'text':
       case 'moz-chunked-text':
       case '':
+      case 'document':
+      case 'msxml-document':
         return response.text();
       case 'json':
         return response.json();
@@ -231,22 +258,96 @@
       case 'blob':
       case 'moz-blob':
         // PhantomJS didn't support blobs until version 2.0
-        return response[self.Response.prototype.blob ? 'blob' : 'valueOf']();
+        if (self.Response.prototype.blob) return response.blob();
+        break;
       case 'formdata':
         // https://bugs.chromium.org/p/chromium/issues/detail?id=455103
-        if (self.Response.prototype.formData)
-          return response.formData();
-      default:
-        return response;
+        if (self.Response.prototype.formData) return response.formData();
     }
+    return self.Promise.resolve(response.body || null);
+  }
+
+  function convertResponse(response) {
+    processedResponse = {
+      headers:    HeadersToObject(response.headers),
+      instance:   response,
+      statusCode: response.status,
+      statusText: response.statusText,
+      url:        response.url
+    };
+    return response;
+  }
+
+  function processXHR(xhr) {
+    var response = {
+      body:       getBody(xhr),
+      headers:    getResponseHeaders(xhr),
+      instance:   xhr,
+      statusCode: xhr.status === 1223 ? 204 : xhr.status,
+      url:        xhr.responseURL
+    };
+
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=596634
+    try {
+      response.statusText = xhr.status === 1223 ? 'No Content' : xhr.statusText;
+    } catch (e) {
+      response.statusText = '';
+    }
+    return response;
+  }
+
+  function getBody(xhr) {
+    var response = getResponse(xhr);
+
+    if (self.JSON && options.responseType === 'json' && typeof response !== 'object')
+      return self.JSON.parse(response + '');
+    return response;
+  }
+
+  function getResponseHeaders(xhr) {
+    var getResponseHeader = xhr.getResponseHeader,
+        exposedHeaders    = cfg.XHR && cfg.XHR.headers,
+        headers           = {},
+        list              = xhr.getAllResponseHeaders(),
+        fields, field, len, index, name, value, i;
+
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=608735
+    if (options.mode === 'cors' && !list) {
+      // https://www.w3.org/TR/cors/#simple-response-header
+      headers['Cache-Control']    = getResponseHeader('Cache-Control');
+      headers['Content-Language'] = getResponseHeader('Content-Language');
+      headers['Content-Type']     = getResponseHeader('Content-Type');
+      headers.Expires             = getResponseHeader('Expires');
+      headers['Last-Modified']    = getResponseHeader('Last-Modified');
+      headers.Pragma              = getResponseHeader('Pragma');
+
+      if (exposedHeaders) {
+        for (name in exposedHeaders) {
+          if (exposedHeaders[name] && name !== 'Set-Cookie' && name !== 'Set-Cookie2')
+            headers[name] = getResponseHeader(name);
+        }
+      }
+    } else if (list) {
+      fields = list.split('\r\n');
+      len    = fields.length;
+      for (i = 0; i < len; ++i) {
+        field = fields[i];
+        index = field.indexOf(': ');
+        if (index > 0) {
+          name  = field.substring(0, index);
+          value = field.substring(index + 2);
+          headers[name] = value;
+        }
+      }
+    }
+    return headers;
   }
 
   // https://support.microsoft.com/en-us/kb/834489
   function stripAuth(url) {
-    var credentials;
-
     if ((/^([^#?]+:)?\/\/[^\/]+@/).test(url)) {
-      credentials      = url.split('//')[1].split('@')[0].split(':');
+      var credentials = url.split('//')[1].split('@')[0].split(':');
+
       if (!options.username) {
         options.username = credentials[0];
         options.password = credentials[1];
@@ -286,6 +387,8 @@
 
   var request = {},
       options = {},
+      cfg,
+      processedResponse,
       init = function (input) {
     processInput(input);
 
@@ -297,13 +400,12 @@
     options.headers     = options.headers || {};
     options.username    = options.username || null;
     options.password    = options.password || null;
-    options.mediaType   = options.mediaType || options.contentType || options.MIMEType;
 
     return request;
   };
 
   request.done = function (onSuccess, onFail) {
-    var cfg = typeof onSuccess === 'object' && onSuccess || {
+    cfg = typeof onSuccess === 'object' && onSuccess || {
       success: onSuccess,
       error:   onFail
     };
@@ -320,11 +422,13 @@
 
     if (self.fetch && !self.fetch.nodeType)
       self.fetch(options.url, options)
+        .then(convertResponse)
+        .then(extractBody)
+        .then(storeBody)
         .then(processStatus)
-        .then(consumeBody)
         .then(cfg.success, cfg.error);
     else
-      xhrPath(cfg);
+      xhrPath();
   };
 
   function addVerb(verb) {

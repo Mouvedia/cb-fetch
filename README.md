@@ -155,12 +155,12 @@ body         | null          | ArrayBuffer, Blob, Document², FormData, String, 
 cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
 credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
 headers      | {}            | Object, Headers³
-mediaType²   |               | String
 method       | 'GET'         | String
 mode         | 'same-origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
-parameters   |               | URLSearchParams, Object, String
-responseType |               | 'text', 'json', 'blob', 'document'², 'arraybuffer', 'formdata'¹
+parameters                  || URLSearchParams, Object, String
+responseMediaType²          || String
+responseType                || 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'ms-stream', 'msxml-document'
 timeout      | 0             | ℕ
 username     | null          | String
 url          | location.href | String, URL
@@ -168,7 +168,7 @@ url          | location.href | String, URL
 ### Normalized Response
 Property   | Type
 --------   | ----
-body       | Object, String, Document², ArrayBuffer, Blob, FormData¹, ReadableStream¹, null
+body       | Object, String, Document, ArrayBuffer, Blob, FormData¹, ReadableStream¹, null
 headers    | Object
 instance   | XMLHttpRequest, XDomainRequest, Response
 statusCode | ℕ
@@ -201,7 +201,7 @@ By passing an URL to one of the HTTP verb methods you effectively reset the `url
 - same scheme restriction
 
 #### Exposed headers
-If the `mode` is set to `cors` and the server returns a non-empty `Access-Control-Expose-Headers` HTTP header, the corresponding exposed headers' field names must be set to `true` explicitly for the normalized response's headers to be properly populated.
+If the `mode` is set to `cors` and the server returns a non-empty `Access-Control-Expose-Headers` HTTP header, the corresponding exposed headers' field names must be set to `true` explicitly for the normalized response's headers to be properly populated on browsers powered by Gecko ≤20.
 
 ```js
 request('http://www.example.com?key1=value1&key2=value2')
@@ -225,7 +225,7 @@ request('http://www.example.com?key1=value1&key2=value2')
 - [x] Universal Module Definition
 - [x] fluent API
 - [ ] [caching](../../issues/4)
-- [ ] [normalized response](../../issues/9)
+- [x] normalized response
 
 ## License
 This project is licensed under the terms of the MIT license.

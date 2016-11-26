@@ -1,6 +1,7 @@
 # Change Log
 
 ## Unreleased
+* response normalization
 * minification
 * XHR constructor parameter support for Gecko-powered browsers
 
