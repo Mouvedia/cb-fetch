@@ -142,7 +142,7 @@ request({
 ```
 {
   (onSuccess: Function, onFail?: Function),
-  ({success: Function, error?: Function, XHR?: Settings})
+  ({success: Function, error?: Function, settings?: Object})
 } => Void, throws: TypeError
 ```
 
@@ -175,16 +175,18 @@ statusCode | ℕ
 statusText | String
 url        | String
 
-### XHR Settings
-Property                    | Default | Type
---------                    | ------- | ----
-mozAnon                     | false   | Boolean
-mozSystem                   | false   | Boolean
-[headers](#exposed-headers) |         | Object
+### Advanced Settings
+Property           | Default | Type
+--------           | ------- | ----
+mozAnon            | false   | Boolean
+mozSystem          | false   | Boolean
+[headers](#exposed-headers) || Object
+queryLanguage⁴     | 'XPath' | 'XPath', 'XSLPattern'
 
 <sup>¹ fetch only<br/>
 ² XHR only<br/>
-³ except Firefox 34–43</sup>
+³ except Firefox 34–43<br />
+⁴ MSXML 3.0 only</sup>
 
 ## Gotchas
 

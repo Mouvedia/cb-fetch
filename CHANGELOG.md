@@ -2,6 +2,7 @@
 
 ## Unreleased
 * response normalization
+* YUI support
 * minification
 * XHR constructor parameter support for Gecko-powered browsers
 

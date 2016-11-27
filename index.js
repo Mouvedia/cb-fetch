@@ -35,9 +35,9 @@
   }
 
   function XHR() {
-    var flags = cfg.XHR && {
-        mozAnon:   !!cfg.XHR.mozAnon,
-        mozSystem: !!cfg.XHR.mozSystem
+    var flags = cfg.settings && {
+        mozAnon:   !!cfg.settings.mozAnon,
+        mozSystem: !!cfg.settings.mozSystem
       };
 
     if (self.XMLHttpRequest
@@ -306,7 +306,7 @@
 
   function getResponseHeaders(xhr) {
     var getResponseHeader = xhr.getResponseHeader,
-        exposedHeaders    = cfg.XHR && cfg.XHR.headers,
+        exposedHeaders    = cfg.settings && cfg.settings.headers,
         headers           = {},
         list              = xhr.getAllResponseHeaders(),
         fields, field, len, index, name, value, i;
