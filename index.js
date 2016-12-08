@@ -344,6 +344,7 @@
   }
 
   // https://support.microsoft.com/en-us/kb/834489
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=709991
   function stripAuth(url) {
     if ((/^([^#?]+:)?\/\/[^\/]+@/).test(url)) {
       var credentials = url.split('//')[1].split('@')[0].split(':');
@@ -395,7 +396,7 @@
     // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
     options.url         = options.url || self.location.href;
     options.method      = (options.method && options.method.toUpperCase()) || 'GET';
-    options.mode        = options.mode || 'same-origin';
+    options.mode        = options.mode || 'cors';
     options.credentials = options.credentials || 'same-origin';
     options.headers     = options.headers || {};
     options.username    = options.username || null;

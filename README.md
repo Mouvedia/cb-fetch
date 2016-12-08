@@ -151,12 +151,12 @@ request({
 ### Request Options
 Property     | Default       | Value(s)
 --------     | -------       | --------
-body         | null          | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams¹
+body         | null          | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams
 cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
 credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
 headers      | {}            | Object, Headers³
 method       | 'GET'         | String
-mode         | 'same-origin' | 'cors', 'no-cors'¹, 'same-origin'
+mode         | 'cors'        | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
 parameters                  || URLSearchParams, Object, String
 responseMediaType²          || String
@@ -181,11 +181,11 @@ Property           | Default | Type
 mozAnon            | false   | Boolean
 mozSystem          | false   | Boolean
 [headers](#exposed-headers) || Object
-queryLanguage⁴     | 'XPath' | 'XPath', 'XSLPattern'
+XSLPattern⁴        | false   | Boolean
 
 <sup>¹ fetch only<br/>
 ² XHR only<br/>
-³ except Firefox 34–43<br />
+³ except Firefox 34–43<br/>
 ⁴ MSXML 3.0 only</sup>
 
 ## Gotchas
