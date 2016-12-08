@@ -7,7 +7,7 @@
     else
       exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '1.0.0-beta.0');
+    YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '1.0.0-beta.1');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -230,14 +230,9 @@
   }
 
   function storeBody(body) {
-    if (options.responseType === 'document' || options.responseType === 'msxml-document') {
-      var MIMEType = options.responseMediaType ||
-                     processedResponse.headers['content-type'] ||
-                     'text/xml',
-          parser   = new self.DOMParser();
-
-      processedResponse.body = parser.parseFromString(body, MIMEType);
-    } else
+    if (options.responseType === 'document' || options.responseType === 'msxml-document')
+      processedResponse.body = createDocument(body);
+    else
       processedResponse.body = body;
     return processedResponse.instance;
   }
@@ -268,40 +263,118 @@
   }
 
   function convertResponse(response) {
-    processedResponse = {
-      headers:    HeadersToObject(response.headers),
-      instance:   response,
-      statusCode: response.status,
-      statusText: response.statusText,
-      url:        response.url
-    };
+    processedResponse.headers    = HeadersToObject(response.headers);
+    processedResponse.instance   = response;
+    processedResponse.statusCode = response.status;
+    processedResponse.statusText = response.statusText;
+    processedResponse.url        = response.url;
     return response;
   }
 
   function processXHR(xhr) {
-    var response = {
-      body:       getBody(xhr),
-      headers:    getResponseHeaders(xhr),
-      instance:   xhr,
-      statusCode: xhr.status === 1223 ? 204 : xhr.status,
-      url:        xhr.responseURL
-    };
+    processedResponse.headers    = getResponseHeaders(xhr);
+    processedResponse.body       = getBody(xhr);
+    processedResponse.instance   = xhr;
+    processedResponse.statusCode = xhr.status === 1223 ? 204 : xhr.status;
+    processedResponse.url        = xhr.responseURL;
 
     // https://bugzilla.mozilla.org/show_bug.cgi?id=596634
     try {
-      response.statusText = xhr.status === 1223 ? 'No Content' : xhr.statusText;
+      processedResponse.statusText = xhr.status === 1223 ? 'No Content' : xhr.statusText;
     } catch (e) {
-      response.statusText = '';
+      processedResponse.statusText = '';
     }
-    return response;
+    return processedResponse;
   }
 
   function getBody(xhr) {
     var response = getResponse(xhr);
 
-    if (self.JSON && options.responseType === 'json' && typeof response !== 'object')
-      return self.JSON.parse(response + '');
+    switch (options.responseType) {
+      case 'document':
+      case 'msxml-document':
+        if (typeof response === 'string')
+          return createDocument(response);
+        break;
+      case 'json':
+        if (self.JSON && typeof response !== 'object')
+          return self.JSON.parse(response + '');
+    }
     return response;
+  }
+
+  function createDocument(serializedDocument) {
+    var progIDs        = ['MSXML2.DOMDocument.6.0',
+                          'MSXML2.DOMDocument.5.0',
+                          'MSXML2.DOMDocument.4.0',
+                          'MSXML2.DOMDocument.3.0',
+                          'MSXML2.DOMDocument',
+                          'Microsoft.XMLDOM',
+                          'MSXML.DOMDocument'],
+        len            = progIDs.length,
+        queryLanguage  = cfg.settings && cfg.settings.XSLPattern ? 'XSLPattern' : 'XPath',
+        implementation = self.document.implementation,
+        MIMEType       = documentMIMEType(),
+        doc, parser, input, i;
+
+    if (implementation && implementation.createLSParser) {
+      parser = implementation.createLSParser(1, null);
+      input = implementation.createLSInput();
+      input.stringData = serializedDocument;
+      return parser.parse(input);
+    } else if (self.DOMParser) {
+      // https://bug98304.bugzilla.mozilla.org/show_bug.cgi?id=102699
+      try {
+        doc = (new self.DOMParser()).parseFromString(serializedDocument, MIMEType);
+      } catch (e) {}
+      // https://bugs.chromium.org/p/chromium/issues/detail?id=265379
+      if (!doc && MIMEType === 'text/html')
+        return createHTMLDocument(serializedDocument);
+      return doc;
+    } else if (self.ActiveXObject) {
+      for (i = 0; i < len; ++i) {
+        try {
+          doc = new self.ActiveXObject(progIDs[i]);
+          if (progIDs[i] === 'MSXML2.DOMDocument.3.0')
+            doc.setProperty('SelectionLanguage', queryLanguage);
+          doc.async = false;
+          doc.loadXML(serializedDocument);
+          return doc;
+        } catch (e) {}
+      }
+    }
+  }
+
+  function createHTMLDocument(str) {
+    var implementation = self.document.implementation,
+        doc, doctype;
+
+    if (implementation.createHTMLDocument)
+      doc = implementation.createHTMLDocument(null, '', null);
+    else {
+      doctype = implementation.createDocumentType('html', '', '');
+      doc = implementation.createDocument('', 'html', doctype);
+    }
+    doc.documentElement.innerHTML = str;
+    return doc;
+  }
+
+  function documentMIMEType() {
+    var MIMEType = options.responseMediaType ||
+                   processedResponse.headers['content-type'];
+
+    // https://w3c.github.io/DOM-Parsing/#idl-def-supportedtype
+    switch (MIMEType) {
+      case 'text/html':
+      case 'text/xml':
+      case 'application/xml':
+      case 'application/xhtml+xml':
+      case 'image/svg+xml':
+        break;
+      default:
+        MIMEType = 'text/xml';
+    }
+    return MIMEType;
   }
 
   function getResponseHeaders(xhr) {
@@ -334,7 +407,7 @@
         field = fields[i];
         index = field.indexOf(': ');
         if (index > 0) {
-          name  = field.substring(0, index);
+          name  = field.substring(0, index).toLowerCase();
           value = field.substring(index + 2);
           headers[name] = value;
         }
@@ -386,10 +459,10 @@
       raiseException();
   }
 
-  var request = {},
-      options = {},
+  var request           = {},
+      options           = {},
+      processedResponse = {},
       cfg,
-      processedResponse,
       init = function (input) {
     processInput(input);
 

@@ -1,6 +1,7 @@
 # Change Log
 
 ## Unreleased
+* automatic document parsing
 * response normalization
 * YUI support
 * minification
