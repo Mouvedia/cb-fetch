@@ -108,7 +108,7 @@
       while (!(pair = entries.next()).done) {
         name      = pair.value[0];
         value     = pair.value[1];
-        separator = name === 'Cookie' ? '; ' : ', ';
+        separator = name.toLowerCase() === 'cookie' ? '; ' : ', ';
         if (value)
           headers[name] = headers[name] ? headers[name] + separator + value : value;
       }
@@ -124,7 +124,7 @@
     else {
       headers = {};
       for (key in options.headers) {
-        separator = key === 'Cookie' ? '; ' : ', ';
+        separator = key.toLowerCase() === 'cookie' ? '; ' : ', ';
         if (options.headers[key])
           headers[key] = (headers[key] ? headers[key] + separator : '') + options.headers[key];
       }
@@ -396,7 +396,9 @@
 
       if (exposedHeaders) {
         for (name in exposedHeaders) {
-          if (exposedHeaders[name] && name !== 'Set-Cookie' && name !== 'Set-Cookie2')
+          if (exposedHeaders[name] &&
+              name.toLowerCase() !== 'set-cookie' &&
+              name.toLowerCase() !== 'set-cookie2')
             headers[name] = getResponseHeader(name);
         }
       }

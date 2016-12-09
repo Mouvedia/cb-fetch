@@ -75,7 +75,7 @@ request({
   method:     'get',
   credentials:'same-origin',
   cache:      'default',
-  mode:       'same-origin',
+  mode:       'cors',
   timeout:    0,
   etc:        '…'
 }).done({
@@ -209,7 +209,7 @@ If the `mode` is set to `cors` and the server returns a non-empty `Access-Contro
 request('http://www.example.com?key1=value1&key2=value2')
   .done({
     success: onSuccessCallback,
-    XHR: {
+    settings: {
       headers: { ETag: true }
     }
   });
