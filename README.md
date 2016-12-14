@@ -90,31 +90,23 @@ request({
 
 ```
 (?: Options | Request | Options.url) => Object
-                                        ├── done
-                                        ├── get
-                                        │   ├─ done
-                                        │   └─ query
-                                        │      └─ done
-                                        ├── head
-                                        │   ├─ done
-                                        │   └─ query
-                                        │      └─ done
-                                        ├── delete
-                                        │   ├─ done
-                                        │   └─ query
-                                        │      └─ done
-                                        ├── patch
-                                        │   ├─ done
-                                        │   └─ send
-                                        │      └─ done
-                                        ├── post
-                                        │   ├─ done
-                                        │   └─ send
-                                        │      └─ done
-                                        └── put
-                                            ├─ done
-                                            └─ send
-                                               └─ done
+                                        ├─── done
+                                        │  ╭────────╮
+                                        ├──│ get    │
+                                        │  │ head   │
+                                        │  │ delete │
+                                        │  ╰────────╯
+                                        │    ├─ done
+                                        │    └─ query
+                                        │       └─ done
+                                        │  ╭───────╮
+                                        └──│ patch │
+                                           │ post  │
+                                           │ put   │
+                                           ╰───────╯
+                                             ├─ done
+                                             └─ send
+                                                └─ done
 ```
 
 ### Method Signatures

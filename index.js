@@ -99,10 +99,25 @@
     }
   }
 
+  function getGeneralHeaders(instance) {
+    return {
+      'Cache-Control':     instance.get('Cache-Control'),
+      'Connection':        instance.get('Connection'),
+      'Date':              instance.get('Date'),
+      'Pragma':            instance.get('Pragma'),
+      'Trailer':           instance.get('Trailer'),
+      'Transfer-Encoding': instance.get('Transfer-Encoding'),
+      'Upgrade':           instance.get('Upgrade'),
+      'Via':               instance.get('Via'),
+      'Warning':           instance.get('Warning')
+    };
+  }
+
   function HeadersToObject(instance) {
     var headers = {},
         entries, pair, name, value, separator;
 
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1108181
     if (instance.entries) {
       entries = instance.entries();
       while (!(pair = entries.next()).done) {
@@ -112,7 +127,8 @@
         if (value)
           headers[name] = headers[name] ? headers[name] + separator + value : value;
       }
-    }
+    } else
+      return getGeneralHeaders(instance);
     return headers;
   }
 
@@ -297,8 +313,12 @@
           return createDocument(response);
         break;
       case 'json':
-        if (self.JSON && typeof response !== 'object')
-          return self.JSON.parse(response + '');
+        // RFC 4627
+        if (typeof response !== 'object') {
+          try {
+            return self.JSON.parse(response + '');
+          } catch (e) {}
+        }
     }
     return response;
   }

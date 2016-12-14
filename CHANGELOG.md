@@ -2,6 +2,7 @@
 
 ## Unreleased
 * automatic document parsing
+* XSL pattern query language option for Trident-based browsers
 * response normalization
 * YUI support
 * minification
