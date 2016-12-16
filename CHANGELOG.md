@@ -1,10 +1,11 @@
 # Change Log
 
 ## Unreleased
+* timeout callback
 * automatic document parsing
 * XSL pattern query language option for Trident-based browsers
 * response normalization
-* YUI support
+* YUI module
 * minification
 * XHR constructor parameter support for Gecko-powered browsers
 

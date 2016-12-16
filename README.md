@@ -150,7 +150,12 @@ request({
 ```
 {
   (onSuccess: Function, onFail?: Function),
-  ({success: Function, error?: Function, settings?: Object})
+  ({
+    success:   Function,
+    error?:    Function,
+    timeout?:  Function,
+    settings?: Object
+  })
 } => Void, throws: TypeError
 ```
 

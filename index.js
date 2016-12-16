@@ -162,9 +162,7 @@
   }
 
   function xhrPath() {
-    var xhr     = XHR(),
-        success = cfg.success,
-        fail    = cfg.error,
+    var xhr = XHR(),
         cleanExit;
 
     // https://support.microsoft.com/en-us/kb/2856746
@@ -190,14 +188,14 @@
               // applicationCache IDLE
               // Opera status 304
               (xhr.status === 0 && getResponse(xhr)))
-            success(processXHR(xhr));
-          else if (fail)
-            fail(processXHR(xhr));
+            cfg.success(processXHR(xhr));
+          else if (cfg.error)
+            cfg.error(processXHR(xhr));
         // Firefox status 408
         // IE9 error c00c023f
         } catch (e) {
           errorHandler(e);
-          fail && fail({instance: xhr});
+          cfg.error && cfg.error({instance: xhr});
         }
 
         xhr = null;
@@ -219,6 +217,9 @@
 
     if (options.timeout && typeof xhr.timeout === 'number')
       xhr.timeout = options.timeout;
+
+    if (cfg.timeout && typeof xhr.ontimeout !== 'undefined')
+      xhr.ontimeout = cfg.timeout;
 
     if (options.responseMediaType && xhr.overrideMimeType)
       xhr.overrideMimeType(options.responseMediaType);
@@ -497,7 +498,9 @@
     if (typeof cfg.success !== 'function')
       raiseException('A success callback must be provided.');
     if (typeof cfg.error !== 'undefined' && typeof cfg.error !== 'function')
-      raiseException('The failure callback must be a function.');
+      raiseException('The error callback must be a function.');
+    if (typeof cfg.timeout !== 'undefined' && typeof cfg.timeout !== 'function')
+      raiseException('The timeout callback must be a function.');
 
     if (/^(POST|PUT|PATCH)$/.test(options.method))
       setRequestMediaType();
