@@ -491,7 +491,7 @@
     // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
     options.url         = options.url || self.location.href;
     options.method      = (options.method && options.method.toUpperCase()) || 'GET';
-    options.mode        = options.mode || 'cors';
+    options.mode        = options.mode || 'same-origin';
     options.credentials = options.credentials || 'same-origin';
     options.headers     = options.headers || {};
     options.username    = options.username || null;

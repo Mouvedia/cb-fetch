@@ -75,7 +75,7 @@ request({
   method:     'get',
   credentials:'same-origin',
   cache:      'default',
-  mode:       'cors',
+  mode:       'same-origin',
   timeout:    0,
   etc:        '…'
 }).done({
@@ -148,7 +148,7 @@ cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'for
 credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
 headers      | {}            | Object, Headers³
 method       | 'GET'         | String
-mode         | 'cors'        | 'cors', 'no-cors'¹, 'same-origin'
+mode         | 'same-origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
 parameters                  || URLSearchParams, Object, String
 responseMediaType²          || String
