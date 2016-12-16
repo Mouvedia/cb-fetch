@@ -132,6 +132,9 @@
     }
     for (key in headers) xhr.setRequestHeader(key, headers[key]);
 
+    if (options.mode !== 'cors')
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
     // https://bugs.chromium.org/p/chromium/issues/detail?id=128323#c3
     // https://technet.microsoft.com/library/security/ms04-004
     if (!headers.Authorization && options.username)
