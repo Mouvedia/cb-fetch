@@ -90,23 +90,33 @@ request({
 
 ```
 (?: Options | Request | Options.url) => Object
-                                        ├─── done
+                                        ├──▒ done
+                                        ├──▒ progress
+                                        │  └─● done
                                         │  ╭────────╮
                                         ├──│ get    │
                                         │  │ head   │
                                         │  │ delete │
                                         │  ╰────────╯
-                                        │    ├─ done
-                                        │    └─ query
-                                        │       └─ done
+                                        │    ├─▒ done
+                                        │    ├─▒ progress
+                                        │    │ └─● done
+                                        │    └─▒ query
+                                        │      ├─● done
+                                        │      └─● progress
+                                        │        └─◌ done
                                         │  ╭───────╮
                                         └──│ patch │
                                            │ post  │
                                            │ put   │
                                            ╰───────╯
-                                             ├─ done
-                                             └─ send
-                                                └─ done
+                                             ├─▒ done
+                                             ├─▒ progress
+                                             │ └─● done
+                                             └─▒ send
+                                               ├─● done
+                                               └─● progress
+                                                 └─◌ done
 ```
 
 ### Method Signatures
@@ -127,6 +137,12 @@ request({
 
 ```
 (Options.body) => Object
+```
+
+#### progress
+
+```
+(onProgress: Function) => Object
 ```
 
 #### done
