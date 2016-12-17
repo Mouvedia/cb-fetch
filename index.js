@@ -7,7 +7,7 @@
     else
       exports.default = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '1.0.0-beta.1');
+    YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '1.0.0-beta.2');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -161,6 +161,33 @@
       return xhr.responseXML;
   }
 
+  function qualifyURL(url) {
+    var a = self.document.createElement('a');
+
+    a.href = url;
+    return a.cloneNode(false).href;
+  }
+
+  function xdrPath() {
+    var xdr = self.XDomainRequest.create();
+
+    if (cfg.timeout)
+      xdr.ontimeout = cfg.timeout;
+    if (cfg.error)
+      xdr.onerror = function () { cfg.error(processedResponse); };
+    xdr.onprogress = function () {};
+    xdr.onload = function () {
+      processedResponse.body     = getBody(xdr);
+      processedResponse.headers  = { 'Content-Type': xdr.contentType };
+      cfg.success(processedResponse);
+    };
+    if (options.timeout)
+      xdr.timeout = options.timeout;
+    xdr.open(options.method, qualifyURL(options.url));
+    xdr.send();
+    processedResponse.instance = xdr;
+  }
+
   function xhrPath() {
     var xhr = XHR(),
         cleanExit;
@@ -305,7 +332,7 @@
         // RFC 4627
         if (typeof response !== 'object') {
           try {
-            return self.JSON.parse(response + '');
+            return self.JSON.parse(response);
           } catch (e) {}
         }
     }
@@ -514,6 +541,9 @@
         .then(storeBody)
         .then(processStatus)
         .then(cfg.success, cfg.error);
+    else if (options.mode === 'cors' &&
+            (document.documentMode == 8 || document.documentMode == 9))
+      xdrPath();
     else
       xhrPath();
   };

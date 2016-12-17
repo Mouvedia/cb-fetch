@@ -90,33 +90,33 @@ request({
 
 ```
 (?: Options | Request | Options.url) => Object
-                                        ├──▒ done
-                                        ├──▒ progress
+                                        ├──● done
+                                        ├──● progress
                                         │  └─● done
                                         │  ╭────────╮
-                                        ├──│ get    │
+                                        ├──┤ get    │
                                         │  │ head   │
                                         │  │ delete │
-                                        │  ╰────────╯
-                                        │    ├─▒ done
-                                        │    ├─▒ progress
+                                        │  ╰─┬──────╯
+                                        │    ├─● done
+                                        │    ├─● progress
                                         │    │ └─● done
-                                        │    └─▒ query
+                                        │    └─● query
                                         │      ├─● done
                                         │      └─● progress
-                                        │        └─◌ done
+                                        │        └─● done
                                         │  ╭───────╮
-                                        └──│ patch │
+                                        └──┤ patch │
                                            │ post  │
                                            │ put   │
-                                           ╰───────╯
-                                             ├─▒ done
-                                             ├─▒ progress
+                                           ╰─┬─────╯
+                                             ├─● done
+                                             ├─● progress
                                              │ └─● done
-                                             └─▒ send
+                                             └─● send
                                                ├─● done
                                                └─● progress
-                                                 └─◌ done
+                                                 └─● done
 ```
 
 ### Method Signatures
@@ -214,6 +214,8 @@ By passing an URL to one of the HTTP verb methods you effectively reset the `url
 - cannot set request headers
 - no credentials
 - same scheme restriction
+- the informational and redirection status code classes are considered errors
+- the response's status code and status text are not supplied
 
 #### Exposed headers
 If the `mode` is set to `cors` and the server returns a non-empty `Access-Control-Expose-Headers` HTTP header, the corresponding exposed headers' field names must be set to `true` explicitly for the normalized response's headers to be properly populated on browsers powered by Gecko ≤20.
@@ -231,7 +233,7 @@ request('http://www.example.com?key1=value1&key2=value2')
 ## Features
 - [x] fetch
 - [x] XHR
-- [ ] [XDR](../../issues/2)
+- [x] XDR
 - [ ] [Request](../../issues/5)
 - [x] URLSearchParams
 - [x] URL
