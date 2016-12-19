@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## [1.0.0-beta.2](https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-beta.2)
 * XDR
 * timeout callback
 * automatic document parsing

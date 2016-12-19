@@ -38,7 +38,7 @@ npm install --save cb-fetch
 <details>
   <summary>CJS</summary>
   <pre><code>
-  var request = require('cb-fetch').default;
+  var request = require('cb-fetch')['default'];
   </code></pre>
 </details>
 
@@ -46,7 +46,7 @@ npm install --save cb-fetch
   <summary>YUI</summary>
   <pre><code>
   YUI().use('cb-fetch', function (Y) {
-    var request = Y.default;
+    var request = Y['default'];
   });
   </code></pre>
 </details>

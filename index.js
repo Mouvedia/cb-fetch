@@ -5,9 +5,9 @@
     if (typeof module === 'object' && !!module && module.exports)
       module.exports = factory();
     else
-      exports.default = factory();
+      exports['default'] = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y.default = factory(); }, '1.0.0-beta.2');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-beta.2');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -165,7 +165,7 @@
     var a = self.document.createElement('a');
 
     a.href = url;
-    return a.cloneNode(false).href;
+    return a.href;
   }
 
   function xdrPath() {
