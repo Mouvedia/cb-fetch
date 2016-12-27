@@ -1,5 +1,8 @@
 # Change Log
 
+## Unreleased
+* the `headers` property is now automatically populated with the exposed headers listed in the Access-Control-Expose-Headers HTTP response header
+
 ## [1.0.0-beta.2](https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-beta.2)
 * XDR
 * timeout callback

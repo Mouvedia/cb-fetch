@@ -51,6 +51,11 @@ npm install --save cb-fetch
   </code></pre>
 </details>
 
+<details open>
+  <summary>Global Namespace</summary>
+  <p>If all four of the module registration methods fail, a global variable named `request` will be exposed.</p>
+</details>
+
 ## Examples
 ```js
 // this looks too easy
@@ -93,11 +98,11 @@ request({
                                         ├──● done
                                         ├──● progress
                                         │  └─● done
-                                        │  ╭────────╮
+                                        │  ┌────────┐
                                         ├──┤ get    │
                                         │  │ head   │
                                         │  │ delete │
-                                        │  ╰─┬──────╯
+                                        │  └─┬──────┘
                                         │    ├─● done
                                         │    ├─● progress
                                         │    │ └─● done
@@ -105,11 +110,11 @@ request({
                                         │      ├─● done
                                         │      └─● progress
                                         │        └─● done
-                                        │  ╭───────╮
+                                        │  ┌───────┐
                                         └──┤ patch │
                                            │ post  │
                                            │ put   │
-                                           ╰─┬─────╯
+                                           └─┬─────┘
                                              ├─● done
                                              ├─● progress
                                              │ └─● done
@@ -193,7 +198,6 @@ Property           | Default | Type
 --------           | ------- | ----
 mozAnon            | false   | Boolean
 mozSystem          | false   | Boolean
-[headers](#exposed-headers) || Object
 XSLPattern⁴        | false   | Boolean
 
 <sup>¹ fetch only<br/>
@@ -209,7 +213,7 @@ In pre-ES5 environments, the delete method requires the use of the bracket notat
 #### URL override
 By passing an URL to one of the HTTP verb methods you effectively reset the `url` property.
 
-#### XDR limitations
+#### XDR intrinsic limitations
 - only support GET and POST methods
 - cannot set request headers
 - no credentials
@@ -217,27 +221,20 @@ By passing an URL to one of the HTTP verb methods you effectively reset the `url
 - the informational and redirection status code classes are considered errors
 - the response's status code and status text are not supplied
 
-#### Exposed headers
-If the `mode` is set to `cors` and the server returns a non-empty `Access-Control-Expose-Headers` HTTP header, the corresponding exposed headers' field names must be set to `true` explicitly for the normalized response's headers to be properly populated on browsers powered by Gecko ≤20.
+#### Exposed Headers
+You will have to manually extract the exposed headers from the instance if **all** of the following conditions are met:
 
-```js
-request('http://www.example.com?key1=value1&key2=value2')
-  .done({
-    success: onSuccessCallback,
-    settings: {
-      headers: { ETag: true }
-    }
-  });
-```
+- browser powered by Gecko ≤20
+- `mode` set to `cors`
+- `credentials` set to `same-origin`
+- [`Access-Control-Expose-Headers` set to `*`](https://github.com/whatwg/fetch/issues/252)
 
 ## Features
 - [x] fetch
 - [x] XHR
 - [x] XDR
-- [ ] [Request](../../issues/5)
 - [x] URLSearchParams
 - [x] URL
-- [ ] [FormData](../../issues/3)
 - [x] Headers
 - [x] Universal Module Definition
 - [x] fluent API

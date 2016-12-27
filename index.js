@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-beta.2');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-beta.3');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -414,28 +414,28 @@
   }
 
   function getResponseHeaders(xhr) {
-    var getResponseHeader = xhr.getResponseHeader,
-        exposedHeaders    = cfg.settings && cfg.settings.headers,
-        headers           = {},
-        list              = xhr.getAllResponseHeaders(),
+    var getRH          = xhr.getResponseHeader,
+        exposedHeaders = getRH('Access-Control-Expose-Headers'),
+        headers        = {},
+        list           = xhr.getAllResponseHeaders(),
         fields, field, len, index, name, value, i;
 
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608735
     if (options.mode === 'cors' && !list) {
       // https://www.w3.org/TR/cors/#simple-response-header
-      headers['Cache-Control']    = getResponseHeader('Cache-Control');
-      headers['Content-Language'] = getResponseHeader('Content-Language');
-      headers['Content-Type']     = getResponseHeader('Content-Type');
-      headers.Expires             = getResponseHeader('Expires');
-      headers['Last-Modified']    = getResponseHeader('Last-Modified');
-      headers.Pragma              = getResponseHeader('Pragma');
+      headers['Cache-Control']    = getRH('Cache-Control');
+      headers['Content-Language'] = getRH('Content-Language');
+      headers['Content-Type']     = getRH('Content-Type');
+      headers.Expires             = getRH('Expires');
+      headers['Last-Modified']    = getRH('Last-Modified');
+      headers.Pragma              = getRH('Pragma');
 
-      if (exposedHeaders) {
-        for (name in exposedHeaders) {
-          if (exposedHeaders[name] &&
-              name.toLowerCase() !== 'set-cookie' &&
-              name.toLowerCase() !== 'set-cookie2')
-            headers[name] = getResponseHeader(name);
+      if (exposedHeaders && exposedHeaders !== '*') {
+        // http://greenbytes.de/tech/webdav/draft-ietf-httpbis-p1-messaging-22.html#rfc.section.3.2.4.p.3
+        exposedHeaders = exposedHeaders.replace(/\s+/g, '').split(',');
+        for (i = 0, len = exposedHeaders.length; i < len; ++i) {
+          name = exposedHeaders[i];
+          headers[name] = getRH(name);
         }
       }
     } else if (list) {
@@ -541,8 +541,8 @@
         .then(storeBody)
         .then(processStatus)
         .then(cfg.success, cfg.error);
-    else if (options.mode === 'cors' &&
-            (document.documentMode == 8 || document.documentMode == 9))
+    else if (options.mode === 'cors' && (self.document.documentMode == 8 ||
+                                         self.document.documentMode == 9))
       xdrPath();
     else
       xhrPath();
