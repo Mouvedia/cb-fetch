@@ -391,7 +391,14 @@
       doctype = implementation.createDocumentType('html', '', '');
       doc = implementation.createDocument('', 'html', doctype);
     }
-    doc.documentElement.innerHTML = str;
+    try {
+      doc.documentElement.innerHTML = str;
+    } catch(e) {
+      doc = new ActiveXObject('htmlfile');
+      doc.open();
+      doc.write(str);
+      doc.close();
+    }
     return doc;
   }
 
