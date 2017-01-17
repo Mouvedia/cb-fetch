@@ -210,8 +210,10 @@ XSLPattern⁴        | false   | Boolean
 #### `delete` reserved keyword
 In pre-ES5 environments, the delete method requires the use of the bracket notation.
 
-#### URL override
-By passing an URL to one of the HTTP verb methods you effectively reset the `url` property.
+#### Property override
+- passing an URL to one of the HTTP verb methods resets the `url` property
+- passing parameters to the query method resets the `parameters` property
+- passing a body to the send method resets the `body` property
 
 #### XDR intrinsic limitations
 - only support GET and POST methods
@@ -221,7 +223,7 @@ By passing an URL to one of the HTTP verb methods you effectively reset the `url
 - the informational and redirection status code classes are considered errors
 - the response's status code and status text are not supplied
 
-#### Exposed Headers
+#### Exposed headers
 You will have to manually extract the exposed headers from the instance if **all** of the following conditions are met:
 
 - browser powered by Gecko ≤20
@@ -240,6 +242,7 @@ You will have to manually extract the exposed headers from the instance if **all
 - [x] fluent API
 - [ ] [caching](../../issues/4)
 - [x] normalized response
+- [ ] [HAR](../../issues/12)
 
 ## License
 This project is licensed under the terms of the MIT license.

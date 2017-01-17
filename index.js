@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-beta.3');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-rc.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -141,6 +141,20 @@
       xhr.setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
   }
 
+  function getXML(XML) {
+    if (XML) {
+      // <= IE9
+      if (XML.parseError && XML.parseError != 0)
+        errorHandler('XML Parsing Error: ' + XML.parseError.reason);
+      // <= Gecko 50
+      else if (XML.documentElement && XML.documentElement.tagName === 'parsererror')
+        errorHandler(XML.documentElement.firstChild.data.split('\n', 1)[0]);
+      else
+        return XML;
+    }
+    return null;
+  }
+
   function getResponse(xhr) {
     if (typeof xhr.responseType === 'string') {
       switch (xhr.responseType) {
@@ -150,15 +164,17 @@
           return xhr.responseText;
         case 'document':
         case 'msxml-document':
-          return xhr.responseXML;
+          return getXML(xhr.responseXML);
         default:
-          return xhr.response;
+          return typeof xhr.response === 'undefined' ?
+                 xhr.responseText :
+                 xhr.response;
       }
     }
+    if (typeof xhr.responseXML === 'object' && xhr.responseXML)
+      return getXML(xhr.responseXML);
     if (typeof xhr.responseText === 'string')
       return xhr.responseText;
-    if (typeof xhr.responseXML === 'object')
-      return xhr.responseXML;
   }
 
   function qualifyURL(url) {
@@ -214,7 +230,7 @@
               // Android status 206
               // applicationCache IDLE
               // Opera status 304
-              (xhr.status === 0 && getResponse(xhr)))
+              (xhr.status == 0 && getResponse(xhr)))
             cfg.success(processXHR(xhr));
           else if (cfg.error)
             cfg.error(processXHR(xhr));
@@ -262,7 +278,7 @@
   }
 
   function storeBody(body) {
-    if (options.responseType === 'document' || options.responseType === 'msxml-document')
+    if (/document$/.test(options.responseType))
       processedResponse.body = createDocument(body);
     else
       processedResponse.body = body;
@@ -351,13 +367,16 @@
         queryLanguage  = cfg.settings && cfg.settings.XSLPattern ? 'XSLPattern' : 'XPath',
         implementation = self.document.implementation,
         MIMEType       = documentMIMEType(),
-        doc, parser, input, i;
+        doc            = null,
+        parser, input, i;
 
     if (implementation && implementation.createLSParser) {
       parser = implementation.createLSParser(1, null);
       input = implementation.createLSInput();
       input.stringData = serializedDocument;
-      return parser.parse(input);
+      try {
+        return parser.parse(input);
+      } catch (e) {}
     } else if (self.DOMParser) {
       // https://bug98304.bugzilla.mozilla.org/show_bug.cgi?id=102699
       try {
@@ -366,7 +385,8 @@
       // https://bugs.chromium.org/p/chromium/issues/detail?id=265379
       if (!doc && MIMEType === 'text/html')
         return createHTMLDocument(serializedDocument);
-      return doc;
+      if (doc && doc.getElementsByTagName('parsererror').length)
+        return null;
     } else if (self.ActiveXObject) {
       for (i = 0; i < len; ++i) {
         try {
@@ -374,11 +394,11 @@
           if (progIDs[i] === 'MSXML2.DOMDocument.3.0')
             doc.setProperty('SelectionLanguage', queryLanguage);
           doc.async = false;
-          doc.loadXML(serializedDocument);
-          return doc;
+          return doc.loadXML(serializedDocument) ? doc : null;
         } catch (e) {}
       }
     }
+    return doc;
   }
 
   function createHTMLDocument(str) {
@@ -393,7 +413,7 @@
     }
     try {
       doc.documentElement.innerHTML = str;
-    } catch(e) {
+    } catch (e) {
       doc = new ActiveXObject('htmlfile');
       doc.open();
       doc.write(str);
