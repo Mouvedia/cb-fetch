@@ -35,16 +35,17 @@
   }
 
   function XHR() {
-    var flags = cfg.settings && {
-        mozAnon:   !!cfg.settings.mozAnon,
-        mozSystem: !!cfg.settings.mozSystem
-      };
+    var subset = /^(GET|POST|HEAD|PUT|DELETE|MOVE|PROPFIND|PROPPATCH|MKCOL|COPY|LOCK|UNLOCK|OPTIONS)$/,
+        flags  = cfg.settings && {
+          mozAnon:   !!cfg.settings.mozAnon,
+          mozSystem: !!cfg.settings.mozSystem
+        };
 
     if (self.XMLHttpRequest
     /*@cc_on@if(@_jscript_version<9)
-      && options.method !== 'PATCH'
+      && subset.test(options.method)
     @else
-      && options.method !== 'PATCH' && document.documentMode >= 9
+      && (document.documentMode >= 9 || subset.test(options.method))
     @end@*/)
       return new self.XMLHttpRequest(flags);
     /*@cc_on@if(@_jscript_version>=5)else {
@@ -84,18 +85,18 @@
       raiseException();
   }
 
-  function setRequestMediaType() {
+  function setDefaultMediaType(mediaType) {
     var headers = options.headers,
         key;
 
     if (self.Headers && Object.prototype.toString.call(headers) === '[object Headers]')
-      headers.get('content-type') || headers.set('Content-Type', 'application/x-www-form-urlencoded');
+      headers.get('content-type') || headers.set('Content-Type', mediaType);
     else {
       for (key in headers) {
         if (key.toLowerCase() === 'content-type' && headers[key])
           return;
       }
-      headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      headers['Content-Type'] = mediaType;
     }
   }
 
@@ -270,7 +271,7 @@
     if (xhr.setRequestHeader)
       setRequestHeaders(xhr);
 
-    xhr.send(/^(POST|PUT|PATCH)$/.test(options.method) ? (options.body || '') : null);
+    xhr.send(/^(HEAD|GET)$/.test(options.method) ? null : options.body || '');
   }
 
   function processStatus(instance) {
@@ -497,16 +498,13 @@
   }
 
   function processURL(url) {
-    if (String.isString(url.href)) {
-      if (!options.username) {
-        options.username = url.username;
-        options.password = url.password;
-      }
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=1195820
-      url.username = url.password = '';
-      options.url = url.href;
-    } else
-      raiseException();
+    if (!options.username) {
+      options.username = url.username;
+      options.password = url.password;
+    }
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1195820
+    url.username = url.password = '';
+    options.url = url.href;
   }
 
   function processInput(input) {
@@ -524,6 +522,15 @@
       raiseException();
   }
 
+  function getMethod() {
+    var method = (options.method && options.method.toUpperCase()) || 'GET',
+        documentElement = (options.body ? options.body.ownerDocument || options.body : 0).documentElement;
+
+    if (/^(PROPPATCH|ORDERPATCH|ACL|REPORT|BIND|UNBIND|REBIND|UPDATE|LABEL|MERGE)$/.test(method) && !documentElement)
+      raiseException('The ' + method + ' method requires an XML body.');
+    return method;
+  }
+
   var request           = {},
       options           = {},
       processedResponse = {},
@@ -533,7 +540,7 @@
 
     // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
     options.url         = options.url || self.location.href;
-    options.method      = (options.method && options.method.toUpperCase()) || 'GET';
+    options.method      = getMethod();
     options.mode        = options.mode || 'same-origin';
     options.credentials = options.credentials || 'same-origin';
     options.headers     = options.headers || {};
@@ -556,9 +563,9 @@
     if (typeof cfg.timeout !== 'undefined' && typeof cfg.timeout !== 'function')
       raiseException('The timeout callback must be a function.');
 
-    if (/^(POST|PUT|PATCH)$/.test(options.method))
-      setRequestMediaType();
-    else if (options.parameters)
+    if (options.method === 'POST' && String.isString(options.body))
+      setDefaultMediaType('application/x-www-form-urlencoded');
+    if (options.parameters)
       setQueryString();
 
     if (self.fetch && !self.fetch.nodeType)
@@ -568,8 +575,8 @@
         .then(storeBody)
         .then(processStatus)
         .then(cfg.success, cfg.error);
-    else if (options.mode === 'cors' && (self.document.documentMode == 8 ||
-                                         self.document.documentMode == 9))
+    else if (options.mode === 'cors' && self.document &&
+            (self.document.documentMode == 8 || self.document.documentMode == 9))
       xdrPath();
     else
       xhrPath();

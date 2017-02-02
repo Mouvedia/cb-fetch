@@ -171,10 +171,10 @@ Property     | Default       | Value(s)
 --------     | -------       | --------
 body         | null          | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams
 cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
-credentials  | 'same-origin' | 'include', 'omit'¹, 'same-origin'
+credentials  | 'same‑origin' | 'include', 'omit'¹, 'same-origin'
 headers      | {}            | Object, Headers³
 method       | 'GET'         | String
-mode         | 'same-origin' | 'cors', 'no-cors'¹, 'same-origin'
+mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
 parameters                  || URLSearchParams, Object, String
 responseMediaType²          || String
@@ -235,14 +235,12 @@ You will have to manually extract the exposed headers from the instance if **all
 - [x] fetch
 - [x] XHR
 - [x] XDR
-- [x] URLSearchParams
-- [x] URL
-- [x] Headers
 - [x] Universal Module Definition
 - [x] fluent API
 - [ ] [caching](../../issues/4)
 - [x] normalized response
 - [ ] [HAR](../../issues/12)
+- [x] WebDAV
 
 ## License
 This project is licensed under the terms of the MIT license.
