@@ -25,7 +25,7 @@
   function errorHandler(error) {
     self.console &&
     self.console.error &&
-    self.console.error(error.message || error.description);
+    self.console.error(error.message || error.description || error);
   }
 
   function raiseException(msg, type) {
