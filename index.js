@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-rc.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-rc.1');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -83,6 +83,26 @@
       }
     } else
       raiseException();
+  }
+
+  function overrideMethod() {
+    var headers     = options.headers,
+        verb        = options.method,
+        isSafe      = /^(HEAD|OPTIONS|PROPFIND|REPORT|SEARCH)$/.test(verb),
+        XHTTPMethod = /^(PUT|MERGE|PATCH|DELETE)$/.test(verb);
+
+    options.method = isSafe ? 'GET' : 'POST';
+
+    if (self.Headers && Object.prototype.toString.call(headers) === '[object Headers]') {
+      headers.set('X-HTTP-Method-Override', verb);
+      headers.set('X-METHOD-OVERRIDE', verb);
+      XHTTPMethod && headers.set('X-HTTP-Method', verb);
+    } else {
+      headers['X-HTTP-Method-Override'] = verb;
+      headers['X-METHOD-OVERRIDE'] = verb;
+      if (XHTTPMethod)
+        headers['X-HTTP-Method'] = verb;
+    }
   }
 
   function setDefaultMediaType(mediaType) {
@@ -563,6 +583,8 @@
     if (typeof cfg.timeout !== 'undefined' && typeof cfg.timeout !== 'function')
       raiseException('The timeout callback must be a function.');
 
+    if (cfg.settings && cfg.settings.tunneling && !/^(POST|GET)$/.test(options.method))
+      overrideMethod();
     if (options.method === 'POST' && String.isString(options.body))
       setDefaultMediaType('application/x-www-form-urlencoded');
     if (options.parameters)

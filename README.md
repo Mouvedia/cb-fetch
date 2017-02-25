@@ -1,3 +1,7 @@
+<a href="http://www.npmjs.com/package/cb-fetch">
+  <img alt="npm version" align="right" vspace="35" src="https://badge.fury.io/js/cb-fetch.svg" />
+</a>
+
 # cb-fetch
 
 A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous HTTP requests that follows the **c**all**b**ack pattern.
@@ -20,7 +24,7 @@ npm install --save cb-fetch
 ## Importation
 
 <details>
-  <summary>AMD</summary>
+  <summary><abbr title="Asynchronous Module Definition">AMD</abbr></summary>
   <pre><code>
   define(function (require) {
     var request = require('cb-fetch');
@@ -29,21 +33,20 @@ npm install --save cb-fetch
 </details>
 
 <details>
-  <summary>Node.js</summary>
+<summary><abbr title="CommonJS">CJS</abbr></summary>
+  <h4>standard compliant</h4>
+  <pre><code>
+  var request = require('cb-fetch')['default'];
+  </code></pre>
+
+  <h4>Node.js compatible</h4>
   <pre><code>
   var request = require('cb-fetch');
   </code></pre>
 </details>
 
 <details>
-  <summary>CJS</summary>
-  <pre><code>
-  var request = require('cb-fetch')['default'];
-  </code></pre>
-</details>
-
-<details>
-  <summary>YUI</summary>
+  <summary><abbr title="Yahoo! User Interface">YUI</abbr></summary>
   <pre><code>
   YUI().use('cb-fetch', function (Y) {
     var request = Y['default'];
@@ -53,7 +56,7 @@ npm install --save cb-fetch
 
 <details open>
   <summary>Global Namespace</summary>
-  <p>If all four of the module registration methods fail, a global variable named `request` will be exposed.</p>
+  <p>If none of the previously listed module registration methods are supported, a global variable named `request` will be exposed.</p>
 </details>
 
 ## Examples
@@ -199,11 +202,13 @@ Property           | Default | Type
 mozAnon            | false   | Boolean
 mozSystem          | false   | Boolean
 XSLPattern⁴        | false   | Boolean
+tunneling⁵         | false   | Boolean
 
 <sup>¹ fetch only<br/>
 ² XHR only<br/>
 ³ except Firefox 34–43<br/>
-⁴ MSXML 3.0 only</sup>
+⁴ MSXML 3.0 only<br/>
+⁵ method override</sup>
 
 ## Gotchas
 
