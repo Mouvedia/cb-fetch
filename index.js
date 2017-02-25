@@ -153,7 +153,7 @@
     }
     for (key in headers) xhr.setRequestHeader(key, headers[key]);
 
-    if (options.mode !== 'cors')
+    if (options.mode !== 'cors' && !headers['X-Requested-With'])
       xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
     // https://bugs.chromium.org/p/chromium/issues/detail?id=128323#c3
@@ -356,8 +356,8 @@
     return processedResponse;
   }
 
-  function getBody(xhr) {
-    var response = getResponse(xhr);
+  function getBody(instance) {
+    var response = getResponse(instance);
 
     switch (options.responseType) {
       case 'document':
