@@ -1,5 +1,5 @@
 <a href="http://www.npmjs.com/package/cb-fetch">
-  <img alt="npm version" align="right" vspace="35" src="https://badge.fury.io/js/cb-fetch.svg" />
+  <img alt="npm version" align="right" height="18" vspace="38" src="https://badge.fury.io/js/cb-fetch.svg" />
 </a>
 
 # cb-fetch
@@ -70,26 +70,36 @@ request()
   .get('http://www.example.com?key1=value1&key2=value2')
   .done(onSuccessCallback);
 
-// is it explicit enough?
+// chaining methods helps separating concerns
 request()
   .get('http://www.example.com')
   .query('key1=value1&key2=value2')
   .done(onSuccessCallback, onFailCallback);
 
-// granularity overkill!
+// passing options objects enables immediate additions
 request({
   url:        new URL('http://www.example.com'),
   parameters: new URLSearchParams('key1=value1&key2=value2'),
-  method:     'get',
-  credentials:'same-origin',
-  cache:      'default',
-  mode:       'same-origin',
-  timeout:    0,
-  etc:        '…'
+  method:     'get'
 }).done({
   success: onSuccessCallback,
   error:   onFailCallback
 });
+
+// once a default config is set
+var init = {
+  mode:              'cors',
+  credentials:       'include',
+  responseType:      'json',
+  responseMediaType: 'application/json',
+  parameters: {
+    _csrf: 'USER_TOKEN_GOES_HERE'
+  }
+};
+
+// it can be shared by ensuing requests
+request('http://www.example.com', init)
+  .done(onSuccessCallback);
 ```
 
 ## API
@@ -97,34 +107,34 @@ request({
 ### Map
 
 ```
-(?: Options | Request | Options.url) => Object
-                                        ├──● done
-                                        ├──● progress
-                                        │  └─● done
-                                        │  ┌────────┐
-                                        ├──┤ get    │
-                                        │  │ head   │
-                                        │  │ delete │
-                                        │  └─┬──────┘
-                                        │    ├─● done
-                                        │    ├─● progress
-                                        │    │ └─● done
-                                        │    └─● query
-                                        │      ├─● done
-                                        │      └─● progress
-                                        │        └─● done
-                                        │  ┌───────┐
-                                        └──┤ patch │
-                                           │ post  │
-                                           │ put   │
-                                           └─┬─────┘
-                                             ├─● done
-                                             ├─● progress
-                                             │ └─● done
-                                             └─● send
-                                               ├─● done
-                                               └─● progress
-                                                 └─● done
+(?: Options | Request | Options.url, defaults?: Options)
+=> Object ┬──● done
+          ├──● progress
+          │  └─● done
+          │  ┌────────┐
+          ├──┤ get    │
+          │  │ head   │
+          │  │ delete │
+          │  └─┬──────┘
+          │    ├─● done
+          │    ├─● progress
+          │    │ └─● done
+          │    └─● query
+          │      ├─● done
+          │      └─● progress
+          │        └─● done
+          │  ┌───────┐
+          └──┤ patch │
+             │ post  │
+             │ put   │
+             └─┬─────┘
+               ├─● done
+               ├─● progress
+               │ └─● done
+               └─● send
+                 ├─● done
+                 └─● progress
+                   └─● done
 ```
 
 ### Method Signatures
