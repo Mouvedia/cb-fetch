@@ -1,5 +1,5 @@
 <a href="http://www.npmjs.com/package/cb-fetch">
-  <img alt="npm version" align="right" height="18" vspace="38" src="https://badge.fury.io/js/cb-fetch.svg" />
+  <img alt="npm version" align="right" height="18" src="https://badge.fury.io/js/cb-fetch.svg" />
 </a>
 
 # cb-fetch

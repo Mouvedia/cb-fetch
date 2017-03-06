@@ -462,8 +462,7 @@
   }
 
   function getResponseHeaders(xhr) {
-    var getRH          = xhr.getResponseHeader,
-        exposedHeaders = getRH('Access-Control-Expose-Headers'),
+    var exposedHeaders = xhr.getResponseHeader('Access-Control-Expose-Headers'),
         headers        = {},
         list           = xhr.getAllResponseHeaders(),
         fields, field, len, index, name, value, i;
@@ -471,19 +470,19 @@
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608735
     if (options.mode === 'cors' && !list) {
       // https://www.w3.org/TR/cors/#simple-response-header
-      headers['Cache-Control']    = getRH('Cache-Control');
-      headers['Content-Language'] = getRH('Content-Language');
-      headers['Content-Type']     = getRH('Content-Type');
-      headers.Expires             = getRH('Expires');
-      headers['Last-Modified']    = getRH('Last-Modified');
-      headers.Pragma              = getRH('Pragma');
+      headers['Cache-Control']    = xhr.getResponseHeader('Cache-Control');
+      headers['Content-Language'] = xhr.getResponseHeader('Content-Language');
+      headers['Content-Type']     = xhr.getResponseHeader('Content-Type');
+      headers.Expires             = xhr.getResponseHeader('Expires');
+      headers['Last-Modified']    = xhr.getResponseHeader('Last-Modified');
+      headers.Pragma              = xhr.getResponseHeader('Pragma');
 
       if (exposedHeaders && exposedHeaders !== '*') {
         // http://greenbytes.de/tech/webdav/draft-ietf-httpbis-p1-messaging-22.html#rfc.section.3.2.4.p.3
         exposedHeaders = exposedHeaders.replace(/\s+/g, '').split(',');
         for (i = 0, len = exposedHeaders.length; i < len; ++i) {
           name = exposedHeaders[i];
-          headers[name] = getRH(name);
+          headers[name] = xhr.getResponseHeader(name);
         }
       }
     } else if (list) {
