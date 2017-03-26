@@ -56,7 +56,7 @@ npm install --save cb-fetch
 
 <details open>
   <summary>Global Namespace</summary>
-  <p>If none of the previously listed module registration methods are supported, a global variable named `request` will be exposed.</p>
+  <p>If none of the previously listed module registration methods are supported, a global variable named <code>request</code> will be exposed.</p>
 </details>
 
 ## Examples
@@ -189,9 +189,9 @@ headers      | {}            | Object, Headers³
 method       | 'GET'         | String
 mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
-parameters                  || URLSearchParams, Object, String
-responseMediaType²          || String
-responseType                || 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'ms-stream', 'msxml-document'
+parameters        |          | URLSearchParams, Object, String
+responseMediaType²|          | String
+responseType      |          | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'ms-stream', 'msxml-document'
 timeout      | 0             | ℕ
 username     | null          | String
 url          | location.href | String, URL
