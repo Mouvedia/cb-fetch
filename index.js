@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-rc.1');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-rc.2');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -550,11 +550,13 @@
     return method;
   }
 
-  var request           = {},
-      options           = {},
-      processedResponse = {},
+  var request = {},
+      options,
+      processedResponse,
       cfg,
       init = function (input) {
+    options = {};
+    processedResponse = {};
     processInput(input);
 
     // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
