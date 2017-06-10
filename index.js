@@ -315,7 +315,11 @@
       case 'msxml-document':
         return response.text();
       case 'json':
-        return response.json();
+        return response.json().then(function (object) {
+          return object;
+        })['catch'](function () {
+          return response.body || null;
+        });
       case 'arraybuffer':
       case 'moz-chunked-arraybuffer':
         return response.arrayBuffer();
@@ -328,7 +332,7 @@
         // https://bugs.chromium.org/p/chromium/issues/detail?id=455103
         if (self.Response.prototype.formData) return response.formData();
     }
-    return self.Promise.resolve(response.body || null);
+    return response.body || null;
   }
 
   function convertResponse(response) {
