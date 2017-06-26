@@ -2,7 +2,7 @@
 
 ## [1.0.0-rc.2][4]
 * consistent handling of invalid JSON
-* the default export can now be reliably reused for subsequent requests
+* options and the processed response are now properly reset during the init phase
 
 ## [1.0.0-rc.1][3]
 * WebDAV optimizations

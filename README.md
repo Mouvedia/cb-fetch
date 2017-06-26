@@ -54,7 +54,7 @@ npm install --save cb-fetch
   </code></pre>
 </details>
 
-<details open>
+<details open="open">
   <summary>Global Namespace</summary>
   <p>If none of the previously listed module registration methods are supported, a global variable named <code>request</code> will be exposed.</p>
 </details>
@@ -239,12 +239,12 @@ In pre-ES5 environments, the delete method requires the use of the bracket notat
 - the response's status code and status text are not supplied
 
 #### Exposed headers
-You will have to manually extract the exposed headers from the instance if **all** of the following conditions are met:
+For the browsers powered by Gecko ≤20 to have the exposed response headers
+populated into the `headers` property, the following conditions must be met:
 
-- browser powered by Gecko ≤20
+- `Access-Control-Expose-Headers` response header exposes itself
+- `Access-Control-Expose-Headers` field value is not `*`
 - `mode` set to `cors`
-- `credentials` set to `same-origin`
-- [`Access-Control-Expose-Headers` set to `*`](https://github.com/whatwg/fetch/issues/252)
 
 ## Features
 - [x] fetch

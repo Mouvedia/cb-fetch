@@ -465,10 +465,16 @@
     return MIMEType;
   }
 
+  function getExposedHeaders(xhr) {
+    try {
+      return xhr.getResponseHeader('Access-Control-Expose-Headers');
+    } catch (e) {}
+  }
+
   function getResponseHeaders(xhr) {
-    var exposedHeaders = xhr.getResponseHeader('Access-Control-Expose-Headers'),
-        headers        = {},
+    var headers        = {},
         list           = xhr.getAllResponseHeaders(),
+        exposedHeaders = !list && getExposedHeaders(xhr),
         fields, field, len, index, name, value, i;
 
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608735
