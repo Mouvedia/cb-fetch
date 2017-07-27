@@ -202,7 +202,7 @@
     var a = self.document.createElement('a');
 
     a.href = url;
-    return a.href;
+    return self.location.protocol + a.href.replace(/^https?:/, '');
   }
 
   function xdrPath() {
