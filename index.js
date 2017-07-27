@@ -390,7 +390,7 @@
                           'MSXML.DOMDocument'],
         len            = progIDs.length,
         queryLanguage  = cfg.settings && cfg.settings.XSLPattern ? 'XSLPattern' : 'XPath',
-        implementation = self.document.implementation,
+        implementation = self.document && self.document.implementation,
         MIMEType       = documentMIMEType(),
         doc            = null,
         parser, input, i;
@@ -496,7 +496,9 @@
         }
       }
     } else if (list) {
-      fields = list.split('\r\n');
+      // https://tools.ietf.org/html/rfc7230#page-26
+      // https://tools.ietf.org/html/rfc7230#page-35
+      fields = list.replace(/\r?\n[\t ]+/g, ' ').split('\r?\n');
       len    = fields.length;
       for (i = 0; i < len; ++i) {
         field = fields[i];
