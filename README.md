@@ -109,7 +109,7 @@ request('http://www.example.com', init)
 ```
 (?: Options | Request | Options.url, defaults?: Options)
 => Object ┬──● done
-          ├──● progress
+          ├──● loading
           │  └─● done
           │  ┌────────┐
           ├──┤ get    │
@@ -117,11 +117,11 @@ request('http://www.example.com', init)
           │  │ delete │
           │  └─┬──────┘
           │    ├─● done
-          │    ├─● progress
+          │    ├─● loading
           │    │ └─● done
           │    └─● query
           │      ├─● done
-          │      └─● progress
+          │      └─● loading
           │        └─● done
           │  ┌───────┐
           └──┤ patch │
@@ -129,11 +129,11 @@ request('http://www.example.com', init)
              │ put   │
              └─┬─────┘
                ├─● done
-               ├─● progress
+               ├─● loading
                │ └─● done
                └─● send
                  ├─● done
-                 └─● progress
+                 └─● loading
                    └─● done
 ```
 
@@ -157,7 +157,7 @@ request('http://www.example.com', init)
 (Options.body) => Object
 ```
 
-#### progress
+#### loading
 
 ```
 (onProgress: Function) => Object
@@ -256,6 +256,7 @@ populated into the `headers` property, the following conditions must be met:
 - [x] normalized response
 - [ ] [HAR](../../issues/12)
 - [x] WebDAV
+- [ ] [progress monitoring](../../issues/8)
 
 ## License
 This project is licensed under the terms of the MIT license.

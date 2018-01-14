@@ -105,7 +105,7 @@
     }
   }
 
-  function setDefaultMediaType(mediaType) {
+  function setMediaType(mediaType) {
     var headers = options.headers,
         key;
 
@@ -242,8 +242,8 @@
     // the handler can be placed before open
     xhr.onreadystatechange = function () {
       if (xhr.readyState == 4) {
-          self.detachEvent && self.detachEvent('onunload', cleanExit);
-          xhr.onreadystatechange = function () {};
+        self.detachEvent && self.detachEvent('onunload', cleanExit);
+        xhr.onreadystatechange = function () {};
 
         try {
           if ((xhr.status >= 200 && xhr.status < 300) ||
@@ -345,9 +345,9 @@
   }
 
   function processXHR(xhr) {
+    processedResponse.instance   = xhr;
     processedResponse.headers    = getResponseHeaders(xhr);
     processedResponse.body       = getBody(xhr);
-    processedResponse.instance   = xhr;
     processedResponse.statusCode = xhr.status === 1223 ? 204 : xhr.status;
     processedResponse.url        = xhr.responseURL;
 
@@ -465,16 +465,16 @@
     return MIMEType;
   }
 
-  function getExposedHeaders(xhr) {
+  function getExposedHeader(name) {
     try {
-      return xhr.getResponseHeader('Access-Control-Expose-Headers');
+      return processedResponse.instance.getResponseHeader(name);
     } catch (e) {}
   }
 
   function getResponseHeaders(xhr) {
     var headers        = {},
         list           = xhr.getAllResponseHeaders(),
-        exposedHeaders = !list && getExposedHeaders(xhr),
+        exposedHeaders = !list && getExposedHeader('Access-Control-Expose-Headers'),
         fields, field, len, index, name, value, i;
 
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608735
@@ -488,11 +488,14 @@
       headers.Pragma              = xhr.getResponseHeader('Pragma');
 
       if (exposedHeaders && exposedHeaders !== '*') {
-        // http://greenbytes.de/tech/webdav/draft-ietf-httpbis-p1-messaging-22.html#rfc.section.3.2.4.p.3
+        // HTTP header field values can be extended over multiple lines
+        // by preceding each extra line with at least one space or horizontal tab
         exposedHeaders = exposedHeaders.replace(/\s+/g, '').split(',');
         for (i = 0, len = exposedHeaders.length; i < len; ++i) {
           name = exposedHeaders[i];
-          headers[name] = xhr.getResponseHeader(name);
+          value = getExposedHeader(name);
+          if (value)
+            headers[name] = value;
         }
       }
     } else if (list) {
@@ -599,7 +602,7 @@
     if (cfg.settings && cfg.settings.tunneling && !/^(POST|GET)$/.test(options.method))
       overrideMethod();
     if (options.method === 'POST' && String.isString(options.body))
-      setDefaultMediaType('application/x-www-form-urlencoded');
+      setMediaType('application/x-www-form-urlencoded');
     if (options.parameters)
       setQueryString();
 
