@@ -182,7 +182,7 @@ request('http://www.example.com', init)
 ### Request Options
 Property     | Default       | Value(s)
 --------     | -------       | --------
-body         | null          | ArrayBuffer, Blob, Document², FormData, String, URLSearchParams
+body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams
 cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
 credentials  | 'same‑origin' | 'include', 'omit'¹, 'same-origin'
 headers      | {}            | Object, Headers³
@@ -199,7 +199,7 @@ url          | location.href | String, URL
 ### Normalized Response
 Property   | Type
 --------   | ----
-body       | Object, String, Document, ArrayBuffer, Blob, FormData¹, ReadableStream¹, null
+body       | Object, String, Document, BufferSource, Blob, FormData¹, ReadableStream¹, null
 headers    | Object
 instance   | XMLHttpRequest, XDomainRequest, Response
 statusCode | ℕ
