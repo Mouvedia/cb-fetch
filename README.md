@@ -76,30 +76,19 @@ request()
   .query('key1=value1&key2=value2')
   .done(onSuccessCallback, onFailCallback);
 
-// passing options objects enables immediate additions
+// passing an object offers more granularity
 request({
-  url:        new URL('http://www.example.com'),
-  parameters: new URLSearchParams('key1=value1&key2=value2'),
-  method:     'get'
+  url:          new URL('http://www.example.com'),
+  parameters:   new URLSearchParams('_csrf=USER_TOKEN_GOES_HERE'),
+  method:       'get',
+  headers:      {'Accept-Language': 'en-us, en-gb;q=0.9, en;q=0.8, *;q=0.5'},
+  mode:         'cors',
+  credentials:  'include',
+  responseType: 'json'
 }).done({
   success: onSuccessCallback,
   error:   onFailCallback
 });
-
-// once a default config is set
-var init = {
-  mode:              'cors',
-  credentials:       'include',
-  responseType:      'json',
-  responseMediaType: 'application/json',
-  parameters: {
-    _csrf: 'USER_TOKEN_GOES_HERE'
-  }
-};
-
-// it can be shared by ensuing requests
-request('http://www.example.com', init)
-  .done(onSuccessCallback);
 ```
 
 ## API
@@ -107,7 +96,7 @@ request('http://www.example.com', init)
 ### Map
 
 ```
-(?: Options | Request | Options.url, defaults?: Options)
+(?: Options | Request | Options.url)
 => Object ┬──● done
           ├──● loading
           │  └─● done

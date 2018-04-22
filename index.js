@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI === 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0-rc.3');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -110,18 +110,18 @@
       }
     }
 
-    function setMediaType(mediaType) {
+    function setRequestHeader(name, value) {
       var headers = options.headers,
           key;
 
       if (self.Headers && Object.prototype.toString.call(headers) === '[object Headers]')
-        headers.get('content-type') || headers.set('Content-Type', mediaType);
+        headers.get(name) || headers.set(name, value);
       else {
         for (key in headers) {
-          if (key.toLowerCase() === 'content-type' && headers[key])
+          if (key.toLowerCase() === name.toLowerCase() && headers[key])
             return;
         }
-        headers['Content-Type'] = mediaType;
+        headers[name] = value;
       }
     }
 
@@ -581,6 +581,18 @@
       options.password    = options.password || null;
     }
 
+    function fetchPath() {
+      if (options.username)
+        setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
+
+      self.fetch(options.url, options)
+        .then(convertResponse)
+        .then(extractBody)
+        .then(storeBody)
+        .then(processStatus)
+        .then(cfg.success, cfg.error);
+    }
+
     request.done = function (onSuccess, onFail) {
       cfg = typeof onSuccess === 'object' && onSuccess || {
         success: onSuccess,
@@ -597,19 +609,13 @@
       if (cfg.settings && cfg.settings.tunneling && !/^(POST|GET)$/.test(options.method))
         overrideMethod();
       if (options.method === 'POST' && String.isString(options.body))
-        setMediaType('application/x-www-form-urlencoded');
+        setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       if (options.parameters)
         setQueryString();
 
       if (self.fetch && !self.fetch.nodeType)
-        self.fetch(options.url, options)
-          .then(convertResponse)
-          .then(extractBody)
-          .then(storeBody)
-          .then(processStatus)
-          .then(cfg.success, cfg.error);
-      else if (options.mode === 'cors' && self.document &&
-              (self.document.documentMode == 8 || self.document.documentMode == 9))
+        fetchPath();
+      else if (options.mode === 'cors' && self.document && (self.document.documentMode == 8 || self.document.documentMode == 9))
         xdrPath();
       else
         xhrPath();

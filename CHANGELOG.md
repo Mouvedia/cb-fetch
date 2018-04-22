@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.0.0-rc.3][5]
+## [1.0.0][5]
 * handle obsolete line folding during parsing of HTTP header field values
 * support line feed as a line terminator
 * all exceptions thrown while extracting exposed headers are now swallowed
@@ -35,4 +35,4 @@
 [2]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-beta.2
 [3]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.1
 [4]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.2
-[5]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.3
+[5]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.2...1.0.0
