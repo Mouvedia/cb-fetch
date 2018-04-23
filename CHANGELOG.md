@@ -1,6 +1,7 @@
 # Change Log
 
 ## [1.0.0][5]
+* normalized handling of credentials
 * handle obsolete line folding during parsing of HTTP header field values
 * support line feed as a line terminator
 * all exceptions thrown while extracting exposed headers are now swallowed

@@ -524,19 +524,26 @@
     // https://support.microsoft.com/en-us/kb/834489
     // https://bugzilla.mozilla.org/show_bug.cgi?id=709991
     function stripAuth(url) {
-      if ((/^([^#?]+:)?\/\/[^\/]+@/).test(url)) {
+      if ((/^([^#?]+:)?\/\/[^/]+@/).test(url)) {
         var credentials = url.split('//')[1].split('@')[0].split(':');
 
         if (!options.username) {
           options.username = credentials[0];
           options.password = credentials[1];
         }
-        return url.replace(/\/\/[^\/]+@/, '//');
+        return url.replace(/\/\/[^/]+@/, '//');
       }
       return url;
     }
 
     function processURL(url) {
+      if (String.isString(url))
+        options.url = stripAuth(url);
+      else if (self.URL && Object.prototype.toString.call(url) === '[object URL]')
+        decomposeURL(url);
+    }
+
+    function decomposeURL(url) {
       if (!options.username) {
         options.username = url.username;
         options.password = url.password;
@@ -550,15 +557,11 @@
       if (String.isString(input))
         options.url = stripAuth(input);
       else if (self.URL && Object.prototype.toString.call(input) === '[object URL]')
-        processURL(input);
-      else if (typeof input === 'object' && !!input) {
+        decomposeURL(input);
+      else if (input === Object(input)) {
         options = input;
-        if (self.URL && Object.prototype.toString.call(options.url) === '[object URL]')
-          processURL(options.url);
-        else if (String.isString(options.url))
-          options.url = stripAuth(options.url);
-      } else
-        raiseException();
+        processURL(options.url);
+      }
     }
 
     function getMethod() {
@@ -570,7 +573,7 @@
       return method;
     }
 
-    function setDefaults() {
+    function setOptions() {
       // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
       options.url         = options.url || self.location.href;
       options.method      = getMethod();
@@ -628,10 +631,7 @@
             payload     = supportBody ? 'body' : 'parameters',
             context     = {};
 
-        if (self.URL && Object.prototype.toString.call(url) === '[object URL]')
-          processURL(url);
-        else if (String.isString(url))
-          options.url = stripAuth(url);
+        processURL(url);
         options.method = verb.toUpperCase();
 
         context[action] = function (data) {
@@ -651,7 +651,7 @@
     addVerb('head');
     addVerb('delete');
     processInput(input);
-    setDefaults();
+    setOptions();
 
     return request;
   };
