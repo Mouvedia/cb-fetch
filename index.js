@@ -554,11 +554,9 @@
     }
 
     function processInput(input) {
-      if (String.isString(input))
-        options.url = stripAuth(input);
-      else if (self.URL && Object.prototype.toString.call(input) === '[object URL]')
-        decomposeURL(input);
-      else if (input === Object(input)) {
+      if (!input) return;
+      processURL(input);
+      if (!options.url && input === Object(input)) {
         options = input;
         processURL(options.url);
       }
@@ -631,7 +629,7 @@
             payload     = supportBody ? 'body' : 'parameters',
             context     = {};
 
-        processURL(url);
+        url && processURL(url);
         options.method = verb.toUpperCase();
 
         context[action] = function (data) {
