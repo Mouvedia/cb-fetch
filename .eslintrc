@@ -1,26 +1,25 @@
 {
+  "root": true,
 
   "env": {
     "browser": true,
-    "node": true,
-    "es6": true
+    "commonjs": true,
+    "amd": true
   },
 
   "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true
-    }
+    "ecmaVersion": 3
   },
 
   "rules": {
+
+    ////////// Errors //////////
 
     "no-const-assign": 2,
     "require-yield": 2,
     "no-unexpected-multiline": 2,
     "no-shadow-restricted-names": 2,
-    "comma-dangle": 2,
+    "comma-dangle": 2,          // array length IE bug
     "no-catch-shadow": 2,
     "wrap-iife": [2, "any"],
     "no-with": 2,
@@ -42,21 +41,26 @@
     "no-invalid-regexp": 2,
     "yoda": 2,
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
-    "quote-props": [2, "consistent"],
     "no-spaced-func": 2,
     "space-before-function-paren": [2, { "anonymous": "always", "named": "never" }],
     "space-before-blocks": 2,
     "keyword-spacing": [2, { "after": true }],
+    "switch-colon-spacing": 2,
     "no-empty": [2, { "allowEmptyCatch": true }],
+    "for-direction": 2,
+    "quote-props": [2, "consistent"],
 
+    ////////// Warnings //////////
+
+    "no-return-await": 1,
     "no-throw-literal": 1,
     "no-mixed-spaces-and-tabs": [1, "smart-tabs"],
     "comma-spacing": 1,
-    "camelcase": 1,
     "no-constant-condition": 1,
     "no-unneeded-ternary": 1,
     "no-extra-bind": 1,
-    "no-extra-parens": 1,
+    "no-extra-parens": [1, "all", { "returnAssign": false }],
+    "no-return-assign": 1,
     "no-ex-assign": 1,
     "no-func-assign": 1,
     "no-inner-declarations": 1,
@@ -64,21 +68,15 @@
     "dot-location": [1, "property"],
     "no-empty-character-class": 1,
     "no-regex-spaces": 1,
-    "newline-after-var": 1,
+    "padding-line-between-statements": [1, { "blankLine": "always", "prev": ["const", "let", "var"], "next": "*"}],
     "computed-property-spacing": 1,
     "no-negated-condition": 1,
     "new-cap": [1, { "capIsNew": false }],
     "operator-assignment": [1, "always"],
     "no-trailing-spaces": [1, { "skipBlankLines": true }],
     "object-shorthand": 1,
-    "max-len": [1, { "ignoreComments": true }],
     "max-params": [1, 4],
-    "quotes": [1, "single", { "avoidEscape": true }],
-
-    "no-new-require": 2,
-    "global-require": 1,
-    "handle-callback-err": 1
-
+    "quotes": [1, "single", { "avoidEscape": true }]
   }
 
 }

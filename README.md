@@ -29,9 +29,9 @@ npm install --save cb-fetch
 - [x] [fluent API](#map)
 - [x] [normalized response](#normalized-response)
 - [x] WebDAV
-- [ ] [caching](../../issues/4)
-- [ ] [progress monitoring](../../issues/8)
-- [ ] [HAR](../../issues/12)
+- [ ] caching [#4](../../issues/4)
+- [ ] progress monitoring [#8](../../issues/8)
+- [ ] HAR [#12](../../issues/12)
 
 ## Importation
 
@@ -86,20 +86,19 @@ request()
 request()
   .get('http://www.example.com')
   .query('key1=value1&key2=value2')
-  .done(onSuccessCallback, onFailCallback);
+  .done(onSuccessCallback, onErrorCallback);
 
 // passing an object offers more granularity
 request({
   url:          new URL('http://www.example.com'),
   parameters:   new URLSearchParams('_csrf=USER_TOKEN_GOES_HERE'),
   method:       'get',
-  headers:      {'Accept-Language': 'en-us, en-gb;q=0.9, en;q=0.8, *;q=0.5'},
   mode:         'cors',
   credentials:  'include',
   responseType: 'json'
 }).done({
   success: onSuccessCallback,
-  error:   onFailCallback
+  error:   onErrorCallback
 });
 ```
 
@@ -168,7 +167,7 @@ request({
 
 ```
 {
-  (onSuccess: Function, onFail?: Function),
+  (onSuccess: Function, onError?: Function),
   ({
     success:   Function,
     error?:    Function,
