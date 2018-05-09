@@ -147,7 +147,7 @@
       var headers, key, separator;
 
       if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]')
-        headers = headersToObject(options.headers);
+        headers = HeadersToObject(options.headers);
       else {
         headers = {};
         for (key in options.headers) {
@@ -160,11 +160,6 @@
 
       if (options.mode !== 'cors' && !headers['X-Requested-With'])
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-      // https://bugs.chromium.org/p/chromium/issues/detail?id=128323#c3
-      // https://technet.microsoft.com/library/security/ms04-004
-      if (!headers.Authorization && options.username)
-        xhr.setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
     }
 
     function getXML(XML) {
@@ -271,7 +266,9 @@
         }
       };
 
-      xhr.open(options.method, options.url, true, options.username, options.password);
+      // https://bugs.chromium.org/p/chromium/issues/detail?id=128323#c3
+      // https://support.microsoft.com/en-us/help/832414/
+      xhr.open(options.method, options.url, true);
 
       if (options.responseType) {
         try {
@@ -558,7 +555,7 @@
       processURL(input);
       if (!options.url && input === Object(input)) {
         options = input;
-        processURL(options.url);
+        options.url && processURL(options.url);
       }
     }
 
@@ -582,18 +579,6 @@
       options.password    = options.password || null;
     }
 
-    function fetchPath() {
-      if (options.username)
-        setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
-
-      self.fetch(options.url, options)
-        .then(convertResponse)
-        .then(extractBody)
-        .then(storeBody)
-        .then(processStatus)
-        .then(cfg.success, cfg.error);
-    }
-
     request.done = function (onSuccess, onFail) {
       cfg = typeof onSuccess === 'object' && onSuccess || {
         success: onSuccess,
@@ -613,9 +598,16 @@
         setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       if (options.parameters)
         setQueryString();
+      if (options.username)
+        setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
 
       if (self.fetch && !self.fetch.nodeType)
-        fetchPath();
+        self.fetch(options.url, options)
+          .then(convertResponse)
+          .then(extractBody)
+          .then(storeBody)
+          .then(processStatus)
+          .then(cfg.success, cfg.error);
       else if (options.mode === 'cors' && self.document && (self.document.documentMode == 8 || self.document.documentMode == 9))
         xdrPath();
       else

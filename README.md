@@ -8,18 +8,30 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
 
 ## Table of Contents
   - [Installation](#installation)
+  - [Features](#features)
   - [Importation](#importation)
   - [Examples](#examples)
   - [API](#api)
   - [Properties](#properties)
   - [Gotchas](#gotchas)
-  - [Features](#features)
   - [License](#license)
 
 ## Installation
 ```sh
 npm install --save cb-fetch
 ```
+
+## Features
+- [x] fetch
+- [x] XMLHttpRequest
+- [x] XDomainRequest
+- [x] [Universal Module Definition](#importation)
+- [x] [fluent API](#map)
+- [x] [normalized response](#normalized-response)
+- [x] WebDAV
+- [ ] [caching](../../issues/4)
+- [ ] [progress monitoring](../../issues/8)
+- [ ] [HAR](../../issues/12)
 
 ## Importation
 
@@ -234,18 +246,6 @@ populated into the `headers` property, the following conditions must be met:
 - `Access-Control-Expose-Headers` response header exposes itself
 - `Access-Control-Expose-Headers` field value is not `*`
 - `mode` set to `cors`
-
-## Features
-- [x] fetch
-- [x] XHR
-- [x] XDR
-- [x] Universal Module Definition
-- [x] fluent API
-- [ ] [caching](../../issues/4)
-- [x] normalized response
-- [ ] [HAR](../../issues/12)
-- [x] WebDAV
-- [ ] [progress monitoring](../../issues/8)
 
 ## License
 This project is licensed under the terms of the MIT license.
