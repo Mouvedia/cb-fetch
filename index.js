@@ -480,7 +480,7 @@
           fields, field, len, index, name, value, i;
 
       // https://bugzilla.mozilla.org/show_bug.cgi?id=608735
-      if (options.mode === 'cors' && !list) {
+      if (options.mode === 'cors' && list === null) {
         // https://www.w3.org/TR/cors/#simple-response-header
         headers['Cache-Control']    = xhr.getResponseHeader('Cache-Control');
         headers['Content-Language'] = xhr.getResponseHeader('Content-Language');
@@ -503,8 +503,8 @@
       } else if (list) {
         // https://tools.ietf.org/html/rfc7230#page-26
         // https://tools.ietf.org/html/rfc7230#page-35
-        fields = list.replace(/\r?\n[\t ]+/g, ' ').split('\r?\n');
-        len    = fields.length;
+        fields = list.replace(/\r?\n[\t ]+/g, ' ').split(/\r?\n/);
+        len    = fields.length - 1;
         for (i = 0; i < len; ++i) {
           field = fields[i];
           index = field.indexOf(': ');
