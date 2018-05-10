@@ -72,7 +72,7 @@
 
       if (self.URLSearchParams && Object.prototype.toString.call(options.parameters) === '[object URLSearchParams]')
         options.parameters = options.parameters.toString();
-      if (String.isString(options.parameters)) {
+      if (options.parameters && String.isString(options.parameters)) {
         var pairs = options.parameters.split('&'),
             len   = pairs.length,
             pair, i;
@@ -86,8 +86,7 @@
           options.url += prefix + EURIC(key) + '=' + EURIC(options.parameters[key]);
           prefix = '&';
         }
-      } else
-        raiseException();
+      }
     }
 
     function overrideMethod() {
@@ -125,41 +124,40 @@
       }
     }
 
+    function setHeader(headers, name, value) {
+      var separator = name.toLowerCase() === 'cookie' ? '; ' : ', ';
+
+      if (value)
+        headers[name] = headers[name] ? headers[name] + separator + value : value;
+    }
+
     function HeadersToObject(instance) {
       var headers = {},
-          entries, pair, name, value, separator;
+          entries, pair;
 
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1108181
       if (instance.entries) {
         entries = instance.entries();
-        while (!(pair = entries.next()).done) {
-          name      = pair.value[0];
-          value     = pair.value[1];
-          separator = name.toLowerCase() === 'cookie' ? '; ' : ', ';
-          if (value)
-            headers[name] = headers[name] ? headers[name] + separator + value : value;
-        }
+        while (!(pair = entries.next()).done) setHeader(headers, pair.value[0], pair.value[1]);
       }
       return headers;
     }
 
     function setRequestHeaders(xhr) {
-      var headers, key, separator;
+      var headers, key;
+
+      if (options.mode !== 'cors')
+        setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      if (self.URLSearchParams && Object.prototype.toString.call(options.body) === '[object URLSearchParams]')
+        setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
       if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]')
         headers = HeadersToObject(options.headers);
       else {
         headers = {};
-        for (key in options.headers) {
-          separator = key.toLowerCase() === 'cookie' ? '; ' : ', ';
-          if (options.headers[key])
-            headers[key] = (headers[key] ? headers[key] + separator : '') + options.headers[key];
-        }
+        for (key in options.headers) setHeader(headers, key, options.headers[key]);
       }
       for (key in headers) xhr.setRequestHeader(key, headers[key]);
-
-      if (options.mode !== 'cors' && !headers['X-Requested-With'])
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     }
 
     function getXML(XML) {
@@ -594,8 +592,6 @@
 
       if (cfg.settings && cfg.settings.tunneling && !/^(POST|GET)$/.test(options.method))
         overrideMethod();
-      if (options.method === 'POST' && String.isString(options.body))
-        setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       if (options.parameters)
         setQueryString();
       if (options.username)
