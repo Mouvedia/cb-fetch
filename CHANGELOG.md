@@ -36,4 +36,4 @@
 [2]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-beta.2
 [3]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.1
 [4]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.2
-[5]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.2...1.0.0
+[5]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.2...1.0.0?w=true

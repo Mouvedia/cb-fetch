@@ -1,12 +1,12 @@
 ;(function (root, factory) {
-  if (typeof define === 'function' && define.amd)
+  if (typeof define == 'function' && define.amd)
     define([], factory);
-  else if (typeof exports === 'object' && !!exports && !exports.nodeType) {
-    if (typeof module === 'object' && !!module && module.exports)
+  else if (typeof exports == 'object' && !!exports && !exports.nodeType) {
+    if (typeof module == 'object' && !!module && module.exports)
       module.exports = factory();
     else
       exports['default'] = factory();
-  } else if (typeof YUI === 'function' && YUI.add)
+  } else if (typeof YUI == 'function' && YUI.add)
     YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0');
   else if (root.request)
     self.console &&
@@ -39,12 +39,21 @@
       throw new (self[type] || self.Error)(msg);
     }
 
+    function getFlags() {
+      var exclude = options.credentials === 'omit';
+
+      if (cfg.settings)
+        return {
+          mozAnon:   !!cfg.settings.mozAnon || exclude,
+          mozSystem: !!cfg.settings.mozSystem
+        };
+      else if (exclude)
+        return { mozAnon: true };
+    }
+
     function XHR() {
       var subset = /^(GET|POST|HEAD|PUT|DELETE|MOVE|PROPFIND|PROPPATCH|MKCOL|COPY|LOCK|UNLOCK|OPTIONS)$/,
-          flags  = cfg.settings && {
-            mozAnon:   !!cfg.settings.mozAnon,
-            mozSystem: !!cfg.settings.mozSystem
-          };
+          flags  = getFlags();
 
       if (self.XMLHttpRequest
       /*@cc_on@if(@_jscript_version<9)
@@ -81,7 +90,7 @@
           pair = pairs[i].split('=');
           options.url += (i ? '&' : prefix) + EURIC(pair[0]) + '=' + EURIC(pair[1]);
         }
-      } else if (typeof options.parameters === 'object') {
+      } else if (typeof options.parameters == 'object') {
         for (var key in options.parameters) {
           options.url += prefix + EURIC(key) + '=' + EURIC(options.parameters[key]);
           prefix = '&';
@@ -175,7 +184,7 @@
     }
 
     function getResponse(xhr) {
-      if (typeof xhr.responseType === 'string') {
+      if (typeof xhr.responseType == 'string') {
         switch (xhr.responseType) {
           case 'text':
           case 'moz-chunked-text':
@@ -185,14 +194,14 @@
           case 'msxml-document':
             return getXML(xhr.responseXML);
           default:
-            return typeof xhr.response === 'undefined' ?
+            return typeof xhr.response == 'undefined' ?
                    xhr.responseText :
                    xhr.response;
         }
       }
-      if (typeof xhr.responseXML === 'object' && xhr.responseXML)
+      if (typeof xhr.responseXML == 'object' && xhr.responseXML)
         return getXML(xhr.responseXML);
-      if (typeof xhr.responseText === 'string')
+      if (typeof xhr.responseText == 'string')
         return xhr.responseText;
     }
 
@@ -276,13 +285,13 @@
         }
       }
 
-      if (options.credentials === 'include' && typeof xhr.withCredentials === 'boolean')
+      if (options.credentials === 'include' && typeof xhr.withCredentials == 'boolean')
         xhr.withCredentials = true;
 
-      if (options.timeout && typeof xhr.timeout === 'number')
+      if (options.timeout && typeof xhr.timeout == 'number')
         xhr.timeout = options.timeout;
 
-      if (cfg.timeout && typeof xhr.ontimeout !== 'undefined')
+      if (cfg.timeout && typeof xhr.ontimeout != 'undefined')
         xhr.ontimeout = cfg.timeout;
 
       if (options.responseMediaType && xhr.overrideMimeType)
@@ -366,12 +375,12 @@
       switch (options.responseType) {
         case 'document':
         case 'msxml-document':
-          if (typeof response === 'string')
+          if (typeof response == 'string')
             return createDocument(response);
           break;
         case 'json':
           // RFC 4627
-          if (typeof response !== 'object') {
+          if (typeof response != 'object') {
             try {
               return self.JSON.parse(response);
             } catch (e) {}
@@ -543,8 +552,6 @@
         options.username = url.username;
         options.password = url.password;
       }
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=1195820
-      url.username = url.password = '';
       options.url = url.href;
     }
 
@@ -578,16 +585,16 @@
     }
 
     request.done = function (onSuccess, onFail) {
-      cfg = typeof onSuccess === 'object' && onSuccess || {
+      cfg = typeof onSuccess == 'object' && onSuccess || {
         success: onSuccess,
         error:   onFail
       };
 
-      if (typeof cfg.success !== 'function')
+      if (typeof cfg.success != 'function')
         raiseException('A success callback must be provided.');
-      if (typeof cfg.error !== 'undefined' && typeof cfg.error !== 'function')
+      if (typeof cfg.error != 'undefined' && typeof cfg.error != 'function')
         raiseException('The error callback must be a function.');
-      if (typeof cfg.timeout !== 'undefined' && typeof cfg.timeout !== 'function')
+      if (typeof cfg.timeout != 'undefined' && typeof cfg.timeout != 'function')
         raiseException('The timeout callback must be a function.');
 
       if (cfg.settings && cfg.settings.tunneling && !/^(POST|GET)$/.test(options.method))

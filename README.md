@@ -17,8 +17,13 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
   - [License](#license)
 
 ## Installation
+#### npm
 ```sh
 npm install --save cb-fetch
+```
+#### jspm
+```sh
+jspm install cb-fetch
 ```
 
 ## Features
@@ -184,7 +189,7 @@ Property     | Default       | Value(s)
 --------     | -------       | --------
 body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams
 cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
-credentials  | 'same‑origin' | 'include', 'omit'¹, 'same-origin'
+credentials  | 'same‑origin' | 'include', 'omit'⁶, 'same-origin'
 headers      | {}            | Object, Headers³
 method       | 'GET'         | String
 mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
@@ -218,7 +223,8 @@ tunneling⁵         | false   | Boolean
 ² XHR only<br/>
 ³ except Firefox 34–43<br/>
 ⁴ MSXML 3.0 only<br/>
-⁵ method override</sup>
+⁵ method override<br/>
+⁶ fetch or Firefox 16+</sup>
 
 ## Gotchas
 
