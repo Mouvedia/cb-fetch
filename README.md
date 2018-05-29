@@ -252,5 +252,11 @@ populated into the `headers` property, the following conditions must be met:
 - `Access-Control-Expose-Headers` field value is not `*`
 - `mode` set to `cors`
 
+#### Platform for Privacy Preferences
+
+Internet Explorer’s default settings restrict the use of 3<sup>rd</sup> party cookies unless a P3P compact policy
+declaration has been included through a custom HTTP response header; hence, the `"include"` credentials mode cannot be
+fully honored if a cookie has been deemed unsatisfactory.
+
 ## License
 This project is licensed under the terms of the MIT license.

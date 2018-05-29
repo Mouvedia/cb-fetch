@@ -40,9 +40,10 @@
     }
 
     function getFlags() {
-      var exclude = options.credentials === 'omit';
+      var exclude  = options.credentials === 'omit',
+          hasFlags = cfg.settings && (cfg.settings.mozAnon || cfg.settings.mozSystem);
 
-      if (cfg.settings)
+      if (hasFlags)
         return {
           mozAnon:   !!cfg.settings.mozAnon || exclude,
           mozSystem: !!cfg.settings.mozSystem
