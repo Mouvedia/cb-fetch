@@ -214,8 +214,6 @@ url        | String
 ### Advanced Settings
 Property           | Default | Type
 --------           | ------- | ----
-mozAnon            | false   | Boolean
-mozSystem          | false   | Boolean
 XSLPattern⁴        | false   | Boolean
 tunneling⁵         | false   | Boolean
 
@@ -224,7 +222,7 @@ tunneling⁵         | false   | Boolean
 ³ except Firefox 34–43<br/>
 ⁴ MSXML 3.0 only<br/>
 ⁵ method override<br/>
-⁶ fetch or Firefox 16+</sup>
+⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423</sup>
 
 ## Gotchas
 

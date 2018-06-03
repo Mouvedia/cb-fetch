@@ -39,31 +39,20 @@
       throw new (self[type] || self.Error)(msg);
     }
 
-    function getFlags() {
-      var exclude  = options.credentials === 'omit',
-          hasFlags = cfg.settings && (cfg.settings.mozAnon || cfg.settings.mozSystem);
-
-      if (hasFlags)
-        return {
-          mozAnon:   !!cfg.settings.mozAnon || exclude,
-          mozSystem: !!cfg.settings.mozSystem
-        };
-      else if (exclude)
-        return { mozAnon: true };
-    }
-
     function XHR() {
       var subset = /^(GET|POST|HEAD|PUT|DELETE|MOVE|PROPFIND|PROPPATCH|MKCOL|COPY|LOCK|UNLOCK|OPTIONS)$/,
-          flags  = getFlags();
+          anon   = options.credentials === 'omit' ? { mozAnon: true } : void 0;
 
       if (self.XMLHttpRequest
       /*@cc_on@if(@_jscript_version<9)
         && subset.test(options.method)
       @else
         && (document.documentMode >= 9 || subset.test(options.method))
-      @end@*/)
-        return new self.XMLHttpRequest(flags);
-      /*@cc_on@if(@_jscript_version>=5)else {
+      @end@*/) {
+        if (anon && self.AnonXMLHttpRequest)
+          return new self.AnonXMLHttpRequest();
+        return new self.XMLHttpRequest(anon);
+      }/*@cc_on@if(@_jscript_version>=5)else {
         var progIDs = ['Msxml2.XMLHTTP.6.0', 'Msxml2.XMLHTTP.3.0', 'Microsoft.XMLHTTP'];
 
         for (var i = 0; i < progIDs.length; ++i) {
@@ -569,7 +558,8 @@
       var method = (options.method && options.method.toUpperCase()) || 'GET',
           documentElement = (options.body ? options.body.ownerDocument || options.body : 0).documentElement;
 
-      if (/^(PROPPATCH|ORDERPATCH|ACL|REPORT|BIND|UNBIND|REBIND|UPDATE|LABEL|MERGE)$/.test(method) && !documentElement)
+      if (/^(PROPPATCH|ORDERPATCH|ACL|REPORT|BIND|UNBIND|REBIND|UPDATE|LABEL|MERGE|MKREDIRECTREF|UPDATEREDIRECTREF)$/.test(method) &&
+          !documentElement)
         raiseException('The ' + method + ' method requires an XML body.');
       return method;
     }

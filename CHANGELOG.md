@@ -1,5 +1,15 @@
 # Change Log
 
+## [Unreleased][6]
+### Added
+* jspm shortname
+
+### Changed
+* `'omit'` credentials mode support for older versions of Firefox and Opera
+
+### Removed
+* `mozSystem` flag
+
 ## [1.0.0][5]
 * normalized handling of credentials
 * handle obsolete line folding during parsing of HTTP header field values
@@ -37,3 +47,4 @@
 [3]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.1
 [4]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.2
 [5]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.2...1.0.0?w=true
+[6]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0...HEAD
