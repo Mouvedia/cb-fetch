@@ -5,6 +5,7 @@
 * jspm shortname
 
 ### Changed
+* `'msxml-document'` responseType falls back to `'document'` if not supported
 * `'omit'` credentials mode support for older versions of Firefox and Opera
 
 ### Removed
@@ -43,8 +44,8 @@
 * polymorphic done method
 
 [1]: https://github.com/Mouvedia/cb-fetch/compare/b15a26f...d5c09ea
-[2]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-beta.2
-[3]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.1
-[4]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.0.0-rc.2
+[2]: https://github.com/Mouvedia/cb-fetch/compare/d5c09ea...1.0.0-beta.2
+[3]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-beta.2...1.0.0-rc.1
+[4]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.1...1.0.0-rc.2
 [5]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.2...1.0.0?w=true
 [6]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0...HEAD

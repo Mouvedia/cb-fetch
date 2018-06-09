@@ -253,7 +253,7 @@
             else if (cfg.error)
               cfg.error(processXHR(xhr));
           // Firefox status 408
-          // IE9 error c00c023f
+          // IE9 error c00c023f on abort
           } catch (e) {
             errorHandler(e);
             cfg.error && cfg.error({instance: xhr});
@@ -305,7 +305,7 @@
       return processedResponse.instance;
     }
 
-    function extractBody(response) {
+    function consumeBody(response) {
       switch (options.responseType) {
         case 'text':
         case 'moz-chunked-text':
@@ -565,6 +565,8 @@
     }
 
     function setOptions() {
+      var MSXML = 'ActiveXObject' in self && self.navigator.msPointerEnabled;
+
       // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
       options.url         = options.url || self.location.href;
       options.method      = getMethod();
@@ -573,6 +575,9 @@
       options.headers     = options.headers || {};
       options.username    = options.username || null;
       options.password    = options.password || null;
+
+      if (options.responseType === 'msxml-document' && !MSXML)
+        options.responseType = 'document';
     }
 
     request.done = function (onSuccess, onFail) {
@@ -598,7 +603,7 @@
       if (self.fetch && !self.fetch.nodeType)
         self.fetch(options.url, options)
           .then(convertResponse)
-          .then(extractBody)
+          .then(consumeBody)
           .then(storeBody)
           .then(processStatus)
           .then(cfg.success, cfg.error);
