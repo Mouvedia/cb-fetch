@@ -298,10 +298,7 @@
     }
 
     function storeBody(body) {
-      if (/document$/.test(options.responseType))
-        processedResponse.body = createDocument(body);
-      else
-        processedResponse.body = body;
+      processedResponse.body = body;
       return processedResponse.instance;
     }
 
@@ -310,9 +307,12 @@
         case 'text':
         case 'moz-chunked-text':
         case '':
+          return response.text();
         case 'document':
         case 'msxml-document':
-          return response.text();
+          return response.text().then(function (str) {
+            return createDocument(str);
+          });
         case 'json':
           return response.json().then(function (object) {
             return object;
@@ -388,7 +388,7 @@
                             'Microsoft.XMLDOM',
                             'MSXML.DOMDocument'],
           len            = progIDs.length,
-          queryLanguage  = cfg.settings && cfg.settings.XSLPattern ? 'XSLPattern' : 'XPath',
+          queryLanguage  = options.XSLPattern ? 'XSLPattern' : 'XPath',
           implementation = self.document && self.document.implementation,
           MIMEType       = documentMIMEType(),
           doc            = null,
@@ -593,14 +593,14 @@
       if (typeof cfg.timeout != 'undefined' && typeof cfg.timeout != 'function')
         raiseException('The timeout callback must be a function.');
 
-      if (cfg.settings && cfg.settings.tunneling && !/^(POST|GET)$/.test(options.method))
+      if (options.tunneling && !/^(POST|GET)$/.test(options.method))
         overrideMethod();
       if (options.parameters)
         setQueryString();
       if (options.username)
         setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
 
-      if (self.fetch && !self.fetch.nodeType)
+      if (typeof self.fetch == 'function')
         self.fetch(options.url, options)
           .then(convertResponse)
           .then(consumeBody)

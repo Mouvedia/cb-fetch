@@ -112,7 +112,7 @@ request({
 ### Map
 
 ```
-(?: Options | Request | Options.url)
+(?: Options | Options.url)
 => Object ┬──● done
           ├──● loading
           │  └─● done
@@ -176,8 +176,7 @@ request({
   ({
     success:   Function,
     error?:    Function,
-    timeout?:  Function,
-    settings?: Object
+    timeout?:  Function
   })
 } => Void, throws: TypeError
 ```
@@ -188,18 +187,19 @@ request({
 Property     | Default       | Value(s)
 --------     | -------       | --------
 body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams
-cache        | 'default'     | 'default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'
 credentials  | 'same‑origin' | 'include', 'omit'⁶, 'same-origin'
 headers      | {}            | Object, Headers³
 method       | 'GET'         | String
 mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
-parameters        |          | URLSearchParams, Object, String
-responseMediaType²|          | String
-responseType      |          | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'ms-stream', 'msxml-document'
+parameters         |         | URLSearchParams, Object, String
+responseMediaType² |         | String
+responseType       |         | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'ms-stream', 'msxml-document'
 timeout      | 0             | ℕ
+tunneling⁵   | false         | Boolean
 username     | null          | String
 url          | location.href | String, URL
+XSLPattern⁴  | false         | Boolean
 
 ### Normalized Response
 Property   | Type
@@ -210,12 +210,6 @@ instance   | XMLHttpRequest, XDomainRequest, Response
 statusCode | ℕ
 statusText | String
 url        | String
-
-### Advanced Settings
-Property           | Default | Type
---------           | ------- | ----
-XSLPattern⁴        | false   | Boolean
-tunneling⁵         | false   | Boolean
 
 <sup>¹ fetch only<br/>
 ² XHR only<br/>

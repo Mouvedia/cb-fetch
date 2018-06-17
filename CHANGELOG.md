@@ -7,9 +7,11 @@
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported
 * `'omit'` credentials mode support for older versions of Firefox and Opera
+* advanced settings are now part of the options
 
 ### Removed
-* `mozSystem` flag
+* `mozSystem` flag support
+* `Request` instance equivalence
 
 ## [1.0.0][5]
 * normalized handling of credentials
