@@ -334,28 +334,37 @@
       return response.body || null;
     }
 
+    function typeHook() {
+      var hook  = options.hooks.type,
+          value = hook && hook({
+            code: processedResponse.statusCode,
+            headers: processedResponse.headers
+          });
+
+      if (value)
+        options.responseType = value;
+    }
+
     function convertResponse(response) {
-      processedResponse.headers    = HeadersToObject(response.headers);
       processedResponse.instance   = response;
+      processedResponse.headers    = HeadersToObject(response.headers);
       processedResponse.statusCode = response.status;
       processedResponse.statusText = response.statusText;
       processedResponse.url        = response.url;
+      typeHook();
       return response;
     }
 
     function processXHR(xhr) {
       processedResponse.instance   = xhr;
       processedResponse.headers    = getResponseHeaders(xhr);
-      processedResponse.body       = getBody(xhr);
       processedResponse.statusCode = xhr.status === 1223 ? 204 : xhr.status;
+      try { // https://bugzilla.mozilla.org/show_bug.cgi?id=596634
+      processedResponse.statusText = xhr.status === 1223 ? 'No Content' : xhr.statusText;
+      } catch (e) { processedResponse.statusText = ''; }
       processedResponse.url        = xhr.responseURL;
-
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=596634
-      try {
-        processedResponse.statusText = xhr.status === 1223 ? 'No Content' : xhr.statusText;
-      } catch (e) {
-        processedResponse.statusText = '';
-      }
+      typeHook();
+      processedResponse.body       = getBody(xhr);
       return processedResponse;
     }
 
@@ -575,6 +584,7 @@
       options.headers     = options.headers || {};
       options.username    = options.username || null;
       options.password    = options.password || null;
+      options.hooks       = options.hooks || {};
 
       if (options.responseType === 'msxml-document' && !MSXML)
         options.responseType = 'document';

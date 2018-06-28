@@ -103,7 +103,7 @@ request({
   mode:         'cors',
   credentials:  'include',
   responseType: 'blob',
-  interceptors: {
+  hooks: {
     // dynamically resets the responseType in preparation for the body's consumption
     type({ code }) {
         if (code === 207)
@@ -200,7 +200,7 @@ Property     | Default       | Value(s)
 body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams
 credentials  | 'same‑origin' | 'include', 'omit'⁶, 'same-origin'
 headers      | {}            | Object, Headers³
-interceptors |               | Object
+hooks        |               | Object
 method       | 'GET'         | String
 mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
