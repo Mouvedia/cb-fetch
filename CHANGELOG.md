@@ -3,15 +3,16 @@
 ## [Unreleased][6]
 ### Added
 * jspm shortname
+* interceptor hooks
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported
 * `'omit'` credentials mode support for older versions of Firefox and Opera
+* `Request` instances' properties are _partially_ supported
 * advanced settings are now part of the options
 
 ### Removed
 * `mozSystem` flag support
-* `Request` instance equivalence
 
 ## [1.0.0][5]
 * normalized handling of credentials

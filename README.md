@@ -13,6 +13,7 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
   - [Examples](#examples)
   - [API](#api)
   - [Properties](#properties)
+  - [Interceptors](#interceptors)
   - [Gotchas](#gotchas)
   - [License](#license)
 
@@ -34,6 +35,7 @@ jspm install cb-fetch
 - [x] [fluent API](#map)
 - [x] [normalized response](#normalized-response)
 - [x] WebDAV
+- [x] interceptors
 - [ ] caching [#4](../../issues/4)
 - [ ] progress monitoring [#8](../../issues/8)
 - [ ] HAR [#12](../../issues/12)
@@ -93,14 +95,23 @@ request()
   .query('key1=value1&key2=value2')
   .done(onSuccessCallback, onErrorCallback);
 
-// passing an object offers more granularity
+// passing an object offers additional options
 request({
   url:          new URL('http://www.example.com'),
-  parameters:   new URLSearchParams('_csrf=USER_TOKEN_GOES_HERE'),
+  parameters:   new URLSearchParams('_csrf=TOKEN'),
   method:       'get',
   mode:         'cors',
   credentials:  'include',
-  responseType: 'json'
+  responseType: 'blob',
+  interceptors: {
+    // dynamically resets the responseType in preparation for the body's consumption
+    type({ code }) {
+        if (code === 207)
+            return 'document';
+        if (code > 399 && code < 600)
+            return 'json';
+    }
+  }
 }).done({
   success: onSuccessCallback,
   error:   onErrorCallback
@@ -189,12 +200,13 @@ Property     | Default       | Value(s)
 body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams
 credentials  | 'same‑origin' | 'include', 'omit'⁶, 'same-origin'
 headers      | {}            | Object, Headers³
+interceptors |               | Object
 method       | 'GET'         | String
 mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
-parameters         |         | URLSearchParams, Object, String
+parameters   |               | URLSearchParams, Object, String
 responseMediaType² |         | String
-responseType       |         | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'ms-stream', 'msxml-document'
+responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'ms-stream', 'msxml-document'
 timeout      | 0             | ℕ
 tunneling⁵   | false         | Boolean
 username     | null          | String
@@ -217,6 +229,20 @@ url        | String
 ⁴ MSXML 3.0 only<br/>
 ⁵ method override<br/>
 ⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423</sup>
+
+## Interceptors
+
+### Request Hook
+
+```
+request(Options) => Boolean | Void
+```
+
+### Type Hook
+
+```
+type({ code: Number, headers: Object }) => String
+```
 
 ## Gotchas
 
