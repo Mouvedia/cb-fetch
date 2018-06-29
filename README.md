@@ -232,16 +232,16 @@ url        | String
 
 ## Interceptors
 
-### Request Hook
+### Before Hook
 
 ```
-request(Options) => Boolean | Void
+before() => Boolean | Void
 ```
 
 ### Type Hook
 
 ```
-type({ code: Number, headers: Object }) => String
+type({ code: Number, headers: Object }) => String | Void
 ```
 
 ## Gotchas

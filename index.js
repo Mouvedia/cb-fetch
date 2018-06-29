@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.0.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.1.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -542,16 +542,13 @@
     function processURL(url) {
       if (String.isString(url))
         options.url = stripAuth(url);
-      else if (self.URL && Object.prototype.toString.call(url) === '[object URL]')
-        decomposeURL(url);
-    }
-
-    function decomposeURL(url) {
-      if (!options.username) {
-        options.username = url.username;
-        options.password = url.password;
+      else if (self.URL && Object.prototype.toString.call(url) === '[object URL]') {
+        if (!options.username) {
+          options.username = url.username;
+          options.password = url.password;
+        }
+        options.url = url.href;
       }
-      options.url = url.href;
     }
 
     function processInput(input) {
@@ -610,6 +607,8 @@
       if (options.username)
         setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
 
+      if (options.hooks.before && options.hooks.before() === false)
+        return;
       if (typeof self.fetch == 'function')
         self.fetch(options.url, options)
           .then(convertResponse)
