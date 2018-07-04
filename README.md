@@ -87,62 +87,69 @@ request('http://www.example.com?key1=value1&key2=value2')
 // being more expressive won't hurt though
 request()
   .get('http://www.example.com?key1=value1&key2=value2')
-  .done(onSuccessCallback);
+  .done(onSuccessCallback, onErrorCallback);
 
 // chaining methods helps separating concerns
 request()
   .get('http://www.example.com')
   .query('key1=value1&key2=value2')
-  .done(onSuccessCallback, onErrorCallback);
+  .done({
+    success: onSuccessCallback,
+    error:   onErrorCallback
+  });
 
 // passing an object offers additional options
-request({
+let { done } = request({
   url:          new URL('http://www.example.com'),
   parameters:   new URLSearchParams('_csrf=TOKEN'),
   method:       'get',
   mode:         'cors',
   credentials:  'include',
   responseType: 'json'
-}).done({
-  success: onSuccessCallback,
-  error:   onErrorCallback
 });
+
+// performs the actual request
+let abort = done(onSuccessCallback);
+
+// immediately aborts it
+abort();
+
+// performs another request reusing the same config
+done(onSuccessCallback);
 ```
 
 ## API
 
 ### Map
 
-```
-(?: Options | Options.url)
-=> Object ┬──● done
-          ├──● loading
-          │  └─● done
+<pre><code>(?: Options | Options.url)
+=> Object ┬─────────────────────○ done
+          ├─● <strike>upload</strike> ───────────○ done
+          │ └─● <strike>download</strike> ───────○ done
+          ├─● <strike>download</strike> ─────────○ done
           │  ┌────────┐
           ├──┤ get    │
           │  │ head   │
           │  │ delete │
           │  └─┬──────┘
-          │    ├─● done
-          │    ├─● loading
-          │    │ └─● done
-          │    └─● query
-          │      ├─● done
-          │      └─● loading
-          │        └─● done
+          │    ├────────────────○ done
+          │    ├─● <strike>download</strike> ────○ done
+          │    └─● query ───────○ done
+          │      └─● <strike>download</strike> ──○ done
           │  ┌───────┐
           └──┤ patch │
              │ post  │
              │ put   │
              └─┬─────┘
-               ├─● done
-               ├─● loading
-               │ └─● done
-               └─● send
-                 ├─● done
-                 └─● loading
-                   └─● done
-```
+               ├────────────────○ done
+               ├─● <strike>upload</strike> ──────○ done
+               │ └─● <strike>download</strike> ──○ done
+               ├─● <strike>download</strike> ────○ done
+               └─● send ────────○ done
+                 ├─● <strike>upload</strike> ────○ done
+                 │ └─● <strike>download</strike> ○ done
+                 └─● <strike>download</strike> ──○ done
+</pre></code>
 
 ### Method Signatures
 
@@ -164,12 +171,6 @@ request({
 (Options.body) => Object
 ```
 
-#### loading
-
-```
-(onProgress: Function) => Object
-```
-
 #### done
 
 ```
@@ -180,7 +181,8 @@ request({
     error?:    Function,
     timeout?:  Function
   })
-} => Void, throws: TypeError
+} => abort:  Function,
+     throws: TypeError
 ```
 
 ## Properties
