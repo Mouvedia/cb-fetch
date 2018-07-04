@@ -3,7 +3,7 @@
 ## [Unreleased][6]
 ### Added
 * jspm shortname
-* type and before hooks
+* before hook
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported

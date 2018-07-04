@@ -102,16 +102,7 @@ request({
   method:       'get',
   mode:         'cors',
   credentials:  'include',
-  responseType: 'blob',
-  hooks: {
-    // dynamically resets the responseType in preparation for the body's consumption
-    type({ code }) {
-        if (code === 207)
-            return 'document';
-        if (code > 399 && code < 600)
-            return 'json';
-    }
-  }
+  responseType: 'json'
 }).done({
   success: onSuccessCallback,
   error:   onErrorCallback
@@ -236,12 +227,6 @@ url        | String
 
 ```
 before() => Boolean | Void
-```
-
-### Type Hook
-
-```
-type({ code: Number, headers: Object }) => String | Void
 ```
 
 ## Gotchas

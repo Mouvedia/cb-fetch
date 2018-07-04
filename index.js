@@ -334,24 +334,12 @@
       return response.body || null;
     }
 
-    function typeHook() {
-      var hook  = options.hooks.type,
-          value = hook && hook({
-            code: processedResponse.statusCode,
-            headers: processedResponse.headers
-          });
-
-      if (value)
-        options.responseType = value;
-    }
-
     function convertResponse(response) {
       processedResponse.instance   = response;
       processedResponse.headers    = HeadersToObject(response.headers);
       processedResponse.statusCode = response.status;
       processedResponse.statusText = response.statusText;
       processedResponse.url        = response.url;
-      typeHook();
       return response;
     }
 
@@ -363,7 +351,6 @@
       processedResponse.statusText = xhr.status === 1223 ? 'No Content' : xhr.statusText;
       } catch (e) { processedResponse.statusText = ''; }
       processedResponse.url        = xhr.responseURL;
-      typeHook();
       processedResponse.body       = getBody(xhr);
       return processedResponse;
     }
