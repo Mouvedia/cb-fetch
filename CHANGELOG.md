@@ -5,6 +5,7 @@
 * jspm shortname
 * before hook
 * cancellation
+* timeout fallback
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported

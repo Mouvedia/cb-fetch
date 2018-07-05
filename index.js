@@ -226,10 +226,13 @@
 
     function xhrPath() {
       var xhr   = XHR(),
-          abort = function () {
-            xhr.onreadystatechange = function () {};
-            xhr.abort();
-          };
+          timeoutID;
+
+      function abort() {
+        timeoutID && clearTimeout(timeoutID);
+        xhr.onreadystatechange = function () {};
+        xhr.abort();
+      }
 
       // https://support.microsoft.com/en-us/kb/2856746
       self.attachEvent && self.attachEvent('onunload', abort);
@@ -238,6 +241,7 @@
       // the handler can be placed before open
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
+          timeoutID && clearTimeout(timeoutID);
           self.detachEvent && self.detachEvent('onunload', abort);
           xhr.onreadystatechange = function () {};
 
@@ -277,9 +281,6 @@
       if (options.credentials === 'include' && typeof xhr.withCredentials == 'boolean')
         xhr.withCredentials = true;
 
-      if (options.timeout && typeof xhr.timeout == 'number')
-        xhr.timeout = options.timeout;
-
       if (cfg.timeout && typeof xhr.ontimeout != 'undefined')
         xhr.ontimeout = cfg.timeout;
 
@@ -288,6 +289,16 @@
 
       if (xhr.setRequestHeader)
         setRequestHeaders(xhr);
+
+      if (options.timeout) {
+        if (typeof xhr.timeout == 'number')
+          xhr.timeout = options.timeout;
+        else
+          timeoutID = setTimeout(function () {
+            abort();
+            cfg.timeout && cfg.timeout();
+          }, options.timeout);
+      }
 
       xhr.send(/^(HEAD|GET)$/.test(options.method) ? null : options.body || '');
       return abort;
