@@ -35,7 +35,6 @@ jspm install cb-fetch
 - [x] [fluent API](#map)
 - [x] [normalized response](#normalized-response)
 - [x] WebDAV
-- [x] interceptors
 - [ ] caching [#4](../../issues/4)
 - [ ] progress monitoring [#8](../../issues/8)
 - [ ] HAR [#12](../../issues/12)

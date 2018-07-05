@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.1.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.2.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -218,28 +218,27 @@
       if (options.timeout)
         xdr.timeout = options.timeout;
       xdr.open(options.method, qualifyURL(options.url));
-      xdr.send();
+      // prevents premature garbage collection
       processedResponse.instance = xdr;
+      xdr.send();
+      return function () { xdr.abort(); };
     }
 
     function xhrPath() {
-      var xhr = XHR(),
-          cleanExit;
+      var xhr   = XHR(),
+          abort = function () {
+            xhr.onreadystatechange = function () {};
+            xhr.abort();
+          };
 
       // https://support.microsoft.com/en-us/kb/2856746
-      if (self.attachEvent) {
-        cleanExit = function () {
-          xhr.onreadystatechange = function () {};
-          xhr.abort();
-        };
-        self.attachEvent('onunload', cleanExit);
-      }
+      self.attachEvent && self.attachEvent('onunload', abort);
 
       // since the XHR instance won't be reused
       // the handler can be placed before open
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
-          self.detachEvent && self.detachEvent('onunload', cleanExit);
+          self.detachEvent && self.detachEvent('onunload', abort);
           xhr.onreadystatechange = function () {};
 
           try {
@@ -291,6 +290,24 @@
         setRequestHeaders(xhr);
 
       xhr.send(/^(HEAD|GET)$/.test(options.method) ? null : options.body || '');
+      return abort;
+    }
+
+    function fetchPath() {
+      var abort      = !!self.Request && 'signal' in self.Request.prototype,
+          controller = abort && new self.AbortController();
+
+      if (controller)
+        options.signal = controller.signal;
+
+      self.fetch(options.url, options)
+        .then(convertResponse)
+        .then(consumeBody)
+        .then(storeBody)
+        .then(processStatus)
+        .then(cfg.success, cfg.error);
+
+      return function () { controller && controller.abort(); };
     }
 
     function processStatus(instance) {
@@ -597,16 +614,10 @@
       if (options.hooks.before && options.hooks.before() === false)
         return;
       if (typeof self.fetch == 'function')
-        self.fetch(options.url, options)
-          .then(convertResponse)
-          .then(consumeBody)
-          .then(storeBody)
-          .then(processStatus)
-          .then(cfg.success, cfg.error);
-      else if (options.mode === 'cors' && self.document && (self.document.documentMode == 8 || self.document.documentMode == 9))
-        xdrPath();
-      else
-        xhrPath();
+        return fetchPath();
+      if (options.mode === 'cors' && self.document && (self.document.documentMode == 8 || self.document.documentMode == 9))
+        return xdrPath();
+      return xhrPath();
     };
 
     function addVerb(verb) {

@@ -4,6 +4,7 @@
 ### Added
 * jspm shortname
 * before hook
+* cancellation
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported
