@@ -230,6 +230,12 @@ url        | String
 before() => Boolean | Void
 ```
 
+### After Hook
+
+```
+after() => Void
+```
+
 ## Gotchas
 
 #### `delete` reserved keyword

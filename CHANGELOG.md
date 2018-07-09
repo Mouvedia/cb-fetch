@@ -1,14 +1,14 @@
 # Change Log
 
-## [Unreleased][6]
+## [1.3.0][6]
 
 ### Fixed
 * IE10+ support in the context of a web worker
-* XDR Content-Type header is supplied in the absence of a `responseMediaType`
+* XDR Content-Type header is set in a timely manner
 
 ### Added
 * jspm shortname
-* before hook
+* before and after hooks
 * cancellation
 * timeout fallback
 
@@ -58,4 +58,4 @@
 [3]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-beta.2...1.0.0-rc.1
 [4]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.1...1.0.0-rc.2
 [5]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.2...1.0.0?w=true
-[6]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0...HEAD
+[6]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0...1.3.0

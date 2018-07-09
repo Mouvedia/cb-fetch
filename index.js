@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.2.2');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.3.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -209,12 +209,16 @@
       if (cfg.timeout)
         xdr.ontimeout = cfg.timeout;
       if (cfg.error)
-        xdr.onerror = function () { cfg.error(processedResponse); };
+        xdr.onerror = function () {
+          cfg.error(processedResponse);
+          options.hooks.after && options.hooks.after();
+        };
       xdr.onprogress = function () {};
       xdr.onload = function () {
         processedResponse.headers = { 'Content-Type': xdr.contentType };
         processedResponse.body    = getBody(xdr);
         cfg.success(processedResponse);
+        options.hooks.after && options.hooks.after();
       };
       if (options.timeout)
         xdr.timeout = options.timeout;
@@ -260,10 +264,11 @@
           // IE9 error c00c023f on abort
           } catch (e) {
             errorHandler(e);
-            cfg.error && cfg.error({instance: xhr});
+            cfg.error && cfg.error({ instance: xhr });
           }
 
           xhr = null;
+          options.hooks.after && options.hooks.after();
         }
       };
 
@@ -316,14 +321,15 @@
         .then(convertResponse)
         .then(consumeBody)
         .then(storeBody)
-        .then(processStatus)
-        .then(cfg.success, cfg.error);
+        .then(function (instance) {
+          if (instance.ok || instance.status == 304)
+            cfg.success(processedResponse);
+          else if (cfg.error)
+            cfg.error(processedResponse);
+          options.hooks.after && options.hooks.after();
+        });
 
       return function () { controller && controller.abort(); };
-    }
-
-    function processStatus(instance) {
-      return self.Promise[instance.ok || instance.status == 304 ? 'resolve' : 'reject'](processedResponse);
     }
 
     function storeBody(body) {
