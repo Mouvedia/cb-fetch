@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.2.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.2.1');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -47,7 +47,7 @@
       /*@cc_on@if(@_jscript_version<9)
         && subset.test(options.method)
       @else
-        && (document.documentMode >= 9 || subset.test(options.method))
+        && (WorkerGlobalScope || document.documentMode >= 9 || subset.test(options.method))
       @end@*/) {
         if (anon && self.AnonXMLHttpRequest)
           return new self.AnonXMLHttpRequest();
@@ -225,7 +225,7 @@
     }
 
     function xhrPath() {
-      var xhr   = XHR(),
+      var xhr = XHR(),
           timeoutID;
 
       function abort() {
