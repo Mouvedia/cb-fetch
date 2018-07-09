@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased][6]
+
+### Fixed
+* IE10+ support in the context of a web worker
+* XDR Content-Type header is supplied in the absence of a `responseMediaType`
+
 ### Added
 * jspm shortname
 * before hook

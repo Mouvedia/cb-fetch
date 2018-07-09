@@ -7,7 +7,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.2.1');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.2.2');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -108,19 +108,20 @@
       }
     }
 
+    function getHeader(headers, name) {
+      for (var key in headers) {
+        if (key.toLowerCase() === name.toLowerCase() && headers[key])
+          return headers[key];
+      }
+    }
+
     function setRequestHeader(name, value) {
-      var headers = options.headers,
-          key;
+      var headers = options.headers;
 
       if (self.Headers && Object.prototype.toString.call(headers) === '[object Headers]')
         headers.get(name) || headers.set(name, value);
-      else {
-        for (key in headers) {
-          if (key.toLowerCase() === name.toLowerCase() && headers[key])
-            return;
-        }
+      else if (!getHeader(headers, name))
         headers[name] = value;
-      }
     }
 
     function setHeader(headers, name, value) {
@@ -211,8 +212,8 @@
         xdr.onerror = function () { cfg.error(processedResponse); };
       xdr.onprogress = function () {};
       xdr.onload = function () {
-        processedResponse.body    = getBody(xdr);
         processedResponse.headers = { 'Content-Type': xdr.contentType };
+        processedResponse.body    = getBody(xdr);
         cfg.success(processedResponse);
       };
       if (options.timeout)
@@ -472,7 +473,7 @@
 
     function documentMIMEType() {
       var MIMEType = options.responseMediaType ||
-                     processedResponse.headers['content-type'];
+                     getHeader(processedResponse.headers, 'Content-Type');
 
       // https://w3c.github.io/DOM-Parsing/#idl-def-supportedtype
       switch (MIMEType) {
