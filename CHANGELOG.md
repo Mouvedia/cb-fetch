@@ -11,6 +11,7 @@
 * before and after hooks
 * cancellation
 * timeout fallback
+* multipart option
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported

@@ -272,6 +272,9 @@
         }
       };
 
+      if (options.multipart && typeof xhr.multipart == 'boolean')
+        xhr.multipart = true;
+
       // https://bugs.chromium.org/p/chromium/issues/detail?id=128323#c3
       // https://support.microsoft.com/en-us/help/832414/
       xhr.open(options.method, options.url, true);

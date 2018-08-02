@@ -36,8 +36,6 @@ jspm install cb-fetch
 - [x] [normalized response](#normalized-response)
 - [x] WebDAV
 - [ ] caching [#4](../../issues/4)
-- [ ] progress monitoring [#8](../../issues/8)
-- [ ] HAR [#12](../../issues/12)
 
 ## Importation
 
@@ -197,7 +195,6 @@ Property     | Default       | Value(s)
 body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams
 credentials  | 'same‑origin' | 'include', 'omit'⁶, 'same-origin'
 headers      | {}            | Object, Headers³
-hooks        |               | Object
 method       | 'GET'         | String
 mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
@@ -205,9 +202,11 @@ parameters   |               | URLSearchParams, Object, String
 responseMediaType² |         | String
 responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'moz-json', 'ms-stream', 'msxml-document'
 timeout      | 0             | ℕ
-tunneling⁵   | false         | Boolean
 username     | null          | String
 url          | location.href | String, URL
+multipart⁷   | false         | Boolean
+hooks        |               | Object
+tunneling⁵   | false         | Boolean
 XSLPattern⁴  | false         | Boolean
 
 ### Normalized Response
@@ -225,7 +224,8 @@ url        | String
 ³ except Firefox 34–43<br/>
 ⁴ MSXML 3.0 only<br/>
 ⁵ method override<br/>
-⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423</sup>
+⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423<br/>
+⁷ Gecko 1.7b–22</sup>
 
 ## Interceptors
 
