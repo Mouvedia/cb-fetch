@@ -204,6 +204,7 @@ responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer'
 timeout      | 0             | ℕ
 username     | null          | String
 url          | location.href | String, URL
+caching⁸     |               | 'auto', 'enabled', 'disabled'
 multipart⁷   | false         | Boolean
 hooks        |               | Object
 tunneling⁵   | false         | Boolean
@@ -225,7 +226,8 @@ url        | String
 ⁴ MSXML 3.0 only<br/>
 ⁵ method override<br/>
 ⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423<br/>
-⁷ Gecko 1.7b–22</sup>
+⁷ Gecko 1.7b–22<br/>
+⁸ IE 11, Edge</sup>
 
 ## Interceptors
 

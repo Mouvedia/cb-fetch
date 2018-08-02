@@ -12,6 +12,7 @@
 * cancellation
 * timeout fallback
 * multipart option
+* caching option
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported
