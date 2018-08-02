@@ -123,31 +123,25 @@ done(onSuccessCallback);
 
 <pre><code>(?: Options | Options.url)
 => Object ┬─────────────────────○ done
-          ├─● <strike>upload</strike> ───────────○ done
-          │ └─● <strike>download</strike> ───────○ done
-          ├─● <strike>download</strike> ─────────○ done
+          ├─● download ─────────○ done
           │  ┌────────┐
           ├──┤ get    │
           │  │ head   │
           │  │ delete │
           │  └─┬──────┘
           │    ├────────────────○ done
-          │    ├─● <strike>download</strike> ────○ done
+          │    ├─● download ────○ done
           │    └─● query ───────○ done
-          │      └─● <strike>download</strike> ──○ done
+          │      └─● download ──○ done
           │  ┌───────┐
           └──┤ patch │
              │ post  │
              │ put   │
              └─┬─────┘
                ├────────────────○ done
-               ├─● <strike>upload</strike> ──────○ done
-               │ └─● <strike>download</strike> ──○ done
-               ├─● <strike>download</strike> ────○ done
+               ├─● download ────○ done
                └─● send ────────○ done
-                 ├─● <strike>upload</strike> ────○ done
-                 │ └─● <strike>download</strike> ○ done
-                 └─● <strike>download</strike> ──○ done
+                 └─● download ──○ done
 </pre></code>
 
 ### Method Signatures
@@ -168,6 +162,17 @@ done(onSuccessCallback);
 
 ```
 (Options.body) => Object
+```
+
+#### download
+
+```
+({
+   target:           XMLHttpRequest | XDomainRequest,
+   loaded:           Number,
+   total:            Number,
+   lengthComputable: Boolean
+}) => Object
 ```
 
 #### done
@@ -198,7 +203,7 @@ mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
 parameters   |               | URLSearchParams, Object, String
 responseMediaType² |         | String
-responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'ms-stream', 'msxml-document'
+responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'moz-json', 'ms-stream', 'msxml-document'
 timeout      | 0             | ℕ
 tunneling⁵   | false         | Boolean
 username     | null          | String

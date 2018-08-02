@@ -25,7 +25,7 @@
     var request = {},
         options = {},
         processedResponse = {},
-        cfg;
+        cbs;
 
     function errorHandler(error) {
       self.console &&
@@ -47,16 +47,16 @@
       /*@cc_on@if(@_jscript_version<9)
         && subset.test(options.method)
       @else
-        && (WorkerGlobalScope || document.documentMode >= 9 || subset.test(options.method))
+        && (self.WorkerGlobalScope || document.documentMode >= 9 || subset.test(options.method))
       @end@*/) {
         if (anon && self.AnonXMLHttpRequest)
-          return new self.AnonXMLHttpRequest();
-        return new self.XMLHttpRequest(anon);
+          return new AnonXMLHttpRequest();
+        return new XMLHttpRequest(anon);
       }/*@cc_on@if(@_jscript_version>=5)else {
         var progIDs = ['Msxml2.XMLHTTP.6.0', 'Msxml2.XMLHTTP.3.0', 'Microsoft.XMLHTTP'];
 
         for (var i = 0; i < progIDs.length; ++i) {
-          try { return new self.ActiveXObject(progIDs[i]) }
+          try { return new ActiveXObject(progIDs[i]) }
           catch (e) {}
         }
       } @end@*/
@@ -206,18 +206,18 @@
     function xdrPath() {
       var xdr = self.XDomainRequest.create();
 
-      if (cfg.timeout)
-        xdr.ontimeout = cfg.timeout;
-      if (cfg.error)
+      if (cbs.timeout)
+        xdr.ontimeout = cbs.timeout;
+      if (cbs.error)
         xdr.onerror = function () {
-          cfg.error(processedResponse);
+          cbs.error(processedResponse);
           options.hooks.after && options.hooks.after();
         };
       xdr.onprogress = function () {};
       xdr.onload = function () {
         processedResponse.headers = { 'Content-Type': xdr.contentType };
         processedResponse.body    = getBody(xdr);
-        cfg.success(processedResponse);
+        cbs.success(processedResponse);
         options.hooks.after && options.hooks.after();
       };
       if (options.timeout)
@@ -240,14 +240,14 @@
       }
 
       // https://support.microsoft.com/en-us/kb/2856746
-      self.attachEvent && self.attachEvent('onunload', abort);
+      self.attachEvent && attachEvent('onunload', abort);
 
       // since the XHR instance won't be reused
       // the handler can be placed before open
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
           timeoutID && clearTimeout(timeoutID);
-          self.detachEvent && self.detachEvent('onunload', abort);
+          self.detachEvent && detachEvent('onunload', abort);
           xhr.onreadystatechange = function () {};
 
           try {
@@ -257,14 +257,14 @@
                 // applicationCache IDLE
                 // Opera status 304
                 (xhr.status == 0 && getResponse(xhr)))
-              cfg.success(processXHR(xhr));
-            else if (cfg.error)
-              cfg.error(processXHR(xhr));
+              cbs.success(processXHR(xhr));
+            else if (cbs.error)
+              cbs.error(processXHR(xhr));
           // Firefox status 408
           // IE9 error c00c023f on abort
           } catch (e) {
             errorHandler(e);
-            cfg.error && cfg.error({ instance: xhr });
+            cbs.error && cbs.error({ instance: xhr });
           }
 
           xhr = null;
@@ -287,8 +287,8 @@
       if (options.credentials === 'include' && typeof xhr.withCredentials == 'boolean')
         xhr.withCredentials = true;
 
-      if (cfg.timeout && typeof xhr.ontimeout != 'undefined')
-        xhr.ontimeout = cfg.timeout;
+      if (cbs.timeout && typeof xhr.ontimeout != 'undefined')
+        xhr.ontimeout = cbs.timeout;
 
       if (options.responseMediaType && xhr.overrideMimeType)
         xhr.overrideMimeType(options.responseMediaType);
@@ -302,7 +302,7 @@
         else
           timeoutID = setTimeout(function () {
             abort();
-            cfg.timeout && cfg.timeout();
+            cbs.timeout && cbs.timeout();
           }, options.timeout);
       }
 
@@ -323,9 +323,9 @@
         .then(storeBody)
         .then(function (instance) {
           if (instance.ok || instance.status == 304)
-            cfg.success(processedResponse);
-          else if (cfg.error)
-            cfg.error(processedResponse);
+            cbs.success(processedResponse);
+          else if (cbs.error)
+            cbs.error(processedResponse);
           options.hooks.after && options.hooks.after();
         });
 
@@ -435,7 +435,7 @@
       } else if (self.DOMParser) {
         // https://bug98304.bugzilla.mozilla.org/show_bug.cgi?id=102699
         try {
-          doc = (new self.DOMParser()).parseFromString(serializedDocument, MIMEType);
+          doc = (new DOMParser()).parseFromString(serializedDocument, MIMEType);
         } catch (e) {}
         // https://bugs.chromium.org/p/chromium/issues/detail?id=265379
         if (!doc && MIMEType === 'text/html')
@@ -445,7 +445,7 @@
       } else if (self.ActiveXObject) {
         for (i = 0; i < len; ++i) {
           try {
-            doc = new self.ActiveXObject(progIDs[i]);
+            doc = new ActiveXObject(progIDs[i]);
             if (progIDs[i] === 'MSXML2.DOMDocument.3.0')
               doc.setProperty('SelectionLanguage', queryLanguage);
             doc.async = false;
@@ -609,18 +609,11 @@
         options.responseType = 'document';
     }
 
-    request.done = function (onSuccess, onFail) {
-      cfg = typeof onSuccess == 'object' && onSuccess || {
+    request.done = function (onSuccess, onError) {
+      cbs = typeof onSuccess == 'object' && onSuccess || {
         success: onSuccess,
-        error:   onFail
+        error:   onError
       };
-
-      if (typeof cfg.success != 'function')
-        raiseException('A success callback must be provided.');
-      if (typeof cfg.error != 'undefined' && typeof cfg.error != 'function')
-        raiseException('The error callback must be a function.');
-      if (typeof cfg.timeout != 'undefined' && typeof cfg.timeout != 'function')
-        raiseException('The timeout callback must be a function.');
 
       if (options.tunneling && !/^(POST|GET)$/.test(options.method))
         overrideMethod();
