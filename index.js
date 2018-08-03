@@ -208,11 +208,10 @@
 
       if (cbs.timeout)
         xdr.ontimeout = cbs.timeout;
-      if (cbs.error)
-        xdr.onerror = function () {
-          cbs.error(processedResponse);
-          options.hooks.after && options.hooks.after();
-        };
+      xdr.onerror = function () {
+        cbs.error && cbs.error(processedResponse);
+        options.hooks.after && options.hooks.after();
+      };
       xdr.onprogress = function () {};
       xdr.onload = function () {
         processedResponse.headers = { 'Content-Type': xdr.contentType };
@@ -317,11 +316,9 @@
     }
 
     function fetchPath() {
-      var abort      = !!self.Request && 'signal' in self.Request.prototype,
-          controller = abort && new self.AbortController();
+      var ctrl = !!self.Request && 'signal' in Request.prototype && new AbortController();
 
-      if (controller)
-        options.signal = controller.signal;
+      if (ctrl) options.signal = ctrl.signal;
 
       self.fetch(options.url, options)
         .then(convertResponse)
@@ -335,7 +332,7 @@
           options.hooks.after && options.hooks.after();
         });
 
-      return function () { controller && controller.abort(); };
+      return ctrl ? ctrl.abort.bind(ctrl) : new Function;
     }
 
     function storeBody(body) {

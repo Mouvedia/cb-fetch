@@ -18,7 +18,7 @@
 * `'msxml-document'` responseType falls back to `'document'` if not supported
 * `'omit'` credentials mode support for older versions of Firefox and Opera
 * `Request` instances' properties are _partially_ covered
-* advanced settings are now part of the options
+* advanced settings were folded into the options
 
 ### Removed
 * `mozSystem` flag support
