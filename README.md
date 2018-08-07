@@ -90,10 +90,7 @@ request()
 request()
   .get('http://www.example.com')
   .query('key1=value1&key2=value2')
-  .done({
-    success: onSuccessCallback,
-    error:   onErrorCallback
-  });
+  .done(onSuccessCallback, onErrorCallback);
 
 // passing an object offers additional options
 let { done } = request({
@@ -106,7 +103,11 @@ let { done } = request({
 });
 
 // performs the actual request
-let abort = done(onSuccessCallback);
+let abort = done({
+    success: onSuccessCallback,
+    error:   onErrorCallback,
+    abort:   onAbortCallback
+});
 
 // immediately aborts it
 abort();
@@ -166,7 +167,8 @@ done(onSuccessCallback);
 
 ```
 ({
-   target:           XMLHttpRequest | XDomainRequest,
+   chunk:            String | ArrayBuffer | Blob | Uint8Array,
+   aggregate:        String | ArrayBuffer | Blob | Uint8Array,
    loaded:           Number,
    total:            Number,
    lengthComputable: Boolean
@@ -183,7 +185,7 @@ done(onSuccessCallback);
     error?:    Function,
     timeout?:  Function
   })
-} => abort:  Function,
+} => Function | Void,
      throws: TypeError
 ```
 
@@ -200,7 +202,7 @@ mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
 parameters   |               | URLSearchParams, Object, String
 responseMediaType² |         | String
-responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'moz-json', 'ms-stream', 'msxml-document'
+responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'moz-json', 'msxml-document'
 timeout      | 0             | ℕ
 username     | null          | String
 url          | location.href | String, URL

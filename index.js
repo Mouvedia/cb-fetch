@@ -25,6 +25,7 @@
     var request = {},
         options = {},
         processedResponse = {},
+        HAS_SIGNAL = !!self.Request && 'signal' in Request.prototype,
         cbs;
 
     function errorHandler(error) {
@@ -225,17 +226,25 @@
       // prevents premature garbage collection
       processedResponse.instance = xdr;
       xdr.send();
-      return function () { xdr.abort(); };
+      return function () {
+        xdr.abort();
+        cbs.abort && cbs.abort();
+      };
     }
 
     function xhrPath() {
-      var xhr = XHR(),
+      var xhr         = XHR(),
+          HAS_ONABORT = typeof xhr.onabort != 'undefined',
           timeoutID;
 
-      function abort() {
+      function abort(e) {
         timeoutID && clearTimeout(timeoutID);
         xhr.onreadystatechange = function () {};
         xhr.abort();
+        if (e && e.type === 'timeout')
+          cbs.timeout && cbs.timeout();
+        else if (!HAS_ONABORT)
+          cbs.abort && cbs.abort();
       }
 
       // https://support.microsoft.com/en-us/kb/2856746
@@ -270,6 +279,9 @@
           options.hooks.after && options.hooks.after();
         }
       };
+
+      if (cbs.abort && HAS_ONABORT)
+        xhr.onabort = cbs.abort;
 
       if (options.multipart && typeof xhr.multipart == 'boolean')
         xhr.multipart = true;
@@ -306,8 +318,7 @@
           xhr.timeout = options.timeout;
         else
           timeoutID = setTimeout(function () {
-            abort();
-            cbs.timeout && cbs.timeout();
+            abort({ type: 'timeout' });
           }, options.timeout);
       }
 
@@ -316,9 +327,12 @@
     }
 
     function fetchPath() {
-      var ctrl = !!self.Request && 'signal' in Request.prototype && new AbortController();
+      var ctrl = HAS_SIGNAL && new AbortController();
 
-      if (ctrl) options.signal = ctrl.signal;
+      if (ctrl) {
+        cbs.abort && ctrl.signal.addEventListener('abort', cbs.abort);
+        options.signal = ctrl.signal;
+      }
 
       self.fetch(options.url, options)
         .then(convertResponse)
@@ -332,7 +346,11 @@
           options.hooks.after && options.hooks.after();
         });
 
-      return ctrl ? ctrl.abort.bind(ctrl) : new Function;
+      if (ctrl)
+        return ctrl.abort.bind(ctrl);
+      return function () {
+        raiseException('An abort callback must be provided.');
+      }
     }
 
     function storeBody(body) {
@@ -627,7 +645,7 @@
 
       if (options.hooks.before && options.hooks.before() === false)
         return;
-      if (typeof self.fetch == 'function')
+      if (typeof self.fetch == 'function' && (HAS_SIGNAL || !cbs.abort))
         return fetchPath();
       if (options.mode === 'cors' && self.document && (self.document.documentMode == 8 || self.document.documentMode == 9))
         return xdrPath();
