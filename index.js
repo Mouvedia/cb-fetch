@@ -26,6 +26,7 @@
         options = {},
         processedResponse = {},
         HAS_SIGNAL = !!self.Request && 'signal' in Request.prototype,
+        SUPPORT_MSXML_DOCUMENT = 'ActiveXObject' in self && self.navigator.msPointerEnabled,
         cbs;
 
     function errorHandler(error) {
@@ -614,8 +615,6 @@
     }
 
     function setOptions() {
-      var MSXML = 'ActiveXObject' in self && self.navigator.msPointerEnabled;
-
       // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
       options.url         = options.url || self.location.href;
       options.method      = getMethod();
@@ -626,7 +625,7 @@
       options.password    = options.password || null;
       options.hooks       = options.hooks || {};
 
-      if (options.responseType === 'msxml-document' && !MSXML)
+      if (options.responseType === 'msxml-document' && !SUPPORT_MSXML_DOCUMENT)
         options.responseType = 'document';
     }
 
@@ -645,6 +644,8 @@
 
       if (options.hooks.before && options.hooks.before() === false)
         return;
+      if (/^(moz|ms)/.test(options.responseType))
+        return xhrPath();
       if (typeof self.fetch == 'function' && (HAS_SIGNAL || !cbs.abort))
         return fetchPath();
       if (options.mode === 'cors' && self.document && (self.document.documentMode == 8 || self.document.documentMode == 9))

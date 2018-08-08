@@ -121,26 +121,21 @@ done(onSuccessCallback);
 ### Map
 
 <pre><code>(?: Options | Options.url)
-=> Object ┬─────────────────────○ done
-          ├─● download ─────────○ done
+=> Object ┬─────────────────○ done
           │  ┌────────┐
           ├──┤ get    │
           │  │ head   │
           │  │ delete │
           │  └─┬──────┘
-          │    ├────────────────○ done
-          │    ├─● download ────○ done
-          │    └─● query ───────○ done
-          │      └─● download ──○ done
+          │    ├────────────○ done
+          │    └──● query ──○ done
           │  ┌───────┐
           └──┤ patch │
              │ post  │
              │ put   │
              └─┬─────┘
-               ├────────────────○ done
-               ├─● download ────○ done
-               └─● send ────────○ done
-                 └─● download ──○ done
+               ├────────────○ done
+               └──● send ───○ done
 </pre></code>
 
 ### Method Signatures
@@ -163,18 +158,6 @@ done(onSuccessCallback);
 (Options.body) => Object
 ```
 
-#### download
-
-```
-({
-   chunk:            String | ArrayBuffer | Blob | Uint8Array,
-   aggregate:        String | ArrayBuffer | Blob | Uint8Array,
-   loaded:           Number,
-   total:            Number,
-   lengthComputable: Boolean
-}) => Object
-```
-
 #### done
 
 ```
@@ -183,7 +166,9 @@ done(onSuccessCallback);
   ({
     success:   Function,
     error?:    Function,
-    timeout?:  Function
+    timeout?:  Function,
+    abort?:    Function,
+    download?: Function
   })
 } => Function | Void,
      throws: TypeError
@@ -211,6 +196,15 @@ multipart⁷   | false         | Boolean
 hooks        |               | Object
 tunneling⁵   | false         | Boolean
 XSLPattern⁴  | false         | Boolean
+
+### Progress Event
+Property         | Type
+--------         | ----
+chunk            | String, ArrayBuffer, Blob, Uint8Array
+aggregate        | String, ArrayBuffer, Blob, Uint8Array
+loaded           | Number
+total            | Number
+lengthComputable | Boolean
 
 ### Normalized Response
 Property   | Type

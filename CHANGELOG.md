@@ -20,6 +20,7 @@
 * `'omit'` credentials mode support for older versions of Firefox and Opera
 * `Request` instances' properties are _partially_ covered
 * advanced settings were folded into the options
+* restrict the non-standard response types to XHR
 
 ### Removed
 * `mozSystem` flag support
