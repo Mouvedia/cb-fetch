@@ -22,11 +22,12 @@
   }
 })(), function () {
   return function (input) {
-    var request = {},
-        options = {},
+    var request           = {},
+        options           = {},
         processedResponse = {},
-        HAS_SIGNAL = !!self.Request && 'signal' in Request.prototype,
+        HAS_SIGNAL             = self.Request && 'signal' in Request.prototype,
         SUPPORT_MSXML_DOCUMENT = 'ActiveXObject' in self && self.navigator.msPointerEnabled,
+        SUPPORT_MOZ_JSON       = self.document && 'mozFullScreen' in self.document && !IDBIndex.prototype.count,
         cbs;
 
     function errorHandler(error) {
@@ -627,6 +628,8 @@
 
       if (options.responseType === 'msxml-document' && !SUPPORT_MSXML_DOCUMENT)
         options.responseType = 'document';
+      else if (options.responseType === 'json' && SUPPORT_MOZ_JSON)
+        options.responseType = 'moz-json';
     }
 
     request.done = function (onSuccess, onError) {

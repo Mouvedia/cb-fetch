@@ -187,7 +187,7 @@ mode         | 'same‑origin' | 'cors', 'no-cors'¹, 'same-origin'
 password     | null          | String
 parameters   |               | URLSearchParams, Object, String
 responseMediaType² |         | String
-responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'moz-json', 'msxml-document'
+responseType |               | 'text', 'json', 'blob', 'document', 'arraybuffer', 'formdata'¹, 'moz-blob', 'moz-chunked-arraybuffer', 'moz-chunked-text', 'msxml-document'
 timeout      | 0             | ℕ
 username     | null          | String
 url          | location.href | String, URL
