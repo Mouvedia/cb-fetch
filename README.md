@@ -164,7 +164,7 @@ done(onSuccessCallback);
 {
   (onSuccess: Function, onError?: Function),
   ({
-    success:   Function,
+    success?:   Function,
     error?:    Function,
     timeout?:  Function,
     abort?:    Function,

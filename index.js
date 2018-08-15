@@ -212,14 +212,16 @@
       if (cbs.timeout)
         xdr.ontimeout = cbs.timeout;
       xdr.onerror = function () {
-        cbs.error && cbs.error(processedResponse);
+        cbs.error && cbs.error({ instance: xdr });
         options.hooks.after && options.hooks.after();
       };
       xdr.onprogress = function () {};
       xdr.onload = function () {
-        processedResponse.headers = { 'Content-Type': xdr.contentType };
-        processedResponse.body    = getBody(xdr);
-        cbs.success(processedResponse);
+        if (cbs.success) {
+          processedResponse.headers = { 'Content-Type': xdr.contentType };
+          processedResponse.body    = getBody(xdr);
+          cbs.success(processedResponse);
+        }
         options.hooks.after && options.hooks.after();
       };
       if (options.timeout)
@@ -267,7 +269,7 @@
                 // applicationCache IDLE
                 // Opera status 304
                 (xhr.status == 0 && getResponse(xhr)))
-              cbs.success(processXHR(xhr));
+              cbs.success && cbs.success(processXHR(xhr));
             else if (cbs.error)
               cbs.error(processXHR(xhr));
           // Firefox status 408
@@ -342,7 +344,7 @@
         .then(storeBody)
         .then(function (instance) {
           if (instance.ok || instance.status == 304)
-            cbs.success(processedResponse);
+            cbs.success && cbs.success(processedResponse);
           else if (cbs.error)
             cbs.error(processedResponse);
           options.hooks.after && options.hooks.after();
@@ -592,7 +594,8 @@
           options.username = url.username;
           options.password = url.password;
         }
-        options.url = url.href;
+        // https://bugs.webkit.org/show_bug.cgi?id=162345
+        options.url = /\?$/.test(url.href) ? url.href.slice(0, -1) : url.href;
       }
     }
 
