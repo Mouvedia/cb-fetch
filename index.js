@@ -181,7 +181,6 @@
       if (typeof xhr.responseType == 'string') {
         switch (xhr.responseType) {
           case 'text':
-          case 'moz-chunked-text':
           case '':
             return xhr.responseText;
           case 'document':
@@ -365,11 +364,9 @@
     function consumeBody(response) {
       switch (options.responseType) {
         case 'text':
-        case 'moz-chunked-text':
         case '':
           return response.text();
         case 'document':
-        case 'msxml-document':
           return response.text().then(function (str) {
             return createDocument(str);
           });
@@ -380,10 +377,8 @@
             return response.body || null;
           });
         case 'arraybuffer':
-        case 'moz-chunked-arraybuffer':
           return response.arrayBuffer();
         case 'blob':
-        case 'moz-blob':
           // PhantomJS didn't support blobs until version 2.0
           if (self.Response.prototype.blob) return response.blob();
           break;
