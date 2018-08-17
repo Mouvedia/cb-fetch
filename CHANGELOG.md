@@ -22,6 +22,7 @@
 * advanced settings were folded into the options
 * restrict the non-standard response types to XHR
 * success callback is optional
+* if AMD is the chosen format, `String.isString`'s module ID must be `'@string/isstring'`
 
 ### Removed
 * `mozSystem` flag support

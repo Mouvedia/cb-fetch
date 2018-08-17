@@ -1,7 +1,8 @@
 ;(function (root, factory) {
   if (typeof define == 'function' && define.amd)
-    define([], factory);
+    define(['@string/isstring'], factory);
   else if (typeof exports == 'object' && !!exports && !exports.nodeType) {
+    require('@string/isstring');
     if (typeof module == 'object' && !!module && module.exports)
       module.exports = factory();
     else
@@ -218,7 +219,7 @@
       xdr.onload = function () {
         if (cbs.success) {
           processedResponse.headers = { 'Content-Type': xdr.contentType };
-          processedResponse.body    = getBody(xdr);
+          processedResponse.body = getBody(xdr);
           cbs.success(processedResponse);
         }
         options.hooks.after && options.hooks.after();

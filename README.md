@@ -64,7 +64,9 @@ jspm install cb-fetch
 <details>
   <summary><abbr title="Yahoo! User Interface">YUI</abbr></summary>
   <pre><code>
-  YUI().use('cb-fetch', function (Y) {
+  YUI({
+    modules: { 'is-string': 'path/to/@string/isstring.js' }
+  }).use('is-string', 'cb-fetch', function (Y) {
     var request = Y['default'];
   });
   </code></pre>
@@ -164,7 +166,7 @@ done(onSuccessCallback);
 {
   (onSuccess: Function, onError?: Function),
   ({
-    success?:   Function,
+    success?:  Function,
     error?:    Function,
     timeout?:  Function,
     abort?:    Function,
