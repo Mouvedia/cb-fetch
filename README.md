@@ -26,6 +26,10 @@ npm install --save cb-fetch
 ```sh
 jspm install cb-fetch
 ```
+#### jsDelivr
+```xml
+<script src="//cdn.jsdelivr.net/combine/npm/@string/isstring/isString.min.js,npm/cb-fetch/index.min.js" type="text/javascript"></script>
+```
 
 ## Features
 - [x] fetch
@@ -35,7 +39,7 @@ jspm install cb-fetch
 - [x] [fluent API](#map)
 - [x] [normalized response](#normalized-response)
 - [x] WebDAV
-- [ ] caching [#4](../../issues/4)
+- [ ] caching [#4](https://github.com/Mouvedia/cb-fetch/issues/4)
 
 ## Importation
 

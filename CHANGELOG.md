@@ -13,7 +13,6 @@
 * timeout fallback
 * multipart option
 * caching option
-* abort callback
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported
@@ -27,24 +26,26 @@
 ### Removed
 * `mozSystem` flag support
 
-## [1.0.0][5]
+## [1.0.0][5] - 2018-05-10
+
+### Final Release
 * normalized handling of credentials
 * handle obsolete line folding during parsing of HTTP header field values
 * support line feed as a line terminator
 * all exceptions thrown while extracting exposed headers are now swallowed
 * work around XDR same scheme restriction
 
-## [1.0.0-rc.2][4]
+### Release Candidate 2
 * consistent handling of invalid JSON
 * options and the processed response are now properly reset during the init phase
 
-## [1.0.0-rc.1][3]
+### Release Candidate 1
 * WebDAV optimizations
 * verb tunneling using custom HTTP header fields
 * proper handling of XML parsing errors
 * the `headers` property is now automatically populated with the exposed headers listed in the Access-Control-Expose-Headers HTTP response header
 
-## [1.0.0-beta.2][2]
+### Beta 2
 * XDR
 * timeout callback
 * automatic document parsing
@@ -60,8 +61,5 @@
 * polymorphic done method
 
 [1]: https://github.com/Mouvedia/cb-fetch/compare/b15a26f...d5c09ea
-[2]: https://github.com/Mouvedia/cb-fetch/compare/d5c09ea...1.0.0-beta.2
-[3]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-beta.2...1.0.0-rc.1
-[4]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.1...1.0.0-rc.2
-[5]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0-rc.2...1.0.0?w=true
+[5]: https://github.com/Mouvedia/cb-fetch/compare/d5c09ea...1.0.0?w=true
 [6]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0...HEAD
