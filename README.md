@@ -1,5 +1,9 @@
+![min+gzip size](https://badgen.net/bundlephobia/minzip/cb-fetch)
+![min size](https://badgen.net/bundlephobia/min/cb-fetch)
+![publish size](https://badgen.net/packagephobia/publish/cb-fetch)
+![install size](https://badgen.net/packagephobia/install/cb-fetch)
 <a href="http://www.npmjs.com/package/cb-fetch">
-  <img alt="npm version" align="right" height="18" src="https://badge.fury.io/js/cb-fetch.svg" />
+  <img alt="npm version" align="right" src="https://badge.fury.io/js/cb-fetch.svg" />
 </a>
 
 # cb-fetch
