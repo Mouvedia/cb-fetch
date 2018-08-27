@@ -8,7 +8,7 @@
 
 ### Added
 * jspm shortname
-* before and after hooks
+* hooks
 * cancellation
 * timeout fallback
 * multipart option
@@ -17,7 +17,6 @@
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported
 * `'omit'` credentials mode support for older versions of Firefox and Opera
-* `Request` instances' properties are _partially_ covered
 * advanced settings were folded into the options
 * restrict the non-standard response types to XHR
 * success callback is optional
@@ -25,6 +24,7 @@
 
 ### Removed
 * `mozSystem` flag support
+* undocumented signal option
 
 ## [1.0.0][5] - 2018-05-10
 

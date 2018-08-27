@@ -17,7 +17,6 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
   - [Examples](#examples)
   - [API](#api)
   - [Properties](#properties)
-  - [Interceptors](#interceptors)
   - [Gotchas](#gotchas)
   - [License](#license)
 
@@ -132,20 +131,25 @@ done(onSuccessCallback);
 
 <pre><code>(?: Options | Options.url)
 => Object ┬─────────────────○ done
+          ├──────● hooks ───○ done
           │  ┌────────┐
           ├──┤ get    │
           │  │ head   │
           │  │ delete │
           │  └─┬──────┘
           │    ├────────────○ done
-          │    └──● query ──○ done
+          │    ├─● hooks ───○ done
+          │    └─● query ───○ done
+          │      └─● hooks ─○ done
           │  ┌───────┐
           └──┤ patch │
              │ post  │
              │ put   │
              └─┬─────┘
                ├────────────○ done
-               └──● send ───○ done
+               ├─● hooks ───○ done
+               └─● send ────○ done
+                 └─● hooks ─○ done
 </pre></code>
 
 ### Method Signatures
@@ -168,6 +172,16 @@ done(onSuccessCallback);
 (Options.body) => Object
 ```
 
+#### hooks
+
+```
+({
+  before()    => Boolean | Void,
+  download(e) => Void,
+  after()     => Void
+}) => Object
+```
+
 #### done
 
 ```
@@ -177,8 +191,7 @@ done(onSuccessCallback);
     success?:  Function,
     error?:    Function,
     timeout?:  Function,
-    abort?:    Function,
-    download?: Function
+    abort?:    Function
   })
 } => Function | Void,
      throws: TypeError
@@ -203,7 +216,6 @@ username     | null          | String
 url          | location.href | String, URL
 caching⁸     |               | 'auto', 'enabled', 'disabled'
 multipart⁷   | false         | Boolean
-hooks        |               | Object
 tunneling⁵   | false         | Boolean
 XSLPattern⁴  | false         | Boolean
 
@@ -234,20 +246,6 @@ url        | String
 ⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423<br/>
 ⁷ Gecko 1.7b–22<br/>
 ⁸ IE 11, Edge</sup>
-
-## Interceptors
-
-### Before Hook
-
-```
-before() => Boolean | Void
-```
-
-### After Hook
-
-```
-after() => Void
-```
 
 ## Gotchas
 

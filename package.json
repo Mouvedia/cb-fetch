@@ -8,7 +8,7 @@
     "XHR",
     "XMLHttpRequest",
     "XDR",
-    "Cross-Domain Request",
+    "XDomainRequest",
     "cross-browser",
     "callback",
     "AJAX",
