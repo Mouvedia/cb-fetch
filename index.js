@@ -26,6 +26,7 @@
     var request           = {},
         options           = {},
         processedResponse = {},
+        hooks             = {},
         HAS_SIGNAL             = self.Request && 'signal' in Request.prototype,
         SUPPORT_MSXML_DOCUMENT = 'ActiveXObject' in self && self.navigator.msPointerEnabled,
         SUPPORT_MOZ_JSON       = self.document && 'mozFullScreen' in self.document && !IDBIndex.prototype.count,
@@ -213,7 +214,7 @@
         xdr.ontimeout = cbs.timeout;
       xdr.onerror = function () {
         cbs.error && cbs.error({ instance: xdr });
-        options.hooks.after && options.hooks.after();
+        hooks.after && hooks.after();
       };
       xdr.onprogress = function () {};
       xdr.onload = function () {
@@ -222,7 +223,7 @@
           processedResponse.body = getBody(xdr);
           cbs.success(processedResponse);
         }
-        options.hooks.after && options.hooks.after();
+        hooks.after && hooks.after();
       };
       if (options.timeout)
         xdr.timeout = options.timeout;
@@ -280,7 +281,7 @@
           }
 
           xhr = null;
-          options.hooks.after && options.hooks.after();
+          hooks.after && hooks.after();
         }
       };
 
@@ -347,7 +348,7 @@
             cbs.success && cbs.success(processedResponse);
           else if (cbs.error)
             cbs.error(processedResponse);
-          options.hooks.after && options.hooks.after();
+          hooks.after && hooks.after();
         });
 
       if (ctrl)
@@ -623,7 +624,6 @@
       options.headers     = options.headers || {};
       options.username    = options.username || null;
       options.password    = options.password || null;
-      options.hooks       = options.hooks || {};
 
       if (options.responseType === 'msxml-document' && !SUPPORT_MSXML_DOCUMENT)
         options.responseType = 'document';
@@ -644,7 +644,7 @@
       if (options.username)
         setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
 
-      if (options.hooks.before && options.hooks.before() === false)
+      if (hooks.before && hooks.before() === false)
         return;
       if (/^(moz|ms)/.test(options.responseType))
         return xhrPath();
@@ -653,6 +653,13 @@
       if (options.mode === 'cors' && self.document && (self.document.documentMode == 8 || self.document.documentMode == 9))
         return xdrPath();
       return xhrPath();
+    };
+
+    request.hooks = function (callbacks) {
+      hooks.before = callbacks.before;
+      hooks.after = callbacks.after;
+
+      return { done: request.done };
     };
 
     function addVerb(verb) {
@@ -667,9 +674,13 @@
 
         context[action] = function (data) {
           options[payload] = data || options[payload];
-          return { done: request.done };
+          return {
+            done: request.done,
+            hooks: request.hooks
+          };
         };
         context.done = request.done;
+        context.hooks = request.hooks;
 
         return context;
       };

@@ -186,7 +186,7 @@ done(onSuccessCallback);
 
 ```
 {
-  (onSuccess: Function, onError?: Function),
+  (onSuccess?: Function, onError?: Function),
   ({
     success?:  Function,
     error?:    Function,
