@@ -210,11 +210,13 @@
     function xdrPath() {
       var xdr = self.XDomainRequest.create();
 
-      if (cbs.timeout)
-        xdr.ontimeout = cbs.timeout;
+      xdr.ontimeout = function () {
+        cbs.timeout && cbs.timeout();
+        hooks.loadend && hooks.loadend();
+      };
       xdr.onerror = function () {
         cbs.error && cbs.error({ instance: xdr });
-        hooks.after && hooks.after();
+        hooks.loadend && hooks.loadend();
       };
       xdr.onprogress = function () {};
       xdr.onload = function () {
@@ -223,7 +225,7 @@
           processedResponse.body = getBody(xdr);
           cbs.success(processedResponse);
         }
-        hooks.after && hooks.after();
+        hooks.loadend && hooks.loadend();
       };
       if (options.timeout)
         xdr.timeout = options.timeout;
@@ -234,6 +236,7 @@
       return function () {
         xdr.abort();
         cbs.abort && cbs.abort();
+        hooks.loadend && hooks.loadend();
       };
     }
 
@@ -250,6 +253,7 @@
           cbs.timeout && cbs.timeout();
         else if (!HAS_ONABORT)
           cbs.abort && cbs.abort();
+        !HAS_ONABORT && hooks.loadend && hooks.loadend();
       }
 
       // https://support.microsoft.com/en-us/kb/2856746
@@ -281,12 +285,15 @@
           }
 
           xhr = null;
-          hooks.after && hooks.after();
+          hooks.loadend && hooks.loadend();
         }
       };
 
-      if (cbs.abort && HAS_ONABORT)
-        xhr.onabort = cbs.abort;
+      if (HAS_ONABORT)
+        xhr.onabort = function () {
+          cbs.abort && cbs.abort();
+          hooks.loadend && hooks.loadend();
+        };
 
       if (options.multipart && typeof xhr.multipart == 'boolean')
         xhr.multipart = true;
@@ -309,8 +316,11 @@
       if (options.credentials === 'include' && typeof xhr.withCredentials == 'boolean')
         xhr.withCredentials = true;
 
-      if (cbs.timeout && typeof xhr.ontimeout != 'undefined')
-        xhr.ontimeout = cbs.timeout;
+      if (typeof xhr.ontimeout != 'undefined')
+        xhr.ontimeout = function () {
+          cbs.timeout && cbs.timeout();
+          hooks.loadend && hooks.loadend();
+        };
 
       if (options.responseMediaType && xhr.overrideMimeType)
         xhr.overrideMimeType(options.responseMediaType);
@@ -348,7 +358,7 @@
             cbs.success && cbs.success(processedResponse);
           else if (cbs.error)
             cbs.error(processedResponse);
-          hooks.after && hooks.after();
+          hooks.loadend && hooks.loadend();
         });
 
       if (ctrl)
@@ -644,7 +654,7 @@
       if (options.username)
         setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
 
-      if (hooks.before && hooks.before() === false)
+      if (hooks.loadstart && hooks.loadstart() === false)
         return;
       if (/^(moz|ms)/.test(options.responseType))
         return xhrPath();
@@ -656,8 +666,8 @@
     };
 
     request.hooks = function (callbacks) {
-      hooks.before = callbacks.before;
-      hooks.after = callbacks.after;
+      hooks.loadstart = callbacks.loadstart;
+      hooks.loadend = callbacks.loadend;
 
       return { done: request.done };
     };

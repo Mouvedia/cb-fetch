@@ -176,9 +176,10 @@ done(onSuccessCallback);
 
 ```
 ({
-  before()    => Boolean | Void,
+  loadstart() => Boolean | Void,
   download(e) => Void,
-  after()     => Void
+  upload(e)   => Void,
+  loadend()   => Void
 }) => Object
 ```
 
