@@ -41,8 +41,8 @@ jspm install cb-fetch
 - [x] [Universal Module Definition](#importation)
 - [x] [fluent API](#map)
 - [x] [normalized response](#normalized-response)
+- [x] [interceptors](#hook)
 - [x] WebDAV
-- [ ] caching [#4](https://github.com/Mouvedia/cb-fetch/issues/4)
 
 ## Importation
 
@@ -131,26 +131,26 @@ done(onSuccessCallback);
 
 <pre><code>(?: Options | Options.url)
 => Object ┬─────────────────○ done
-          ├──────● hooks ───○ done
+          ├──────● hookⁿ ───○ done
           │  ┌────────┐
           ├──┤ get    │
           │  │ head   │
           │  │ delete │
           │  └─┬──────┘
           │    ├────────────○ done
-          │    ├─● hooks ───○ done
+          │    ├─● hookⁿ ───○ done
           │    └─● query ───○ done
-          │      └─● hooks ─○ done
+          │      └─● hookⁿ ─○ done
           │  ┌───────┐
           └──┤ patch │
              │ post  │
              │ put   │
              └─┬─────┘
                ├────────────○ done
-               ├─● hooks ───○ done
+               ├─● hookⁿ ───○ done
                └─● send ────○ done
-                 └─● hooks ─○ done
-</pre></code>
+                 └─● hookⁿ ─○ done
+</code></pre>
 
 ### Method Signatures
 
@@ -172,16 +172,19 @@ done(onSuccessCallback);
 (Options.body) => Object
 ```
 
-#### hooks
+#### hook
 
-```
-({
-  loadstart() => Boolean | Void,
-  download(e) => Void,
-  upload(e)   => Void,
-  loadend()   => Void
-}) => Object
-```
+<pre><code>{
+  (
+    name: 'loadstart' | 'loadend',
+    handler: Function
+  ),
+  (
+    name: 'download' | <del>'upload'</del>,
+    handler: (event: Object) => Boolean | Void
+  )
+} => Object
+</code></pre>
 
 #### done
 
@@ -229,7 +232,7 @@ loaded           | Number
 total            | Number
 lengthComputable | Boolean
 
-### Normalized Response
+### Response
 Property   | Type
 --------   | ----
 body       | Object, String, Document, BufferSource, Blob, FormData¹, ReadableStream¹, null

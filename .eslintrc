@@ -40,6 +40,7 @@
     "no-native-reassign": [2, {"exceptions": ["JSON", "isNaN"]}],
     "no-redeclare": 2,
     "no-invalid-regexp": 2,
+    "no-sparse-arrays": 2,
     "yoda": 2,
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "no-spaced-func": 2,
@@ -50,6 +51,7 @@
     "no-empty": [2, { "allowEmptyCatch": true }],
     "for-direction": 2,
     "quote-props": [2, "consistent"],
+    "no-console": [2, { "allow": ["info", "warn", "error", "exception"] }],
 
     ////////// Warnings //////////
 
@@ -76,6 +78,7 @@
     "operator-assignment": [1, "always"],
     "no-trailing-spaces": [1, { "skipBlankLines": true }],
     "max-params": [1, 4],
+    "func-names": [1, "never"],  // https://kangax.github.io/nfe/
     "quotes": [1, "single", { "avoidEscape": true }]
   }
 

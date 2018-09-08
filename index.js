@@ -665,16 +665,18 @@
       return xhrPath();
     };
 
-    request.hooks = function (callbacks) {
-      hooks.loadstart = callbacks.loadstart;
-      hooks.loadend = callbacks.loadend;
+    request.hook = function (name, handler) {
+      hooks[name] = handler;
 
-      return { done: request.done };
+      return {
+        hook: request.hook,
+        done: request.done
+      };
     };
 
     function addVerb(verb) {
       request[verb] = function (url) {
-        var supportBody = /^(patch|post|put)$/.test(verb),
+        var supportBody = !/^(get|head|delete)$/.test(verb),
             action      = supportBody ? 'send' : 'query',
             payload     = supportBody ? 'body' : 'parameters',
             context     = {};
@@ -686,11 +688,11 @@
           options[payload] = data || options[payload];
           return {
             done: request.done,
-            hooks: request.hooks
+            hook: request.hook
           };
         };
         context.done = request.done;
-        context.hooks = request.hooks;
+        context.hook = request.hook;
 
         return context;
       };
