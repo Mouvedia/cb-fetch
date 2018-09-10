@@ -260,7 +260,9 @@
             cbs.abort && cbs.abort();
           xhr.onreadystatechange = function () {};
           xhr.abort();
-          !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
+          // https://bugs.webkit.org/show_bug.cgi?id=40952
+          if (!HAS_ONLOADEND && !HAS_ONABORT)
+            hooks.loadend && hooks.loadend();
         }
       }
 
@@ -327,12 +329,6 @@
       if (options.credentials === 'include' && typeof xhr.withCredentials == 'boolean')
         xhr.withCredentials = true;
 
-      if (typeof xhr.ontimeout != 'undefined')
-        xhr.ontimeout = function () {
-          cbs.timeout && cbs.timeout();
-          !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
-        };
-
       if (options.responseMediaType && xhr.overrideMimeType)
         xhr.overrideMimeType(options.responseMediaType);
 
@@ -340,9 +336,13 @@
         setRequestHeaders(xhr);
 
       if (options.timeout) {
-        if (typeof xhr.timeout == 'number')
+        if (typeof xhr.timeout == 'number') {
           xhr.timeout = options.timeout;
-        else
+          xhr.ontimeout = function () {
+            cbs.timeout && cbs.timeout();
+            !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
+          };
+        } else
           timeoutID = setTimeout(function () {
             abort({ type: 'timeout' });
           }, options.timeout);

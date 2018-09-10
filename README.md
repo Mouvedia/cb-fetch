@@ -228,8 +228,8 @@ Property         | Type
 --------         | ----
 chunk            | String, ArrayBuffer, Blob, Uint8Array
 aggregate        | String, ArrayBuffer, Blob, Uint8Array
-loaded           | Number
-total            | Number
+loaded           | ℕ
+total            | ℕ
 lengthComputable | Boolean
 
 ### Response
