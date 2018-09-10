@@ -246,19 +246,22 @@
     }
 
     function xhrPath() {
-      var xhr         = XHR(),
-          HAS_ONABORT = typeof xhr.onabort != 'undefined',
+      var xhr           = XHR(),
+          HAS_ONABORT   = typeof xhr.onabort != 'undefined',
+          HAS_ONLOADEND = typeof xhr.onloadend != 'undefined',
           timeoutID;
 
       function abort(e) {
         timeoutID && clearTimeout(timeoutID);
-        xhr.onreadystatechange = function () {};
-        xhr.abort();
-        if (e && e.type === 'timeout')
-          cbs.timeout && cbs.timeout();
-        else if (!HAS_ONABORT)
-          cbs.abort && cbs.abort();
-        !HAS_ONABORT && hooks.loadend && hooks.loadend();
+        if (xhr) {
+          if (e && e.type === 'timeout')
+            cbs.timeout && cbs.timeout();
+          else if (!HAS_ONABORT)
+            cbs.abort && cbs.abort();
+          xhr.onreadystatechange = function () {};
+          xhr.abort();
+          !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
+        }
       }
 
       // https://support.microsoft.com/en-us/kb/2856746
@@ -290,15 +293,18 @@
           }
 
           xhr = null;
-          hooks.loadend && hooks.loadend();
+          !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
         }
       };
 
       if (HAS_ONABORT)
         xhr.onabort = function () {
           cbs.abort && cbs.abort();
-          hooks.loadend && hooks.loadend();
+          !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
         };
+
+      if (hooks.loadend && HAS_ONLOADEND)
+        xhr.onloadend = hooks.loadend;
 
       if (options.multipart && typeof xhr.multipart == 'boolean')
         xhr.multipart = true;
@@ -324,7 +330,7 @@
       if (typeof xhr.ontimeout != 'undefined')
         xhr.ontimeout = function () {
           cbs.timeout && cbs.timeout();
-          hooks.loadend && hooks.loadend();
+          !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
         };
 
       if (options.responseMediaType && xhr.overrideMimeType)
