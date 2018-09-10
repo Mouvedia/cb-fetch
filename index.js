@@ -208,14 +208,17 @@
     }
 
     function xdrPath() {
-      var xdr = self.XDomainRequest.create();
+      var xdr = self.XDomainRequest.create(),
+          loadended;
 
       xdr.ontimeout = function () {
         cbs.timeout && cbs.timeout();
+        loadended = true;
         hooks.loadend && hooks.loadend();
       };
       xdr.onerror = function () {
         cbs.error && cbs.error({ instance: xdr });
+        loadended = true;
         hooks.loadend && hooks.loadend();
       };
       xdr.onprogress = function () {};
@@ -225,6 +228,7 @@
           processedResponse.body = getBody(xdr);
           cbs.success(processedResponse);
         }
+        loadended = true;
         hooks.loadend && hooks.loadend();
       };
       if (options.timeout)
@@ -234,6 +238,7 @@
       processedResponse.instance = xdr;
       xdr.send();
       return function () {
+        if (loadended) return;
         xdr.abort();
         cbs.abort && cbs.abort();
         hooks.loadend && hooks.loadend();
