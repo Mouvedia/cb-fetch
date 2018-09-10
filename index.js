@@ -347,10 +347,13 @@
     }
 
     function fetchPath() {
-      var ctrl = HAS_SIGNAL && new AbortController();
+      var ctrl = HAS_SIGNAL && new AbortController(),
+          loadended;
 
       if (ctrl) {
-        cbs.abort && ctrl.signal.addEventListener('abort', cbs.abort);
+        cbs.abort && ctrl.signal.addEventListener('abort', function () {
+          !loadended && cbs.abort();
+        });
         options.signal = ctrl.signal;
       }
 
@@ -363,7 +366,12 @@
             cbs.success && cbs.success(processedResponse);
           else if (cbs.error)
             cbs.error(processedResponse);
+          loadended = true;
           hooks.loadend && hooks.loadend();
+        })['catch'](function (e) {
+          if (ctrl && ctrl.signal.aborted)
+            hooks.loadend && hooks.loadend();
+          errorHandler(e);
         });
 
       if (ctrl)
