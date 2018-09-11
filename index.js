@@ -200,6 +200,14 @@
         return xhr.responseText;
     }
 
+    function getStatusClass(xhr) {
+      if (xhr.status >= 200 && xhr.status < 300 || (xhr.status == 304 || xhr.status == 1223) ||
+          // Android status 206 // applicationCache IDLE // Opera status 304
+          xhr.status == 0 && getResponse(xhr))
+        return 'success';
+      return 'error';
+    }
+
     function qualifyURL(url) {
       var a = self.document.createElement('a');
 
@@ -251,6 +259,11 @@
           HAS_ONLOADEND = typeof xhr.onloadend != 'undefined',
           timeoutID;
 
+      function fireHandler(name, arg) {
+        cbs[name] && cbs[name](arg);
+        !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
+      }
+
       function abort(e) {
         timeoutID && clearTimeout(timeoutID);
         if (xhr) {
@@ -278,32 +291,19 @@
           xhr.onreadystatechange = function () {};
 
           try {
-            if ((xhr.status >= 200 && xhr.status < 300) ||
-                (xhr.status == 304 || xhr.status == 1223) ||
-                // Android status 206
-                // applicationCache IDLE
-                // Opera status 304
-                (xhr.status == 0 && getResponse(xhr)))
-              cbs.success && cbs.success(processXHR(xhr));
-            else if (cbs.error)
-              cbs.error(processXHR(xhr));
-          // Firefox status 408
-          // IE9 error c00c023f on abort
+            fireHandler(getStatusClass(xhr), processXHR(xhr));
+          // Firefox status 408 // IE9 error c00c023f on abort
           } catch (e) {
             errorHandler(e);
-            cbs.error && cbs.error({ instance: xhr });
+            fireHandler('error', { instance: xhr });
           }
 
           xhr = null;
-          !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
         }
       };
 
       if (HAS_ONABORT)
-        xhr.onabort = function () {
-          cbs.abort && cbs.abort();
-          !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
-        };
+        xhr.onabort = function () { fireHandler('abort'); };
 
       if (hooks.loadend && HAS_ONLOADEND)
         xhr.onloadend = hooks.loadend;
@@ -338,10 +338,7 @@
       if (options.timeout) {
         if (typeof xhr.timeout == 'number') {
           xhr.timeout = options.timeout;
-          xhr.ontimeout = function () {
-            cbs.timeout && cbs.timeout();
-            !HAS_ONLOADEND && hooks.loadend && hooks.loadend();
-          };
+          xhr.ontimeout = function () { fireHandler('timeout'); };
         } else
           timeoutID = setTimeout(function () {
             abort({ type: 'timeout' });
@@ -353,13 +350,10 @@
     }
 
     function fetchPath() {
-      var ctrl = HAS_SIGNAL && new AbortController(),
-          loadended;
+      var ctrl = HAS_SIGNAL && new AbortController();
 
       if (ctrl) {
-        cbs.abort && ctrl.signal.addEventListener('abort', function () {
-          !loadended && cbs.abort();
-        });
+        cbs.abort && ctrl.signal.addEventListener('abort', cbs.abort);
         options.signal = ctrl.signal;
       }
 
@@ -368,11 +362,12 @@
         .then(consumeBody)
         .then(storeBody)
         .then(function (instance) {
+          if (ctrl && cbs.abort)
+            ctrl.signal.removeEventListener('abort', cbs.abort);
           if (instance.ok || instance.status == 304)
             cbs.success && cbs.success(processedResponse);
           else if (cbs.error)
             cbs.error(processedResponse);
-          loadended = true;
           hooks.loadend && hooks.loadend();
         })['catch'](function (e) {
           if (ctrl && ctrl.signal.aborted)
@@ -382,9 +377,7 @@
 
       if (ctrl)
         return ctrl.abort.bind(ctrl);
-      return function () {
-        raiseException('An abort callback must be provided.');
-      }
+      return raiseException.bind(null, 'An abort callback must be provided.');
     }
 
     function storeBody(body) {
@@ -635,7 +628,7 @@
     }
 
     function getMethod() {
-      var method = (options.method && options.method.toUpperCase()) || 'GET',
+      var method = options.method && options.method.toUpperCase() || 'GET',
           documentElement = (options.body ? options.body.ownerDocument || options.body : 0).documentElement;
 
       if (/^(PROPPATCH|ORDERPATCH|ACL|REPORT|BIND|UNBIND|REBIND|UPDATE|LABEL|MERGE|MKREDIRECTREF|UPDATEREDIRECTREF)$/.test(method) &&
