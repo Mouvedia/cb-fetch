@@ -176,12 +176,16 @@ done(onSuccessCallback);
 
 <pre><code>{
   (
-    name: 'loadstart' | 'loadend',
-    handler: Function
+    name: 'loadstart',
+    handler: () => Boolean | Void
   ),
   (
-    name: 'download' | <del>'upload'</del>,
-    handler: (event: Object) => Boolean | Void
+    name: <del>'upload'</del> | 'download',
+    handler: (Object) => Void
+  ),
+  (
+    name: 'loadend',
+    handler: () => Void
   )
 } => Object
 </code></pre>
