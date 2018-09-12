@@ -217,27 +217,31 @@
 
     function xdrPath() {
       var xdr = self.XDomainRequest.create(),
-          loadended;
+          abort;
 
-      xdr.ontimeout = function () {
-        cbs.timeout && cbs.timeout();
-        loadended = true;
+      function fireHandler(name, arg) {
+        cbs[name] && cbs[name](arg);
         hooks.loadend && hooks.loadend();
+        abort = function () {};
+      }
+
+      abort = function () {
+        xdr.abort();
+        fireHandler('abort');
+      };
+      xdr.ontimeout = function () {
+        fireHandler('timeout');
       };
       xdr.onerror = function () {
-        cbs.error && cbs.error({ instance: xdr });
-        loadended = true;
-        hooks.loadend && hooks.loadend();
+        fireHandler('error', { instance: xdr });
       };
       xdr.onprogress = function () {};
       xdr.onload = function () {
         if (cbs.success) {
           processedResponse.headers = { 'Content-Type': xdr.contentType };
           processedResponse.body = getBody(xdr);
-          cbs.success(processedResponse);
         }
-        loadended = true;
-        hooks.loadend && hooks.loadend();
+        fireHandler('success', processedResponse);
       };
       if (options.timeout)
         xdr.timeout = options.timeout;
@@ -245,12 +249,7 @@
       // prevents premature garbage collection
       processedResponse.instance = xdr;
       xdr.send();
-      return function () {
-        if (loadended) return;
-        xdr.abort();
-        cbs.abort && cbs.abort();
-        hooks.loadend && hooks.loadend();
-      };
+      return function () { abort(); };
     }
 
     function xhrPath() {
