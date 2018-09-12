@@ -210,7 +210,7 @@ done(onSuccessCallback);
 ### Request Options
 Property     | Default       | Value(s)
 --------     | -------       | --------
-body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams
+body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams, ReadableStream
 credentials  | 'same‑origin' | 'include', 'omit'⁶, 'same-origin'
 headers      | {}            | Object, Headers³
 method       | 'GET'         | String

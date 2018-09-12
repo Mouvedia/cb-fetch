@@ -645,6 +645,7 @@
       options.headers     = options.headers || {};
       options.username    = options.username || null;
       options.password    = options.password || null;
+      options.redirect    = options.redirect || 'follow';
 
       if (options.responseType === 'msxml-document' && !SUPPORT_MSXML_DOCUMENT)
         options.responseType = 'document';
