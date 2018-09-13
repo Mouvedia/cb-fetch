@@ -236,7 +236,7 @@
 
     function xdrPath() {
       var xdr = self.XDomainRequest.create(),
-          abort;
+          abort, length;
 
       function fireHandler(name, arg) {
         cbs[name] && cbs[name](arg);
@@ -254,7 +254,13 @@
       xdr.onerror = function () {
         fireHandler('error', { instance: xdr });
       };
-      xdr.onprogress = function () {};
+      xdr.onprogress = hooks.download ? function () {
+        var response = xdr.responseText,
+            chunk    = length ? response.slice(length) : response;
+
+        reportDownload(chunk, response);
+        length = response.length;
+      } : function () {};
       xdr.onload = function () {
         if (cbs.success) {
           processedResponse.headers = { 'Content-Type': xdr.contentType };
