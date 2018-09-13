@@ -28,6 +28,7 @@
         processedResponse = {},
         hooks             = {},
         HAS_SIGNAL             = self.Request && 'signal' in Request.prototype,
+        HAS_BODY               = self.Response && 'body' in Response.prototype,
         SUPPORT_MSXML_DOCUMENT = 'ActiveXObject' in self && self.navigator.msPointerEnabled,
         SUPPORT_MOZ_JSON       = self.document && 'mozFullScreen' in self.document && !IDBIndex.prototype.count,
         cbs;
@@ -208,6 +209,24 @@
       return 'error';
     }
 
+    function concatUint8Array(accumulator, current) {
+      var array = new Uint8Array(accumulator.length + current.length);
+
+      array.set(accumulator);
+      array.set(current, accumulator.length);
+      return array;
+    }
+
+    function reportDownload(chunk, aggregate, length) {
+      hooks.download({
+        chunk: chunk,
+        aggregate: aggregate,
+        loaded: aggregate.length,
+        total: length || 0,
+        lengthComputable: !!length
+      });
+    }
+
     function qualifyURL(url) {
       var a = self.document.createElement('a');
 
@@ -358,6 +377,7 @@
 
       self.fetch(options.url, options)
         .then(convertResponse)
+        .then(consumeStream)
         .then(consumeBody)
         .then(storeBody)
         .then(function (instance) {
@@ -410,6 +430,27 @@
           if (self.Response.prototype.formData) return response.formData();
       }
       return response.body || null;
+    }
+
+    function consumeStream(response) {
+      if (!hooks.download)
+        return response;
+      var clone  = response.clone(),
+          reader = response.body.getReader(),
+          length = +response.headers.get('Content-Length'),
+          aggregate;
+
+      function processResult(result) {
+        if (result.done)
+          return clone;
+        var chunk = result.value;
+
+        aggregate = aggregate ? concatUint8Array(aggregate, chunk) : chunk;
+        reportDownload(chunk, aggregate, length);
+
+        return reader.read().then(processResult);
+      }
+      return reader.read().then(processResult);
     }
 
     function convertResponse(response) {
@@ -670,7 +711,7 @@
         return;
       if (/^(moz|ms)/.test(options.responseType))
         return xhrPath();
-      if (typeof self.fetch == 'function' && (HAS_SIGNAL || !cbs.abort))
+      if (typeof self.fetch == 'function' && (HAS_SIGNAL || !cbs.abort) && (HAS_BODY || !hooks.download))
         return fetchPath();
       if (options.mode === 'cors' && self.document && (self.document.documentMode == 8 || self.document.documentMode == 9))
         return xdrPath();
