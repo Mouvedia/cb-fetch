@@ -8,7 +8,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.3.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.5.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -209,12 +209,85 @@
       return 'error';
     }
 
-    function concatUint8Array(accumulator, current) {
-      var array = new Uint8Array(accumulator.length + current.length);
+    function concatBufferSource(accumulator, current) {
+      var array = new Uint8Array(accumulator.byteLength + current.byteLength);
 
       array.set(accumulator);
-      array.set(current, accumulator.length);
-      return array;
+      array.set(current, accumulator.byteLength);
+      return current.length ? array : array.buffer;
+    }
+
+    function concatResponse(response, aggregate) {
+      if (response.byteLength)
+        return concatBufferSource(aggregate, response);
+      if (response.length)
+        return aggregate + response;
+    }
+
+    function sliceResponse(response, aggregate) {
+      if (response.length)
+        return response.slice(aggregate.length);
+      if (response.slice)
+        return response.slice(aggregate.size);
+      if (response.mozSlice)
+        return response.mozSlice(aggregate.size);
+    }
+
+    function setDownloadHandlers(xhr) {
+      var loaded, total, hasContentLength, chunked, chunk, aggregate;
+
+      if (self.AnonXMLHttpRequest && !options.responseMediaType)
+        options.responseMediaType = 'application/octet-stream';
+
+      function convertEvent(e) {
+        if (typeof hasContentLength != 'boolean')
+          hasContentLength = e.totalSize ? e.totalSize !== 0xffffffffffffffff : !!e.lengthComputable;
+
+        return {
+          chunk: chunk,
+          aggregate: aggregate,
+          loaded: e.loaded || e.position,
+          total: hasContentLength ? e.total || e.totalSize : 0,
+          lengthComputable: hasContentLength
+        };
+      }
+
+      xhr.onprogress = function (e) {
+        var response = typeof xhr.response == 'undefined' ? xhr.responseText : xhr.response;
+
+        if (typeof chunked != 'boolean')
+          chunked = typeof xhr.responseType == 'string' && ~xhr.responseType.indexOf('chunked');
+        if (aggregate) {
+          chunk = chunked ? response : sliceResponse(response, aggregate);
+          aggregate = chunked ? concatResponse(response, aggregate) : response;
+        } else
+          chunk = aggregate = response;
+
+        if (e.loaded || e.position) {
+          hooks.download(convertEvent(e));
+          loaded = e.loaded;
+          total = e.total;
+        }
+      };
+
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=687087#c1
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=614352
+      xhr.onload = function (e) {
+        if (typeof e.loaded != 'number' || e.loaded === loaded)
+          return;
+        var response = typeof xhr.response == 'undefined' ? xhr.responseText : xhr.response,
+            length   = e.loaded || total ||
+                       response && response.size ||
+                       +getExposedHeader('content-length');
+
+        hooks.download({
+          chunk: aggregate ? response.slice(aggregate.length) : response,
+          aggregate: response,
+          loaded: length,
+          total: length,
+          lengthComputable: !!length
+        });
+      };
     }
 
     function reportDownload(chunk, aggregate, length) {
@@ -325,6 +398,9 @@
           xhr = null;
         }
       };
+
+      if (hooks.download && typeof xhr.onprogress != 'undefined')
+        setDownloadHandlers(xhr);
 
       if (HAS_ONABORT)
         xhr.onabort = function () { fireHandler('abort'); };
@@ -451,7 +527,7 @@
           return clone;
         var chunk = result.value;
 
-        aggregate = aggregate ? concatUint8Array(aggregate, chunk) : chunk;
+        aggregate = aggregate ? concatBufferSource(aggregate, chunk) : chunk;
         reportDownload(chunk, aggregate, length);
 
         return reader.read().then(processResult);

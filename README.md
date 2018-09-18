@@ -230,8 +230,8 @@ XSLPattern⁴  | false         | Boolean
 ### Progress Event
 Property         | Type
 --------         | ----
-chunk            | String, ArrayBuffer, Blob, Uint8Array
-aggregate        | String, ArrayBuffer, Blob, Uint8Array
+chunk            | String, ArrayBuffer, Blob, Uint8Array, null
+aggregate        | String, ArrayBuffer, Blob, Uint8Array, null
 loaded           | ℕ
 total            | ℕ
 lengthComputable | Boolean
@@ -239,7 +239,7 @@ lengthComputable | Boolean
 ### Response
 Property   | Type
 --------   | ----
-body       | Object, String, Document, BufferSource, Blob, FormData¹, ReadableStream¹, null
+body       | Object, String, Document, ArrayBuffer, Blob, FormData¹, ReadableStream¹, null
 headers    | Object
 instance   | XMLHttpRequest, XDomainRequest, Response
 statusCode | ℕ
