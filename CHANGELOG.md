@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased][6]
+## [1.5.0][6] - 2018-09-20
 
 ### Fixed
 * IE10+ support in the context of a web worker
@@ -63,4 +63,4 @@
 
 [1]: https://github.com/Mouvedia/cb-fetch/compare/b15a26f...d5c09ea
 [5]: https://github.com/Mouvedia/cb-fetch/compare/d5c09ea...1.0.0?w=true
-[6]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0...HEAD
+[6]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.5.0

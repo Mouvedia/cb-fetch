@@ -278,7 +278,7 @@
                        response && response.size ||
                        +getExposedHeader('content-length');
 
-        if (typeof e.loaded != 'number' || e.loaded === loaded || length <= loaded)
+        if (typeof e.loaded != 'number' || length <= loaded)
           return;
 
         hooks.download({

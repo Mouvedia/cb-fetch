@@ -21,5 +21,6 @@
     "json3": "latest"
   },
   "license": "MIT",
-  "bugs": "https://github.com/Mouvedia/cb-fetch/issues"
+  "bugs": "https://github.com/Mouvedia/cb-fetch/issues",
+  "unpkg": "index.min.js"
 }
