@@ -273,12 +273,13 @@
       // https://bugzilla.mozilla.org/show_bug.cgi?id=687087#c1
       // https://bugzilla.mozilla.org/show_bug.cgi?id=614352
       xhr.onload = function (e) {
-        if (typeof e.loaded != 'number' || e.loaded === loaded)
-          return;
         var response = typeof xhr.response == 'undefined' ? xhr.responseText : xhr.response,
             length   = e.loaded || total ||
                        response && response.size ||
                        +getExposedHeader('content-length');
+
+        if (typeof e.loaded != 'number' || e.loaded === loaded || length <= loaded)
+          return;
 
         hooks.download({
           chunk: aggregate ? response.slice(aggregate.length) : response,
@@ -790,7 +791,7 @@
         setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
 
       if (hooks.loadstart && hooks.loadstart() === false)
-        return;
+        return function () {};
       if (/^(moz|ms)/.test(options.responseType))
         return xhrPath();
       if (typeof self.fetch == 'function' && (HAS_SIGNAL || !cbs.abort) && (HAS_BODY || !hooks.download))

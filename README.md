@@ -40,7 +40,7 @@ jspm install cb-fetch
 - [x] XDomainRequest
 - [x] [Universal Module Definition](#importation)
 - [x] [fluent API](#map)
-- [x] [normalized response](#normalized-response)
+- [x] [normalized response](#response)
 - [x] [interceptors](#hook)
 - [x] WebDAV
 
@@ -201,7 +201,7 @@ done(onSuccessCallback);
     timeout?:  Function,
     abort?:    Function
   })
-} => Function | Void,
+} => Function,
      throws: TypeError
 ```
 
