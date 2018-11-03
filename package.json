@@ -1,6 +1,6 @@
 {
   "name": "cb-fetch",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Normalize fetch, XMLHttpRequest and XDomainRequest using an easy-to-use API",
   "repository": "Mouvedia/cb-fetch",
   "keywords": [

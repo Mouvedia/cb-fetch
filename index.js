@@ -8,7 +8,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.5.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.6.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -68,7 +68,7 @@
       } @end@*/
     }
 
-    function setQueryString() {
+    function addQueryString() {
       var prefix = (/^[^#?]+\?/).test(options.url) ? '&' : '?',
           EURIC  = self.encodeURIComponent;
 
@@ -150,7 +150,8 @@
     }
 
     function setRequestHeaders(xhr) {
-      var headers, key;
+      var headers = {},
+          key;
 
       if (options.mode !== 'cors')
         setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -159,10 +160,9 @@
 
       if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]')
         headers = HeadersToObject(options.headers);
-      else {
-        headers = {};
+      else
         for (key in options.headers) setHeader(headers, key, options.headers[key]);
-      }
+
       for (key in headers) xhr.setRequestHeader(key, headers[key]);
     }
 
@@ -306,6 +306,12 @@
 
       a.href = url;
       return self.location.protocol + a.href.replace(/^https?:/, '');
+    }
+
+    function isAbsolute(url) {
+      if (self.URL && Object.prototype.toString.call(url) === '[object URL]')
+        url = url.href;
+      return /^([a-z][-a-z\d+.]+:)?\/\//i.test(url);
     }
 
     function xdrPath() {
@@ -741,6 +747,27 @@
       }
     }
 
+    function appendPath(path) {
+      var parts    = options.url.split('/'),
+          segments = path.split('/');
+
+      if (parts.length > 3)
+        parts = parts.slice(0, parts.length - 1);
+      if (/^\.\//.test(path))
+        options.url = parts.join('/') + path.slice(1);
+      else if (path[0] === '/')
+        options.url = parts[0] + '//' + parts[2] + path;
+      else {
+        while (segments[0] === '..') {
+          if (parts.length === 3)
+            break;
+          parts = parts.slice(0, parts.length - 1);
+          segments = segments.slice(1);
+        }
+        options.url = parts.join('/') + '/' + segments.join('/');
+      }
+    }
+
     function processInput(input) {
       if (!input) return;
       processURL(input);
@@ -786,7 +813,7 @@
       if (options.tunneling && !/^(POST|GET)$/.test(options.method))
         overrideMethod();
       if (options.parameters)
-        setQueryString();
+        addQueryString();
       if (options.username)
         setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
 
@@ -817,7 +844,10 @@
             payload     = supportBody ? 'body' : 'parameters',
             context     = {};
 
-        url && processURL(url);
+        if (isAbsolute(url))
+          processURL(url);
+        else if (options.url && String.isString(url))
+          appendPath(url);
         options.method = verb.toUpperCase();
 
         context[action] = function (data) {

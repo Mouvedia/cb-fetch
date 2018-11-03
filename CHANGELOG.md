@@ -1,6 +1,11 @@
 # Change Log
 
-## [1.5.0][6] - 2018-09-20
+## [Unreleased][4]
+
+### Added
+* verb methods now accept paths as argument
+
+## [1.5.0][3] - 2018-09-25
 
 ### Fixed
 * IE10+ support in the context of a web worker
@@ -27,7 +32,7 @@
 * `mozSystem` flag support
 * undocumented signal option
 
-## [1.0.0][5] - 2018-05-10
+## [1.0.0][2] - 2018-05-10
 
 ### Final Release
 * normalized handling of credentials
@@ -62,5 +67,6 @@
 * polymorphic done method
 
 [1]: https://github.com/Mouvedia/cb-fetch/compare/b15a26f...d5c09ea
-[5]: https://github.com/Mouvedia/cb-fetch/compare/d5c09ea...1.0.0?w=true
-[6]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.5.0
+[2]: https://github.com/Mouvedia/cb-fetch/compare/d5c09ea...1.0.0?w=true
+[3]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.5.0
+[4]: https://github.com/Mouvedia/cb-fetch/compare/1.5.0...HEAD
