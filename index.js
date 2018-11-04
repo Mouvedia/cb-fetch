@@ -755,7 +755,7 @@
         parts = parts.slice(0, parts.length - 1);
       if (/^\.\//.test(path))
         options.url = parts.join('/') + path.slice(1);
-      else if (path[0] === '/')
+      else if (path.charAt(0) === '/')
         options.url = parts[0] + '//' + parts[2] + path;
       else {
         while (segments[0] === '..') {

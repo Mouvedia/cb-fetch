@@ -3,7 +3,7 @@
 ## [Unreleased][4]
 
 ### Added
-* verb methods now accept paths as argument
+* verb methods accept paths as argument
 
 ## [1.5.0][3] - 2018-09-25
 

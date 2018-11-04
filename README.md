@@ -102,27 +102,24 @@ request()
   .done(onSuccessCallback, onErrorCallback);
 
 // passing an object offers additional options
-let { done } = request({
+let json = request({
   url:          new URL('http://www.example.com'),
   parameters:   new URLSearchParams('_csrf=TOKEN'),
-  method:       'get',
   mode:         'cors',
   credentials:  'include',
-  responseType: 'json'
+  responseType: 'json',
+  headers:      { 'content-type': 'application/json' }
 });
 
-// performs the actual request
-let abort = done({
-    success: onSuccessCallback,
-    error:   onErrorCallback,
-    abort:   onAbortCallback
+// gotta admit, this is more concise
+let abort = json.get('/segment').done({
+  success: onSuccessCallback,
+  error:   onErrorCallback,
+  abort:   onAbortCallback
 });
 
-// immediately aborts it
+// forcefully aborts the request
 abort();
-
-// performs another request reusing the same config
-done(onSuccessCallback);
 ```
 
 ## API
@@ -259,11 +256,6 @@ url        | String
 
 #### `delete` reserved keyword
 In pre-ES5 environments, the delete method requires the use of the bracket notation.
-
-#### Property override
-- passing an URL to one of the HTTP verb methods resets the `url` property
-- passing parameters to the query method resets the `parameters` property
-- passing a body to the send method resets the `body` property
 
 #### XDR intrinsic limitations
 - only support GET and POST methods
