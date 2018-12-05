@@ -69,11 +69,8 @@
     }
 
     function addQueryString() {
-      var prefix = (/^[^#?]+\?/).test(options.url) ? '&' : '?',
+      var prefix = (/^[^?]+\?/).test(options.url) ? '&' : '?',
           EURIC  = self.encodeURIComponent;
-
-      // https://github.com/w3c/web-platform-tests/commit/d9d33e2
-      options.url = options.url.split('#')[0];
 
       if (self.URLSearchParams && Object.prototype.toString.call(options.parameters) === '[object URLSearchParams]')
         options.parameters = options.parameters.toString();
@@ -722,29 +719,33 @@
     // https://support.microsoft.com/en-us/kb/834489
     // https://bugzilla.mozilla.org/show_bug.cgi?id=709991
     function stripAuth(url) {
-      if ((/^([^#?]+:)?\/\/[^/]+@/).test(url)) {
-        var credentials = url.split('//')[1].split('@')[0].split(':');
+      var credentials = url.split('//')[1].split('@')[0].split(':');
 
-        if (!options.username) {
-          options.username = credentials[0];
-          options.password = credentials[1];
-        }
-        return url.replace(/\/\/[^/]+@/, '//');
+      if (!options.username) {
+        options.username = credentials[0];
+        options.password = credentials[1];
       }
-      return url;
+      return url.replace(/\/\/[^/]+@/, '//');
+    }
+
+    function setURL(url) {
+      url = url.split('#')[0];
+
+      // https://bugs.webkit.org/show_bug.cgi?id=162345
+      if (/\?$/.test(url))
+        url = url.slice(0, -1);
+
+      if (/^([^#?]+:)?\/\/[^/]+@/.test(url))
+        url = stripAuth(url);
+
+      options.url = url;
     }
 
     function processURL(url) {
       if (String.isString(url))
-        options.url = stripAuth(url);
-      else if (self.URL && Object.prototype.toString.call(url) === '[object URL]') {
-        if (!options.username) {
-          options.username = url.username;
-          options.password = url.password;
-        }
-        // https://bugs.webkit.org/show_bug.cgi?id=162345
-        options.url = /\?$/.test(url.href) ? url.href.slice(0, -1) : url.href;
-      }
+        setURL(url);
+      else if (self.URL && Object.prototype.toString.call(url) === '[object URL]')
+        setURL(url.href);
     }
 
     function appendPath(path) {
@@ -754,9 +755,9 @@
       if (parts.length > 3)
         parts = parts.slice(0, parts.length - 1);
       if (/^\.\//.test(path))
-        options.url = parts.join('/') + path.slice(1);
+        setURL(parts.join('/') + path.slice(1));
       else if (path.charAt(0) === '/')
-        options.url = parts[0] + '//' + parts[2] + path;
+        setURL(parts[0] + '//' + parts[2] + path);
       else {
         while (segments[0] === '..') {
           if (parts.length === 3)
@@ -764,7 +765,7 @@
           parts = parts.slice(0, parts.length - 1);
           segments = segments.slice(1);
         }
-        options.url = parts.join('/') + '/' + segments.join('/');
+        setURL(parts.join('/') + '/' + segments.join('/'));
       }
     }
 
@@ -788,8 +789,6 @@
     }
 
     function setOptions() {
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
-      options.url         = options.url || self.location.href;
       options.method      = getMethod();
       options.mode        = options.mode || 'same-origin';
       options.credentials = options.credentials || 'same-origin';
@@ -797,6 +796,9 @@
       options.username    = options.username || null;
       options.password    = options.password || null;
       options.redirect    = options.redirect || 'follow';
+
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
+      options.url || setURL(self.location.href);
 
       if (options.responseType === 'msxml-document' && !SUPPORT_MSXML_DOCUMENT)
         options.responseType = 'document';
