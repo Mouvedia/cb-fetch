@@ -8,7 +8,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.6.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.7.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -68,9 +68,31 @@
       } @end@*/
     }
 
+    function appendField(name, value) {
+      options.url += self.encodeURIComponent(name);
+      if (value !== null) options.url += '=' + self.encodeURIComponent(value);
+    }
+
+    function getAppender() {
+      var prefix = /^[^?]+\?/.test(options.url) ? '&' : '?';
+
+      return function (name, value) {
+        if (typeof value === 'undefined') return;
+        options.url += prefix;
+        if (value && value.constructor === Array) {
+          for (var len = value.length, i = 0, j = 0; i < len; ++i) {
+            if (typeof value[i] === 'undefined') continue;
+            if (j) options.url += '&';
+            appendField(name + '[' + j++ + ']', value[i]);
+          }
+        } else
+          appendField(name, value);
+        prefix = '&';
+      }
+    }
+
     function addQueryString() {
-      var prefix = (/^[^?]+\?/).test(options.url) ? '&' : '?',
-          EURIC  = self.encodeURIComponent;
+      var append = getAppender();
 
       if (self.URLSearchParams && Object.prototype.toString.call(options.parameters) === '[object URLSearchParams]')
         options.parameters = options.parameters.toString();
@@ -81,14 +103,10 @@
 
         for (i = 0; i < len; ++i) {
           pair = pairs[i].split('=');
-          options.url += (i ? '&' : prefix) + EURIC(pair[0]) + '=' + EURIC(pair[1]);
+          append(pair[0], pair[1]);
         }
-      } else if (typeof options.parameters == 'object') {
-        for (var key in options.parameters) {
-          options.url += prefix + EURIC(key) + '=' + EURIC(options.parameters[key]);
-          prefix = '&';
-        }
-      }
+      } else if (typeof options.parameters == 'object')
+        for (var key in options.parameters) append(key, options.parameters[key]);
     }
 
     function overrideMethod() {

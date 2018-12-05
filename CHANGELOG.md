@@ -5,6 +5,12 @@
 ### Added
 * verb methods accept paths as argument
 
+### Changed
+* plain object parameters serialization
+    * array support
+    * `undefined` properties get skipped
+    * `null` properties emulate `name="isindex"`
+
 ## [1.5.0][3] - 2018-09-25
 
 ### Fixed
