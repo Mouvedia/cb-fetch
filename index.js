@@ -472,34 +472,40 @@
     }
 
     function fetchPath() {
-      var ctrl = HAS_SIGNAL && new AbortController();
+      var ctrl      = HAS_SIGNAL && new AbortController(),
+          abort     = function () { progress && ctrl.abort(); },
+          progress  = true;
 
       if (ctrl) {
-        cbs.abort && ctrl.signal.addEventListener('abort', cbs.abort);
+        cbs.abort && ctrl.signal.addEventListener('abort', cbs.abort, { once: true });
         options.signal = ctrl.signal;
       }
 
       self.fetch(options.url, options)
-        .then(convertResponse)
         .then(consumeStream)
+        .then(function (response) {
+          ctrl && cbs.abort && ctrl.signal.removeEventListener('abort', cbs.abort);
+          progress = false;
+          return response;
+        })
+        .then(convertResponse)
         .then(consumeBody)
         .then(storeBody)
         .then(function (instance) {
-          if (ctrl && cbs.abort)
-            ctrl.signal.removeEventListener('abort', cbs.abort);
           if (instance.ok || instance.status == 304)
             cbs.success && cbs.success(processedResponse);
           else if (cbs.error)
             cbs.error(processedResponse);
           hooks.loadend && hooks.loadend();
         })['catch'](function (e) {
-          if (ctrl && ctrl.signal.aborted)
+          if (e.code === 20)
             hooks.loadend && hooks.loadend();
-          errorHandler(e);
+          else
+            errorHandler(e);
         });
 
       if (ctrl)
-        return ctrl.abort.bind(ctrl);
+        return abort;
       return raiseException.bind(null, 'An abort callback must be provided.');
     }
 
