@@ -491,13 +491,8 @@
         .then(convertResponse)
         .then(consumeBody)
         .then(storeBody)
-        .then(function (instance) {
-          if (instance.ok || instance.status == 304)
-            cbs.success && cbs.success(processedResponse);
-          else if (cbs.error)
-            cbs.error(processedResponse);
-          hooks.loadend && hooks.loadend();
-        })['catch'](function (e) {
+        .then(fireHandler)
+        ['catch'](function (e) {
           if (e.code === 20)
             hooks.loadend && hooks.loadend();
           else
@@ -507,6 +502,14 @@
       if (ctrl)
         return abort;
       return raiseException.bind(null, 'An abort callback must be provided.');
+    }
+
+    function fireHandler(instance) {
+      if (instance.ok || instance.status == 304)
+        cbs.success && cbs.success(processedResponse);
+      else if (cbs.error)
+        cbs.error(processedResponse);
+      hooks.loadend && hooks.loadend();
     }
 
     function storeBody(body) {
