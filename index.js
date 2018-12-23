@@ -437,9 +437,6 @@
       // https://support.microsoft.com/en-us/help/832414/
       xhr.open(options.method, options.url, true);
 
-      if (options.caching && typeof xhr.msCaching == 'string')
-        xhr.msCaching = options.caching;
-
       if (options.responseType) {
         try {
           xhr.responseType = options.responseType;

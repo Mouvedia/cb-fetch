@@ -17,6 +17,9 @@
     * invalid JSON throws
     * `abort` becomes a no-op after completion
 
+### Removed
+* `caching` option
+
 ## [1.5.0][3] - 2018-09-25
 
 ### Fixed
