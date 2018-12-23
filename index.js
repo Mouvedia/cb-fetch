@@ -528,11 +528,7 @@
             return createDocument(str);
           });
         case 'json':
-          return response.json().then(function (object) {
-            return object;
-          })['catch'](function () {
-            return response.body || null;
-          });
+          return response.json();
         case 'arraybuffer':
           return response.arrayBuffer();
         case 'blob':

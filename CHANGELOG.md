@@ -11,6 +11,7 @@
     * `undefined` properties get skipped
     * `null` properties emulate `name="isindex"`
 * fetch
+    * invalid JSON throws
     * `abort` becomes a no-op after completion
 
 ## [1.5.0][3] - 2018-09-25
