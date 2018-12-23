@@ -484,7 +484,6 @@
       self.fetch(options.url, options)
         .then(consumeStream)
         .then(function (response) {
-          ctrl && cbs.abort && ctrl.signal.removeEventListener('abort', cbs.abort);
           progress = false;
           return response;
         })
@@ -493,7 +492,9 @@
         .then(storeBody)
         .then(fireHandler)
         ['catch'](function (e) {
-          if (e.code === 20)
+          progress = false;
+          // FF overuses ABORT_ERR
+          if (ctrl && ctrl.signal.aborted)
             hooks.loadend && hooks.loadend();
           else
             errorHandler(e);
@@ -630,7 +631,7 @@
           return parser.parse(input);
         } catch (e) {}
       } else if (self.DOMParser) {
-        // https://bug98304.bugzilla.mozilla.org/show_bug.cgi?id=102699
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=102699
         try {
           doc = (new DOMParser()).parseFromString(serializedDocument, MIMEType);
         } catch (e) {}
