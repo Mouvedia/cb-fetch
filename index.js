@@ -8,7 +8,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.7.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.8.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -471,17 +471,29 @@
       return abort;
     }
 
-    function fetchPath() {
-      var ctrl      = HAS_SIGNAL && new AbortController(),
-          abort     = function () { progress && ctrl.abort(); },
-          progress  = true;
-
+    function initiateRequest(ctrl) {
       if (ctrl) {
         cbs.abort && ctrl.signal.addEventListener('abort', cbs.abort, { once: true });
         options.signal = ctrl.signal;
       }
 
-      self.fetch(options.url, options)
+      return Promise.race([
+        fetch(options.url, options),
+        new Promise(function (_, reject) {
+          if (options.timeout)
+            setTimeout(function () {
+              reject({ name: 'TimeoutError', code: 23 });
+            }, options.timeout);
+        })
+      ]);
+    }
+
+    function fetchPath() {
+      var ctrl      = HAS_SIGNAL && new AbortController(),
+          abort     = function () { progress && ctrl.abort(); },
+          progress  = true;
+
+      initiateRequest(ctrl)
         .then(consumeStream)
         .then(function (response) {
           progress = false;
@@ -493,8 +505,10 @@
         .then(fireHandler)
         ['catch'](function (e) {
           progress = false;
-          // FF overuses ABORT_ERR
-          if (ctrl && ctrl.signal.aborted)
+          if (e.code === 23)
+            cbs.timeout && cbs.timeout();
+          if (ctrl && ctrl.signal.aborted || // Firefox abuses ABORT_ERR
+              e.code === 23)
             hooks.loadend && hooks.loadend();
           else
             errorHandler(e);

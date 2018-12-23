@@ -4,6 +4,9 @@
 
 ### Added
 * verb methods accept paths as argument
+* fetch
+    * `timeout` callback
+    * `timeout` option
 
 ### Changed
 * plain object parameters serialization
@@ -24,10 +27,11 @@
 * jspm shortname
 * hooks
 * cancellation
-* timeout fallback
-* multipart option
-* caching option
 * download monitoring
+* XHR
+    * timeout fallback
+    * multipart option
+    * caching option
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported
