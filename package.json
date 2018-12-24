@@ -16,7 +16,9 @@
     "AJAJ"
   ],
   "dependencies": {
-    "@string/isstring": "latest",
+    "@string/isstring": "latest"
+  },
+  "optionalDependencies": {
     "Base64": "latest",
     "json3": "latest"
   },

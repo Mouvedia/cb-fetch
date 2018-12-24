@@ -2,13 +2,19 @@
 
 ## [Unreleased][4]
 
+### Fixed
+* match the document's MIME type to a **parameter-less** Content-Type header
+* `URL`
+    * extract credentials in a cross-browser manner
+    * strip the credentials
+
 ### Added
-* verb methods accept paths as argument
 * fetch
     * `timeout` callback
     * `timeout` option
 
 ### Changed
+* verb methods accept paths as argument
 * plain object parameters serialization
     * array support
     * `undefined` properties get skipped

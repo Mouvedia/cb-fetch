@@ -626,7 +626,7 @@
           len            = progIDs.length,
           queryLanguage  = options.XSLPattern ? 'XSLPattern' : 'XPath',
           implementation = self.document && self.document.implementation,
-          MIMEType       = documentMIMEType(),
+          MIMEType       = getDocumentType(),
           doc            = null,
           parser, input, i;
 
@@ -682,22 +682,20 @@
       return doc;
     }
 
-    function documentMIMEType() {
-      var MIMEType = options.responseMediaType ||
-                     getHeader(processedResponse.headers, 'Content-Type');
+    function getDocumentType() {
+      var value = options.responseMediaType || getHeader(processedResponse.headers, 'Content-Type'),
+          type  = value && value.split(';', 1)[0];
 
-      // https://w3c.github.io/DOM-Parsing/#idl-def-supportedtype
-      switch (MIMEType) {
+      switch (type) {
         case 'text/html':
         case 'text/xml':
         case 'application/xml':
         case 'application/xhtml+xml':
         case 'image/svg+xml':
-          break;
+          return type;
         default:
-          MIMEType = 'text/xml';
+          return 'text/xml';
       }
-      return MIMEType;
     }
 
     function getExposedHeader(name) {
