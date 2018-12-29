@@ -8,7 +8,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.8.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.9.0');
   else if (root.request)
     self.console &&
     self.console.warn &&

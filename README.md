@@ -79,6 +79,13 @@ jspm install cb-fetch
   </code></pre>
 </details>
 
+<details>
+  <summary><abbr title="TypeScript">TS</abbr></summary>
+  <pre><code>
+  import request = require('cb-fetch');
+  </code></pre>
+</details>
+
 <details open="open">
   <summary>Global Namespace</summary>
   <p>If none of the previously listed module registration methods are supported, a global variable named <code>request</code> will be exposed.</p>

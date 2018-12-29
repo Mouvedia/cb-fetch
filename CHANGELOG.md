@@ -9,6 +9,7 @@
     * strip the credentials
 
 ### Added
+* TypeScript declaration file
 * fetch
     * `timeout` callback
     * `timeout` option
