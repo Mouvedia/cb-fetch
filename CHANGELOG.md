@@ -16,6 +16,7 @@
 
 ### Changed
 * verb methods accept paths as argument
+* the query method appends
 * plain object parameters serialization
     * array support
     * `undefined` properties get skipped

@@ -8,7 +8,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.9.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.10.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -91,13 +91,13 @@
       }
     }
 
-    function addQueryString() {
+    function addQueryString(parameters) {
       var append = getAppender();
 
-      if (self.URLSearchParams && Object.prototype.toString.call(options.parameters) === '[object URLSearchParams]')
-        options.parameters = options.parameters.toString();
-      if (options.parameters && String.isString(options.parameters)) {
-        var pairs = options.parameters.split('&'),
+      if (self.URLSearchParams && Object.prototype.toString.call(parameters) === '[object URLSearchParams]')
+        parameters = parameters.toString();
+      if (parameters && String.isString(parameters)) {
+        var pairs = parameters.split('&'),
             len   = pairs.length,
             pair, i;
 
@@ -105,8 +105,8 @@
           pair = pairs[i].split('=');
           append(pair[0], pair[1]);
         }
-      } else if (typeof options.parameters == 'object')
-        for (var key in options.parameters) append(key, options.parameters[key]);
+      } else if (typeof parameters == 'object')
+        for (var key in parameters) append(key, parameters[key]);
     }
 
     function overrideMethod() {
@@ -848,7 +848,7 @@
       if (options.tunneling && !/^(POST|GET)$/.test(options.method))
         overrideMethod();
       if (options.parameters)
-        addQueryString();
+        addQueryString(options.parameters);
       if (options.username)
         setRequestHeader('Authorization', 'Basic ' + self.btoa(options.username + ':' + (options.password || '')));
 
@@ -876,7 +876,6 @@
       request[verb] = function (url) {
         var supportBody = !/^(get|head|delete)$/.test(verb),
             action      = supportBody ? 'send' : 'query',
-            payload     = supportBody ? 'body' : 'parameters',
             context     = {};
 
         if (isAbsolute(url))
@@ -886,7 +885,13 @@
         options.method = verb.toUpperCase();
 
         context[action] = function (data) {
-          options[payload] = data || options[payload];
+          if (supportBody)
+            options.body = data || options.body;
+          else if (data) {
+            addQueryString(options.parameters);
+            addQueryString(data);
+            delete options.parameters;
+          }
           return {
             done: request.done,
             hook: request.hook

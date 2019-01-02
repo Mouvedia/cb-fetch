@@ -118,15 +118,13 @@ let json = request({
   headers:      { 'content-type': 'application/json' }
 });
 
-// gotta admit, this is more concise
-let abort = json.get('/segment').done({
-  success: onSuccessCallback,
-  error:   onErrorCallback,
-  abort:   onAbortCallback
-});
-
-// forcefully aborts the request
-abort();
+// GETs http://www.example.com/segment?_csrf=TOKEN&foo%5B0%5D=bar&foo%5B1%5D=qux
+json.get('/segment')
+    .query({ foo: ['bar', 'qux'] })
+    .done({
+      success: onSuccessCallback,
+      error:   onErrorCallback
+    });
 ```
 
 ## API
