@@ -4,6 +4,9 @@
 ![install size](https://badgen.net/packagephobia/install/cb-fetch)
 <a href="http://www.npmjs.com/package/cb-fetch">
   <img alt="npm version" align="right" src="https://badge.fury.io/js/cb-fetch.svg" />
+</a><br/>
+<a href="https://libraries.io/subscribe/1164538">
+  <img alt="libraries.io" align="right" src="https://badgen.net/badge//subscribe/50AB50?icon=libraries" />
 </a>
 
 # cb-fetch
@@ -93,38 +96,38 @@ jspm install cb-fetch
 
 ## Examples
 ```js
-// this looks too easy
+// here's your typical request
 request('http://www.example.com?key1=value1&key2=value2')
-  .done(onSuccessCallback);
+  .done(response => { /* … */ });
 
-// being more expressive won't hurt though
-request()
-  .get('http://www.example.com?key1=value1&key2=value2')
-  .done(onSuccessCallback, onErrorCallback);
-
-// chaining methods helps separating concerns
+// taking a comprehensive approach is encouraged though
 request()
   .get('http://www.example.com')
   .query('key1=value1&key2=value2')
   .done(onSuccessCallback, onErrorCallback);
 
-// passing an object offers additional options
+// passing an object offers options not available otherwise
 let json = request({
   url:          new URL('http://www.example.com'),
   parameters:   new URLSearchParams('_csrf=TOKEN'),
   mode:         'cors',
   credentials:  'include',
   responseType: 'json',
-  headers:      { 'content-type': 'application/json' }
+  headers:      { 'Content-Type': 'application/json' }
 });
 
-// GETs http://www.example.com/segment?_csrf=TOKEN&foo%5B0%5D=bar&foo%5B1%5D=qux
-json.get('/segment')
-    .query({ foo: ['bar', 'qux'] })
-    .done({
-      success: onSuccessCallback,
-      error:   onErrorCallback
-    });
+// let's put that base config to good use
+let abort = json.get('/segment')
+                .query({ foo: ['bar', 'qux'] })
+                .hook('download', e => { /* … */ })
+                .done({
+                    success: onSuccessCallback,
+                    error:   onErrorCallback,
+                    abort:   onAbortCallback
+                });
+
+// forcefully aborts the request
+abort();
 ```
 
 ## API
@@ -183,11 +186,11 @@ json.get('/segment')
   ),
   (
     name: <del>'upload'</del> | 'download',
-    handler: (Object) => Void
+    handler: (Object) => Any
   ),
   (
     name: 'loadend',
-    handler: () => Void
+    handler: () => Any
   )
 } => Object
 </code></pre>
@@ -203,8 +206,8 @@ json.get('/segment')
     timeout?:  Function,
     abort?:    Function
   })
-} => Function,
-     throws: TypeError
+} => () => Void,
+  throws: TypeError
 ```
 
 ## Properties
@@ -253,7 +256,7 @@ url        | String
 ⁴ MSXML 3.0 only<br/>
 ⁵ method override<br/>
 ⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423<br/>
-⁷ Gecko 1.7b–22</sup>
+⁷ Gecko 1.7β–22</sup>
 
 ## Gotchas
 
