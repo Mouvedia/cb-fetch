@@ -28,6 +28,9 @@
 ### Removed
 * `caching` option
 
+### Security
+* the `ProhibitDTD` second-level XML DOM property is explicitly set to `false`
+
 ## [1.5.0][3] - 2018-09-25
 
 ### Fixed

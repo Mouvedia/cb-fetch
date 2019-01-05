@@ -623,7 +623,6 @@
                             'MSXML2.DOMDocument',
                             'Microsoft.XMLDOM',
                             'MSXML.DOMDocument'],
-          len            = progIDs.length,
           queryLanguage  = options.XSLPattern ? 'XSLPattern' : 'XPath',
           implementation = self.document && self.document.implementation,
           MIMEType       = getDocumentType(),
@@ -648,14 +647,20 @@
         if (doc && doc.getElementsByTagName('parsererror').length)
           return null;
       } else if (self.ActiveXObject) {
-        for (i = 0; i < len; ++i) {
+        for (i = 0; progIDs[i]; ++i) {
           try {
             doc = new ActiveXObject(progIDs[i]);
-            if (progIDs[i] === 'MSXML2.DOMDocument.3.0')
-              doc.setProperty('SelectionLanguage', queryLanguage);
-            doc.async = false;
-            return doc.loadXML(serializedDocument) ? doc : null;
+          } catch (e) { continue; }
+          if (i < 3)
+            // http://msdn.microsoft.com/en-us/library/ms767616(VS.85).aspx
+            doc.setProperty('NewParser', true);
+          if (i === 3)
+            doc.setProperty('SelectionLanguage', queryLanguage);
+          try {
+            doc.setProperty('ProhibitDTD', false);
           } catch (e) {}
+          doc.async = false;
+          return doc.loadXML(serializedDocument) ? doc : null;
         }
       }
       return doc;

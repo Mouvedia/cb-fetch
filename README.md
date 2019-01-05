@@ -137,7 +137,8 @@ abort();
 
 ### Map
 
-<pre><code>(?: Options | Options.url)
+~~~
+(?: Options | Options.url)
 => Object ┬─────────────────○ done
           ├──────● hookⁿ ───○ done
           │  ┌────────┐
@@ -158,7 +159,7 @@ abort();
                ├─● hookⁿ ───○ done
                └─● send ────○ done
                  └─● hookⁿ ─○ done
-</code></pre>
+~~~
 
 ### Method Signatures
 
