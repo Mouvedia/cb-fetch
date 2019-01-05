@@ -5,25 +5,25 @@
 ### Fixed
 * match the document's MIME type to a **parameter-less** Content-Type header
 * `URL`
-    * extract credentials in a cross-browser manner
-    * strip the credentials
+  * extract credentials in a cross-browser manner
+  * strip the credentials
 
 ### Added
 * TypeScript declaration file
 * fetch
-    * `timeout` callback
-    * `timeout` option
+  * `timeout` callback
+  * `timeout` option
 
 ### Changed
 * verb methods accept paths as argument
 * the query method appends
 * plain object parameters serialization
-    * array support
-    * `undefined` properties get skipped
-    * `null` properties emulate `name="isindex"`
+  * array support
+  * `undefined` properties get skipped
+  * `null` properties emulate `name="isindex"`
 * fetch
-    * invalid JSON throws
-    * `abort` becomes a no-op after completion
+  * invalid JSON throws
+  * `abort` becomes a no-op after completion
 
 ### Removed
 * `caching` option
@@ -40,9 +40,9 @@
 * cancellation
 * download monitoring
 * XHR
-    * timeout fallback
-    * multipart option
-    * caching option
+  * timeout fallback
+  * multipart option
+  * caching option
 
 ### Changed
 * `'msxml-document'` responseType falls back to `'document'` if not supported

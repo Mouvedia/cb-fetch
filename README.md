@@ -14,28 +14,31 @@
 A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous HTTP requests that follows the **c**all**b**ack pattern.
 
 ## Table of Contents
-  - [Installation](#installation)
-  - [Features](#features)
-  - [Importation](#importation)
-  - [Examples](#examples)
-  - [API](#api)
-  - [Properties](#properties)
-  - [Gotchas](#gotchas)
-  - [License](#license)
+- [Installation](#installation)
+- [Features](#features)
+- [Importation](#importation)
+- [Examples](#examples)
+- [API](#api)
+- [Properties](#properties)
+- [Gotchas](#gotchas)
+- [License](#license)
 
 ## Installation
+
 #### npm
-```sh
+~~~sh
 npm install --save cb-fetch
-```
+~~~
+
 #### jspm
-```sh
+~~~sh
 jspm install cb-fetch
-```
+~~~
+
 #### jsDelivr
-```xml
+~~~xml
 <script src="//cdn.jsdelivr.net/combine/npm/@string/isstring/isString.min.js,npm/cb-fetch/index.min.js" type="text/javascript"></script>
-```
+~~~
 
 ## Features
 - [x] fetch
@@ -95,7 +98,7 @@ jspm install cb-fetch
 </details>
 
 ## Examples
-```js
+~~~js
 // here's your typical request
 request('http://www.example.com?key1=value1&key2=value2')
   .done(response => { /* … */ });
@@ -128,7 +131,7 @@ let abort = json.get('/segment')
 
 // forcefully aborts the request
 abort();
-```
+~~~
 
 ## API
 
@@ -161,21 +164,21 @@ abort();
 
 #### HTTP verbs
 
-```
+~~~
 (Options.url) => Object
-```
+~~~
 
 #### query
 
-```
+~~~
 (Options.parameters) => Object
-```
+~~~
 
 #### send
 
-```
+~~~
 (Options.body) => Object
-```
+~~~
 
 #### hook
 
@@ -197,7 +200,7 @@ abort();
 
 #### done
 
-```
+~~~
 {
   (onSuccess?: Function, onError?: Function),
   ({
@@ -208,11 +211,12 @@ abort();
   })
 } => () => Void,
   throws: TypeError
-```
+~~~
 
 ## Properties
 
 ### Request Options
+
 Property     | Default       | Value(s)
 --------     | -------       | --------
 body         | null          | BufferSource, Blob, Document², FormData, String, URLSearchParams, ReadableStream
@@ -232,6 +236,7 @@ tunneling⁵   | false         | Boolean
 XSLPattern⁴  | false         | Boolean
 
 ### Progress Event
+
 Property         | Type
 --------         | ----
 chunk            | String, ArrayBuffer, Blob, Uint8Array, null
@@ -241,6 +246,7 @@ total            | ℕ
 lengthComputable | Boolean
 
 ### Response
+
 Property   | Type
 --------   | ----
 body       | Object, String, Document, ArrayBuffer, Blob, FormData¹, ReadableStream¹, null
@@ -250,13 +256,13 @@ statusCode | ℕ
 statusText | String
 url        | String
 
-<sup>¹ fetch only<br/>
+<sub><sup>¹ fetch only<br/>
 ² XHR only<br/>
 ³ except Firefox 34–43<br/>
 ⁴ MSXML 3.0 only<br/>
 ⁵ method override<br/>
 ⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423<br/>
-⁷ Gecko 1.7β–22</sup>
+⁷ Gecko 1.7β–22</sup></sub>
 
 ## Gotchas
 
