@@ -27,10 +27,10 @@
         options           = {},
         processedResponse = {},
         hooks             = {},
-        HAS_SIGNAL             = self.Request && 'signal' in Request.prototype,
-        HAS_BODY               = self.Response && 'body' in Response.prototype,
-        SUPPORT_MSXML_DOCUMENT = 'ActiveXObject' in self && self.navigator.msPointerEnabled,
-        SUPPORT_MOZ_JSON       = self.document && 'mozFullScreen' in self.document && !IDBIndex.prototype.count,
+        HAS_SIGNAL             = self.Request && Request.prototype.hasOwnProperty('signal'),
+        HAS_BODY               = self.Response && Response.prototype.hasOwnProperty('body'),
+        SUPPORT_MSXML_DOCUMENT = self.hasOwnProperty && self.hasOwnProperty('ActiveXObject') && self.navigator.msPointerEnabled,
+        SUPPORT_MOZ_JSON       = self.document && self.document.mozFullScreen && !IDBIndex.prototype.count,
         cbs;
 
     function errorHandler(error) {
@@ -189,7 +189,7 @@
         // <= Gecko 50
         else if (XML.documentElement && XML.documentElement.tagName === 'parsererror')
           errorHandler(XML.documentElement.firstChild.data.split('\n', 1)[0]);
-        else
+        else if (XML.documentElement)
           return XML;
       }
       return null;
@@ -451,7 +451,7 @@
       if (options.responseMediaType && xhr.overrideMimeType)
         xhr.overrideMimeType(options.responseMediaType);
 
-      if (xhr.setRequestHeader)
+      if (typeof xhr.setRequestHeader != 'undefined')
         setRequestHeaders(xhr);
 
       if (options.timeout) {
@@ -585,7 +585,7 @@
 
     function processXHR(xhr) {
       processedResponse.instance   = xhr;
-      processedResponse.headers    = getResponseHeaders(xhr);
+      processedResponse.headers    = typeof xhr.getResponseHeader == 'undefined' ? {} : getResponseHeaders(xhr);
       processedResponse.statusCode = xhr.status === 1223 ? 204 : xhr.status;
       try { // https://bugzilla.mozilla.org/show_bug.cgi?id=596634
       processedResponse.statusText = xhr.status === 1223 ? 'No Content' : xhr.statusText;
@@ -885,7 +885,7 @@
 
         if (isAbsolute(url))
           processURL(url);
-        else if (options.url && String.isString(url))
+        else if (String.isString(url))
           appendPath(url);
         options.method = verb.toUpperCase();
 
