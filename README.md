@@ -14,6 +14,7 @@
 A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous HTTP requests that follows the **c**all**b**ack pattern.
 
 ## Table of Contents
+
 - [Installation](#installation)
 - [Features](#features)
 - [Importation](#importation)
@@ -25,22 +26,26 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
 
 ## Installation
 
-#### npm
+### npm
+
 ~~~sh
 npm install --save cb-fetch
 ~~~
 
-#### jspm
+### jspm
+
 ~~~sh
 jspm install cb-fetch
 ~~~
 
-#### jsDelivr
+### jsDelivr
+
 ~~~xml
 <script src="//cdn.jsdelivr.net/combine/npm/@string/isstring/isString.min.js,npm/cb-fetch/index.min.js" type="text/javascript"></script>
 ~~~
 
 ## Features
+
 - [x] fetch
 - [x] XMLHttpRequest
 - [x] XDomainRequest
@@ -98,6 +103,7 @@ jspm install cb-fetch
 </details>
 
 ## Examples
+
 ~~~js
 // here's your typical request
 request('http://www.example.com?key1=value1&key2=value2')
@@ -267,10 +273,12 @@ url        | String
 
 ## Gotchas
 
-#### `delete` reserved keyword
+### `delete` reserved keyword
+
 In pre-ES5 environments, the delete method requires the use of the bracket notation.
 
-#### XDR intrinsic limitations
+### XDR intrinsic limitations
+
 - only support GET and POST methods
 - cannot set request headers
 - no credentials
@@ -278,7 +286,8 @@ In pre-ES5 environments, the delete method requires the use of the bracket notat
 - the informational and redirection status code classes are considered errors
 - the response's status code and status text are not supplied
 
-#### Exposed headers
+### Exposed headers
+
 For the browsers powered by Gecko ≤20 to have the exposed response headers
 populated into the `headers` property, the following conditions must be met:
 
@@ -286,11 +295,12 @@ populated into the `headers` property, the following conditions must be met:
 - `Access-Control-Expose-Headers` field value is not `*`
 - `mode` set to `cors`
 
-#### Platform for Privacy Preferences
+### Platform for Privacy Preferences
 
 Internet Explorer’s default settings restrict the use of 3<sup>rd</sup> party cookies unless a P3P compact policy
 declaration has been included through a custom HTTP response header; hence, the `"include"` credentials mode cannot be
 fully honored if a cookie has been deemed unsatisfactory.
 
 ## License
-This project is licensed under the terms of the MIT license.
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FMouvedia%2Fcb-fetch.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FMouvedia%2Fcb-fetch?ref=badge_large)
