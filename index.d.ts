@@ -54,21 +54,23 @@ interface RequestOptions {
 
 interface JSONArray extends Array<JSONValue> {}
 type JSONValue = string | number | boolean | null | { [name: string]: JSONValue } | JSONArray
+type Callback  = () => any
+type Abort     = () => void
 
 interface XDomainRequest {
          prototype:    XDomainRequest
          new():        XDomainRequest
          create():     XDomainRequest
-         onprogress(): any
-         onload():     any
-         onerror():    any
-         ontimeout():  any
+         onprogress:   Callback
+         onload:       Callback
+         onerror:      Callback
+         ontimeout:    Callback
 readonly responseText: string
 readonly contentType:  string
          timeout:      number
          open:         (method: 'GET' | 'POST', url: string) => void
          send:         (body?: string) => void
-         abort:        () => void
+         abort:        Abort
 }
 
 interface NormalizedResponse  {
@@ -88,21 +90,15 @@ interface ProgressEvent {
     lengthComputable: boolean
 }
 
-interface Complete {
-    (response: NormalizedResponse): any
-}
-
-interface Abort {
-    (): void
-}
+type Complete = (response: NormalizedResponse) => any
 
 interface Done {
     (onSuccess?: Complete, onError?: Complete): Abort
     (callbacks?: {
         success?: Complete
         error?:   Complete
-        timeout?: () => any
-        abort?:   () => any
+        timeout?: Callback
+        abort?:   (event?: Event) => any
     }): Abort
 }
 
@@ -122,7 +118,7 @@ interface Hook {
     ): Tail
     (
         name: 'loadend',
-        handler: () => any
+        handler: Callback
     ): Tail
 }
 
