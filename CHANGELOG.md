@@ -3,6 +3,7 @@
 ## [Unreleased][4]
 
 ### Fixed
+* Firefox 3.5–7 support in the context of a web worker
 * match the document's MIME type to a **parameter-less** Content-Type header
 * `URL`
   * extract credentials in a cross-browser manner
@@ -34,7 +35,7 @@
 ## [1.5.0][3] - 2018-09-25
 
 ### Fixed
-* IE10+ support in the context of a web worker
+* Internet Explorer 10+ support in the context of a web worker
 * XDR Content-Type header is set in a timely manner
 
 ### Added

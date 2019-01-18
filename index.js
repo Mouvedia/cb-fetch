@@ -57,7 +57,11 @@
       @end@*/) {
         if (anon && self.AnonXMLHttpRequest)
           return new AnonXMLHttpRequest();
-        return new XMLHttpRequest(anon);
+        try {
+          return new XMLHttpRequest(anon);
+        } catch (e) {
+          return new XMLHttpRequest();
+        }
       }/*@cc_on@if(@_jscript_version>=5)else {
         var progIDs = ['Msxml2.XMLHTTP.6.0', 'Msxml2.XMLHTTP.3.0', 'Microsoft.XMLHTTP'];
 
