@@ -195,35 +195,6 @@
       return null;
     }
 
-    function getResponse(xhr) {
-      if (typeof xhr.responseType == 'string') {
-        switch (xhr.responseType) {
-          case 'text':
-          case '':
-            return xhr.responseText;
-          case 'document':
-          case 'msxml-document':
-            return getXML(xhr.responseXML);
-          default:
-            return typeof xhr.response == 'undefined' ?
-                   xhr.responseText :
-                   xhr.response;
-        }
-      }
-      if (typeof xhr.responseXML == 'object' && xhr.responseXML)
-        return getXML(xhr.responseXML);
-      if (typeof xhr.responseText == 'string')
-        return xhr.responseText;
-    }
-
-    function getStatusClass(xhr) {
-      if (xhr.status >= 200 && xhr.status < 300 || (xhr.status == 304 || xhr.status == 1223) ||
-          // Android status 206 // applicationCache IDLE // Opera status 304
-          xhr.status == 0 && getResponse(xhr))
-        return 'success';
-      return 'error';
-    }
-
     function concatBufferSource(accumulator, current) {
       var array = new Uint8Array(accumulator.byteLength + current.byteLength);
 
@@ -372,6 +343,35 @@
       return function () { abort(); };
     }
 
+    function getResponse(xhr) {
+      if (typeof xhr.responseType == 'string') {
+        switch (xhr.responseType) {
+          case 'text':
+          case '':
+            return xhr.responseText;
+          case 'document':
+          case 'msxml-document':
+            return getXML(xhr.responseXML);
+          default:
+            return typeof xhr.response == 'undefined' ?
+                          xhr.responseText :
+                          xhr.response;
+        }
+      }
+      if (typeof xhr.responseXML == 'object' && xhr.responseXML)
+        return getXML(xhr.responseXML);
+      if (typeof xhr.responseText == 'string')
+        return xhr.responseText;
+    }
+
+    function processStatus(xhr) {
+      if (xhr.status >= 200 && xhr.status < 300 || (xhr.status == 304 || xhr.status == 1223) ||
+          // Android status 206 // applicationCache IDLE // Opera status 304
+          xhr.status == 0 && getResponse(xhr))
+        return 'success';
+      return 'error';
+    }
+
     function xhrPath() {
       var xhr           = XHR(),
           HAS_ONABORT   = typeof xhr.onabort != 'undefined',
@@ -404,17 +404,24 @@
       // since the XHR instance won't be reused
       // the handler can be placed before open
       xhr.onreadystatechange = function () {
+        var category, response;
+
         if (xhr.readyState == 4) {
           timeoutID && clearTimeout(timeoutID);
           self.detachEvent && detachEvent('onunload', abort);
           xhr.onreadystatechange = function () {};
 
           try {
-            fireHandler(getStatusClass(xhr), processXHR(xhr));
+            category = processStatus(xhr);
+            response = processXHR(xhr);
           // Firefox status 408 // IE9 error c00c023f on abort
           } catch (e) {
             errorHandler(e);
-            fireHandler('error', { instance: xhr });
+          } finally {
+            if (response)
+              fireHandler(category, response);
+            else
+              fireHandler('error', { instance: xhr });
           }
 
           xhr = null;
