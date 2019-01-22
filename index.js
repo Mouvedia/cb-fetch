@@ -794,7 +794,7 @@
       if (String.isString(url))
         setURL(url);
       else if (self.URL && Object.prototype.toString.call(url) === '[object URL]')
-        setURL(url.href);
+        url.href && setURL(url.href);
     }
 
     function appendPath(path) {
