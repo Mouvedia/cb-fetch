@@ -5,25 +5,16 @@ declare function request(options?: Partial<RequestOptions>): Methods
 declare function request(url?: RequestURL): Methods
 
 type RequestBody =
-    | string
-    | Blob
+    | BodyInit
     | Document
-    | FormData
-    | ReadableStream
-    | BufferSource
-    | URLSearchParams
 
 type Type =
-    |             'arraybuffer'
+    | XMLHttpRequestResponseType
+    | 'formdata'
     | 'moz-chunked-arraybuffer'
-    |             'blob'
-    |         'moz-blob'
-    |             'document'
-    |       'msxml-document'
-    |             'formdata'
-    |             'json'
-    |             'text'
     | 'moz-chunked-text'
+    | 'moz-blob'
+    | 'msxml-document'
 
 type Parameters =
     | string
@@ -40,7 +31,7 @@ interface RequestOptions {
     headers: Record<string, string> | Headers
     parameters: Parameters
     body: RequestBody
-    credentials: 'include' | 'omit' | 'same-origin'
+    credentials: RequestCredentials
     mode: 'cors' | 'no-cors' | 'same-origin'
     responseType: Type
     responseMediaType: string
