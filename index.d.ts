@@ -64,10 +64,12 @@ readonly contentType:  string
          abort:        Abort
 }
 
+interface AnonXMLHttpRequest extends XMLHttpRequest {}
+
 interface NormalizedResponse  {
     body: JSONValue | Blob | Document | FormData | ReadableStream | ArrayBuffer
     headers: Record<string, string>
-    instance: XMLHttpRequest | XDomainRequest | Response
+    instance: XMLHttpRequest | XDomainRequest | Response | AnonXMLHttpRequest
     statusCode: number
     statusText: string
     url: string
@@ -114,11 +116,11 @@ interface Hook {
 }
 
 interface Querier extends Tail {
-    query: (parameters: Parameters) => Tail
+    query: (parameters?: Parameters) => Tail
 }
 
 interface Sender extends Tail {
-    send: (body: RequestBody) => Tail
+    send: (body?: RequestBody) => Tail
 }
 
 interface Verb<T> {

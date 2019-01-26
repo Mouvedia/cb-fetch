@@ -258,7 +258,7 @@ Property   | Type
 --------   | ----
 body       | Object, String, Document, ArrayBuffer, Blob, FormData¹, ReadableStream¹, null
 headers    | Object
-instance   | XMLHttpRequest, XDomainRequest, Response
+instance   | XMLHttpRequest, XDomainRequest, Response, AnonXMLHttpRequest
 statusCode | ℕ
 statusText | String
 url        | String

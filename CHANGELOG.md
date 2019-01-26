@@ -11,6 +11,7 @@
 
 ### Added
 * TypeScript declaration file
+* Flow library definition
 * fetch
   * `timeout` callback
   * `timeout` option

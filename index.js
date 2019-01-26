@@ -305,7 +305,7 @@
     }
 
     function xdrPath() {
-      var xdr = self.XDomainRequest.create(),
+      var xdr = XDomainRequest.create(),
           abort, length;
 
       function fireHandler(name, arg) {
