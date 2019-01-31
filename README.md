@@ -1,7 +1,7 @@
 ![min+gzip size](https://badgen.net/bundlephobia/minzip/cb-fetch)
 ![min size](https://badgen.net/bundlephobia/min/cb-fetch)
-![publish size](https://badgen.net/packagephobia/publish/cb-fetch)
-![install size](https://badgen.net/packagephobia/install/cb-fetch)
+[![codacy](https://api.codacy.com/project/badge/grade/79ead244450442f1b252649a5c0563dd)](https://www.codacy.com/app/Mouvedia/cb-fetch)
+[![code climate](https://api.codeclimate.com/v1/badges/4aec18c558f6a51155e6/maintainability)](https://codeclimate.com/github/Mouvedia/cb-fetch)
 <a href="http://www.npmjs.com/package/cb-fetch">
   <img alt="npm version" align="right" src="https://badge.fury.io/js/cb-fetch.svg" />
 </a><br/>
@@ -46,9 +46,9 @@ jspm install cb-fetch
 
 ## Features
 
-- [x] fetch
-- [x] XMLHttpRequest
-- [x] XDomainRequest
+- [x] `fetch`
+- [x] `XMLHttpRequest`
+- [x] `XDomainRequest`
 - [x] [Universal Module Definition](#importation)
 - [x] [fluent API](#map)
 - [x] [normalized response](#response)
@@ -189,21 +189,23 @@ abort();
 
 #### hook
 
-<pre><code>{
-  (
-    name: 'loadstart',
-    handler: () => Boolean | Void
-  ),
-  (
-    name: <del>'upload'</del> | 'download',
-    handler: (Object) => Any
-  ),
-  (
-    name: 'loadend',
-    handler: () => Any
-  )
-} => Object
-</code></pre>
+##### loadstart
+
+~~~
+('loadstart', () => Boolean | Void) => Object
+~~~
+
+<h5>download<img align="right" src="https://badges.herokuapp.com/browsers?firefox=%E2%89%A50.9.3&opera=%E2%89%A512&iexplore=%E2%89%A58&googlechrome=%E2%89%A51&safari=%E2%89%A54&labels=none&line=true" /></h5>
+
+~~~
+('download', (Object) => Any) => Object
+~~~
+
+##### loadend
+
+~~~
+('loadend', () => Any) => Object
+~~~
 
 #### done
 
@@ -277,16 +279,7 @@ url        | String
 
 In pre-ES5 environments, the delete method requires the use of the bracket notation.
 
-### XDR intrinsic limitations
-
-- only support GET and POST methods
-- cannot set request headers
-- no credentials
-- same scheme restriction
-- the informational and redirection status code classes are considered errors
-- the response's status code and status text are not supplied
-
-### Exposed headers
+### Gecko
 
 For the browsers powered by Gecko ≤20 to have the exposed response headers
 populated into the `headers` property, the following conditions must be met:
@@ -295,7 +288,20 @@ populated into the `headers` property, the following conditions must be met:
 - `Access-Control-Expose-Headers` field value is not `*`
 - `mode` set to `cors`
 
-### Platform for Privacy Preferences
+### Trident
+
+#### `XDomainRequest` intrinsic limitations
+
+- only support GET and POST methods
+- cannot set request headers
+- no credentials
+- same scheme restriction
+- the informational and redirection status code classes are considered errors
+- the response's status code and status text are not supplied
+- same-origin requests _also_ requires the server to respond with an `Access-Control-Allow-Origin` header of either `*`
+or the exact URL of the requesting document
+
+#### Platform for Privacy Preferences
 
 Internet Explorer’s default settings restrict the use of 3<sup>rd</sup> party cookies unless a P3P compact policy
 declaration has been included through a custom HTTP response header; hence, the `"include"` credentials mode cannot be
