@@ -797,16 +797,18 @@
         url.href && setURL(url.href);
     }
 
-    function appendPath(path) {
-      var parts    = options.url.split('/'),
+    function newURL(base, path) {
+      var absolute = isAbsolute(base),
+          url      = (absolute ? base : self.location.href).split(/[#?]/)[0],
+          parts    = (absolute ? url : newURL(url, base)).split('/'),
           segments = path.split('/');
 
       if (parts.length > 3)
         parts = parts.slice(0, parts.length - 1);
       if (/^\.\//.test(path))
-        setURL(parts.join('/') + path.slice(1));
+        url = parts.join('/') + path.slice(1);
       else if (path.charAt(0) === '/')
-        setURL(parts[0] + '//' + parts[2] + path);
+        url = parts[0] + '//' + parts[2] + path;
       else {
         while (segments[0] === '..') {
           if (parts.length === 3)
@@ -814,8 +816,9 @@
           parts = parts.slice(0, parts.length - 1);
           segments = segments.slice(1);
         }
-        setURL(parts.join('/') + '/' + segments.join('/'));
+        url = parts.join('/') + '/' + segments.join('/');
       }
+      return url;
     }
 
     function processInput(input) {
@@ -897,7 +900,7 @@
         if (isAbsolute(url))
           processURL(url);
         else if (String.isString(url))
-          appendPath(url);
+          setURL(newURL(options.url, url));
         options.method = verb.toUpperCase();
 
         context[action] = function (data) {
