@@ -12,6 +12,7 @@
 ### Added
 * TypeScript declaration file
 * Flow library definition
+* Bower metadata
 * fetch
   * `timeout` callback
   * `timeout` option

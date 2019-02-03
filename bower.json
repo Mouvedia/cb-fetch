@@ -1,0 +1,29 @@
+{
+  "name": "cb-fetch",
+  "description": "Normalize fetch, XMLHttpRequest and XDomainRequest using an easy-to-use API",
+  "main": "index.js",
+  "dependencies": {
+    "isstring": "https://raw.githubusercontent.com/Mouvedia/isString/master/isString.min.js",
+    "json3": "latest",
+    "base64": "latest"
+  },
+  "moduleType": [
+    "amd",
+    "globals",
+    "node",
+    "yui"
+  ],
+  "keywords": [
+    "fetch",
+    "XHR",
+    "XMLHttpRequest",
+    "XDR",
+    "XDomainRequest",
+    "cross-browser",
+    "callback",
+    "AJAX",
+    "AJAH",
+    "AJAJ"
+  ],
+  "license": "MIT"
+}

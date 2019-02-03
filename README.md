@@ -32,10 +32,22 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
 npm install --save cb-fetch
 ~~~
 
+### yarn
+
+~~~sh
+yarn add cb-fetch
+~~~
+
 ### jspm
 
 ~~~sh
 jspm install cb-fetch
+~~~
+
+### bower
+
+~~~sh
+bower install --save cb-fetch#master
 ~~~
 
 ### jsDelivr
