@@ -30,7 +30,7 @@
         HAS_SIGNAL             = self.Request && Request.prototype.hasOwnProperty('signal'),
         HAS_BODY               = self.Response && Response.prototype.hasOwnProperty('body'),
         SUPPORT_MSXML_DOCUMENT = self.hasOwnProperty && self.hasOwnProperty('ActiveXObject') && self.navigator.msPointerEnabled,
-        SUPPORT_MOZ_JSON       = self.document && self.document.mozFullScreen && !IDBIndex.prototype.count,
+        SUPPORT_MOZ_JSON       = self.document && typeof self.document.mozFullScreen == 'boolean' && !IDBIndex.prototype.count,
         cbs;
 
     function errorHandler(error) {
@@ -797,10 +797,10 @@
         url.href && setURL(url.href);
     }
 
-    function newURL(base, path) {
+    function deriveURL(base, path) {
       var absolute = isAbsolute(base),
           url      = (absolute ? base : self.location.href).split(/[#?]/)[0],
-          parts    = (absolute ? url : newURL(url, base)).split('/'),
+          parts    = (absolute ? url : deriveURL(url, base)).split('/'),
           segments = path.split('/');
 
       if (parts.length > 3)
@@ -900,7 +900,7 @@
         if (isAbsolute(url))
           processURL(url);
         else if (String.isString(url))
-          setURL(newURL(options.url, url));
+          setURL(deriveURL(options.url, url));
         options.method = verb.toUpperCase();
 
         context[action] = function (data) {

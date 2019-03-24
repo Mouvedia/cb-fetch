@@ -4,7 +4,7 @@
 
 ### Fixed
 * Firefox 3.5–7 support in the context of a web worker
-* match the document's MIME type to a **parameter-less** Content-Type header
+* match the document's MIME type to a _parameter-less_ Content-Type header
 * `URL`
   * extract credentials in a cross-browser manner
   * strip the credentials
