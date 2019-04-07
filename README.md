@@ -1,7 +1,6 @@
-![min+gzip size](https://badgen.net/bundlephobia/minzip/cb-fetch)
-![min size](https://badgen.net/bundlephobia/min/cb-fetch)
-[![codacy](https://api.codacy.com/project/badge/grade/79ead244450442f1b252649a5c0563dd)](https://www.codacy.com/app/Mouvedia/cb-fetch)
-[![code climate](https://api.codeclimate.com/v1/badges/4aec18c558f6a51155e6/maintainability)](https://codeclimate.com/github/Mouvedia/cb-fetch)
+![min+gzip size](https://img.shields.io/bundlephobia/minzip/cb-fetch.svg)
+![min size](https://img.shields.io/bundlephobia/min/cb-fetch.svg)
+[![flow-typed](https://badgen.net/badge//flow-typed/3F6EFB?icon=flow)](https://github.com/flow-typed/flow-typed)
 <a href="http://www.npmjs.com/package/cb-fetch">
   <img alt="npm version" align="right" src="https://badge.fury.io/js/cb-fetch.svg" />
 </a><br/>

@@ -370,8 +370,10 @@
 
     function processStatus(xhr) {
       if (xhr.status >= 200 && xhr.status < 300 || (xhr.status == 304 || xhr.status == 1223) ||
-          // Android status 206 // applicationCache IDLE // Opera status 304
-          xhr.status == 0 && getResponse(xhr))
+          // Android status 206 // applicationCache IDLE // Opera 9.5 // Firefox 3.5
+          xhr.status == 0 && getResponse(xhr) ||
+          // Firefox 3.6
+          xhr.statusText === 'NOT MODIFIED')
         return 'success';
       return 'error';
     }
