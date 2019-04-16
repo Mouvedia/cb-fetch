@@ -370,7 +370,7 @@
 
     function processStatus(xhr) {
       if (xhr.status >= 200 && xhr.status < 300 || (xhr.status == 304 || xhr.status == 1223) ||
-          // Android status 206 // applicationCache IDLE // Opera 9.5 // Firefox 3.5
+          // Android status 206 // applicationCache IDLE // Opera // Firefox 3.5
           xhr.status == 0 && getResponse(xhr) ||
           // Firefox 3.6
           xhr.statusText === 'NOT MODIFIED')
@@ -420,6 +420,7 @@
           try {
             category = processStatus(xhr);
             response = processXHR(xhr);
+          // https://bugzilla.mozilla.org/show_bug.cgi?id=596634
           // Firefox status 408 // IE9 error c00c023f on abort
           } catch (e) {
             errorHandler(e);
@@ -600,9 +601,7 @@
       processedResponse.instance   = xhr;
       processedResponse.headers    = typeof xhr.getResponseHeader == 'undefined' ? {} : getResponseHeaders(xhr);
       processedResponse.statusCode = xhr.status === 1223 ? 204 : xhr.status;
-      try { // https://bugzilla.mozilla.org/show_bug.cgi?id=596634
       processedResponse.statusText = xhr.status === 1223 ? 'No Content' : xhr.statusText;
-      } catch (e) { processedResponse.statusText = ''; }
       processedResponse.url        = xhr.responseURL;
       processedResponse.body       = getBody(xhr);
       return processedResponse;

@@ -4,6 +4,7 @@
 
 ### Fixed
 * Firefox 3.5–7 support in the context of a web worker
+* Firefox 3.6 handles empty 304 response
 * match the document's MIME type to a _parameter-less_ Content-Type header
 * `URL`
   * extract credentials in a cross-browser manner
