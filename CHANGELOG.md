@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased][4]
+## [1.10.0][4] - 2019-06-10
 
 ### Fixed
 * Firefox 3.5–7 support in the context of a web worker
@@ -13,7 +13,7 @@
 ### Added
 * TypeScript declaration file
 * Flow library definition
-* Bower metadata
+* Bower manifest
 * fetch
   * `timeout` callback
   * `timeout` option
@@ -21,6 +21,7 @@
 ### Changed
 * verb methods accept paths as argument
 * the query method appends
+* [optimized][103] `index.min.js` parsing
 * plain object parameters serialization
   * array support
   * `undefined` properties get skipped
@@ -99,5 +100,6 @@
 
 [1]: https://github.com/Mouvedia/cb-fetch/compare/b15a26f...d5c09ea
 [2]: https://github.com/Mouvedia/cb-fetch/compare/d5c09ea...1.0.0?w=true
-[3]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.5.0
-[4]: https://github.com/Mouvedia/cb-fetch/compare/1.5.0...HEAD
+[3]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0...1.5.0
+[4]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.10.0
+[103]: https://github.com/nolanlawson/optimize-js

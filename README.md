@@ -127,24 +127,21 @@ request()
   .done(onSuccessCallback, onErrorCallback);
 
 // passing an object offers options not available otherwise
-let json = request({
+let abort = request({
   url:          new URL('http://www.example.com'),
   parameters:   new URLSearchParams('_csrf=TOKEN'),
   mode:         'cors',
   credentials:  'include',
   responseType: 'json',
   headers:      { 'Content-Type': 'application/json' }
-});
-
-// let's put that base config to good use
-let abort = json.get('/segment')
-                .query({ foo: ['bar', 'qux'] })
-                .hook('download', e => { /* … */ })
-                .done({
-                    success: onSuccessCallback,
-                    error:   onErrorCallback,
-                    abort:   onAbortCallback
-                });
+}).get('/segment')
+  .query({ foo: ['bar', 'qux'] })
+  .hook('download', e => { /* … */ })
+  .done({
+    success: onSuccessCallback,
+    error:   onErrorCallback,
+    abort:   onAbortCallback
+  });
 
 // forcefully aborts the request
 abort();
@@ -183,19 +180,19 @@ abort();
 #### HTTP verbs
 
 ~~~
-(Options.url) => Object
+(Options.url?) => Object
 ~~~
 
 #### query
 
 ~~~
-(Options.parameters) => Object
+(Options.parameters?) => Object
 ~~~
 
 #### send
 
 ~~~
-(Options.body) => Object
+(Options.body?) => Object
 ~~~
 
 #### hook
@@ -278,10 +275,10 @@ url        | String
 
 <sub><sup>¹ fetch only<br/>
 ² XHR only<br/>
-³ except Firefox 34–43<br/>
+³ except Gecko 34–43<br/>
 ⁴ MSXML 3.0 only<br/>
 ⁵ method override<br/>
-⁶ fetch, Firefox 16+, Presto/2.10.232–2.12.423<br/>
+⁶ fetch, Gecko 16+, Presto/2.10.232–2.12.423<br/>
 ⁷ Gecko 1.7β–22</sup></sub>
 
 ## Gotchas
@@ -292,7 +289,7 @@ In pre-ES5 environments, the delete method requires the use of the bracket notat
 
 ### Gecko
 
-For the browsers powered by Gecko ≤20 to have the exposed response headers
+For the browsers powered by Gecko 1.9.1–20 to have the exposed response headers
 populated into the `headers` property, the following conditions must be met:
 
 - `Access-Control-Expose-Headers` response header exposes itself
@@ -309,7 +306,7 @@ populated into the `headers` property, the following conditions must be met:
 - same scheme restriction
 - the informational and redirection status code classes are considered errors
 - the response's status code and status text are not supplied
-- same-origin requests _also_ requires the server to respond with an `Access-Control-Allow-Origin` header of either `*`
+- same-origin requests _also_ require the server to respond with an `Access-Control-Allow-Origin` header of either `*`
 or the exact URL of the requesting document
 
 #### Platform for Privacy Preferences
