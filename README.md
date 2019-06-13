@@ -1,11 +1,12 @@
 ![min+gzip size](https://img.shields.io/bundlephobia/minzip/cb-fetch.svg)
 ![min size](https://img.shields.io/bundlephobia/min/cb-fetch.svg)
-[![flow-typed](https://badgen.net/badge//flow-typed/3F6EFB?icon=flow)](https://github.com/flow-typed/flow-typed)
+[![Flow](https://badgen.net/badge/_/library%20definition/3F6EFB?icon=flow&label)](https://github.com/flow-typed/flow-typed)
+![TypeScript](https://badgen.net/badge/_/declaration%20file/1E7ACC?icon=typescript&label)
 <a href="http://www.npmjs.com/package/cb-fetch">
   <img alt="npm version" align="right" src="https://badge.fury.io/js/cb-fetch.svg" />
 </a><br/>
 <a href="https://libraries.io/subscribe/1164538">
-  <img alt="libraries.io" align="right" src="https://badgen.net/badge//subscribe/50AB50?icon=libraries" />
+  <img alt="libraries.io" align="right" src="https://badgen.net/badge/_/subscribe/50AB50?icon=libraries&label" />
 </a>
 
 # cb-fetch
