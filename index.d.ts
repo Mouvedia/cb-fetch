@@ -1,8 +1,8 @@
 export = request;
 export as namespace request;
 
-declare function request(options?: Partial<RequestOptions>): Methods
 declare function request(url?: RequestURL): Methods
+declare function request(options?: Partial<RequestOptions>): Methods
 
 type RequestBody =
     | BodyInit
