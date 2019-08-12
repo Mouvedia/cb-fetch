@@ -154,7 +154,17 @@
     }
 
     function assignHeaders(target, source) {
-      for (var key in source) setHeader(target, key, source[key]);
+      var keys = {};
+
+      for (var key in source) {
+        var k = key.toLowerCase(),
+            v = source[key];
+
+        if (keys[k]) key = keys[k];
+        else keys[k] = key;
+
+        setHeader(target, key, v);
+      }
     }
 
     function setHeader(headers, name, value) {

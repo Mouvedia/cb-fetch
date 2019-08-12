@@ -5,6 +5,9 @@
 ### Fixed
 * support empty HTTP header field values in accordance with [RFC 2616](https://tools.ietf.org/html/rfc2616#page-32)
 
+### Changed
+* duplicate keys passed in the headers option are now properly combined
+
 ## [1.10.0][4] - 2019-06-10
 
 ### Fixed
@@ -20,8 +23,8 @@
 * Flow library definition
 * Bower manifest
 * fetch
-  * `timeout` callback
-  * `timeout` option
+  * timeout callback
+  * timeout option
 
 ### Changed
 * verb methods accept paths as argument
@@ -36,7 +39,7 @@
   * `abort` becomes a no-op after completion
 
 ### Removed
-* `caching` option
+* caching option
 
 ### Security
 * the `ProhibitDTD` second-level XML DOM property is explicitly set to `false`
