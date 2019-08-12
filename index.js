@@ -8,7 +8,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.10.0');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.10.1');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -95,6 +95,10 @@
       }
     }
 
+    function isHeaders(instance) {
+      return self.Headers && Object.prototype.toString.call(instance) === '[object Headers]';
+    }
+
     function addQueryString(parameters) {
       var append = getAppender();
 
@@ -121,7 +125,7 @@
 
       options.method = isSafe ? 'GET' : 'POST';
 
-      if (self.Headers && Object.prototype.toString.call(headers) === '[object Headers]') {
+      if (isHeaders(headers)) {
         headers.set('X-HTTP-Method-Override', verb);
         headers.set('X-METHOD-OVERRIDE', verb);
         XHTTPMethod && headers.set('X-HTTP-Method', verb);
@@ -143,10 +147,14 @@
     function setRequestHeader(name, value) {
       var headers = options.headers;
 
-      if (self.Headers && Object.prototype.toString.call(headers) === '[object Headers]')
+      if (isHeaders(headers))
         headers.get(name) || headers.set(name, value);
       else if (!getHeader(headers, name))
         headers[name] = value;
+    }
+
+    function assignHeaders(target, source) {
+      for (var key in source) setHeader(target, key, source[key]);
     }
 
     function setHeader(headers, name, value) {
@@ -154,6 +162,8 @@
 
       if (value)
         headers[name] = headers[name] ? headers[name] + separator + value : value;
+      else if (!headers[name])
+        headers[name] = '';
     }
 
     function HeadersToObject(instance) {
@@ -164,25 +174,25 @@
       if (instance.entries) {
         entries = instance.entries();
         while (!(pair = entries.next()).done) setHeader(headers, pair.value[0], pair.value[1]);
-      }
+      } else
+        errorHandler('The Header instance is not iterable.');
       return headers;
     }
 
     function setRequestHeaders(xhr) {
-      var headers = {},
-          key;
+      var headers = {};
 
       if (options.mode !== 'cors')
         setRequestHeader('X-Requested-With', 'XMLHttpRequest');
       if (self.URLSearchParams && Object.prototype.toString.call(options.body) === '[object URLSearchParams]')
         setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-      if (self.Headers && Object.prototype.toString.call(options.headers) === '[object Headers]')
+      if (isHeaders(options.headers))
         headers = HeadersToObject(options.headers);
       else
-        for (key in options.headers) setHeader(headers, key, options.headers[key]);
+        assignHeaders(headers, options.headers);
 
-      for (key in headers) xhr.setRequestHeader(key, headers[key]);
+      for (var key in headers) xhr.setRequestHeader(key, headers[key]);
     }
 
     function getXML(XML) {

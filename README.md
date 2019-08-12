@@ -1,7 +1,7 @@
 ![min+gzip size](https://img.shields.io/bundlephobia/minzip/cb-fetch.svg)
 ![min size](https://img.shields.io/bundlephobia/min/cb-fetch.svg)
-[![Flow](https://badgen.net/badge/_/library%20definition/3F6EFB?icon=flow&label)](https://github.com/flow-typed/flow-typed)
-![TypeScript](https://badgen.net/badge/_/declaration%20file/1E7ACC?icon=typescript&label)
+![Flow](https://badgen.net/badge/_/≥0.42.0/3F6EFB?icon=flow&label)
+![TypeScript](https://badgen.net/badge/_/≥2.3.0/1E7ACC?icon=typescript&label)
 <a href="http://www.npmjs.com/package/cb-fetch">
   <img alt="npm version" align="right" src="https://badge.fury.io/js/cb-fetch.svg" />
 </a><br/>
@@ -47,7 +47,7 @@ jspm install cb-fetch
 ### bower
 
 ~~~sh
-bower install --save cb-fetch#master
+bower install --save cb-fetch
 ~~~
 
 ### jsDelivr

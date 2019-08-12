@@ -1,5 +1,10 @@
 # Change Log
 
+## [Unreleased][5]
+
+### Fixed
+* support empty HTTP header field values in accordance with [RFC 2616](https://tools.ietf.org/html/rfc2616#page-32)
+
 ## [1.10.0][4] - 2019-06-10
 
 ### Fixed
@@ -21,7 +26,7 @@
 ### Changed
 * verb methods accept paths as argument
 * the query method appends
-* [optimized][103] `index.min.js` parsing
+* optimized index.min.js parsing
 * plain object parameters serialization
   * array support
   * `undefined` properties get skipped
@@ -102,4 +107,4 @@
 [2]: https://github.com/Mouvedia/cb-fetch/compare/d5c09ea...1.0.0?w=true
 [3]: https://github.com/Mouvedia/cb-fetch/compare/1.0.0...1.5.0
 [4]: https://github.com/Mouvedia/cb-fetch/releases/tag/1.10.0
-[103]: https://github.com/nolanlawson/optimize-js
+[5]: https://github.com/Mouvedia/cb-fetch/compare/1.10.0...HEAD
