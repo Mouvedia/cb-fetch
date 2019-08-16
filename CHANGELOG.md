@@ -5,8 +5,12 @@
 ### Fixed
 * support empty HTTP header field values in accordance with [RFC 2616](https://tools.ietf.org/html/rfc2616#page-32)
 
+### Added
+* polymorphic pass method
+
 ### Changed
 * duplicate keys passed in the headers option are now properly combined
+* hook method returns `this` (instead of a subset)
 
 ## [1.10.0][4] - 2019-06-10
 

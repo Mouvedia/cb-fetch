@@ -8,7 +8,7 @@
     else
       exports['default'] = factory();
   } else if (typeof YUI == 'function' && YUI.add)
-    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.10.1');
+    YUI.add('cb-fetch', function (Y) { Y['default'] = factory(); }, '1.11.0');
   else if (root.request)
     self.console &&
     self.console.warn &&
@@ -130,18 +130,30 @@
         headers.set('X-METHOD-OVERRIDE', verb);
         XHTTPMethod && headers.set('X-HTTP-Method', verb);
       } else {
-        headers['X-HTTP-Method-Override'] = verb;
-        headers['X-METHOD-OVERRIDE'] = verb;
-        if (XHTTPMethod)
-          headers['X-HTTP-Method'] = verb;
+        replaceHeader('X-HTTP-Method-Override', verb);
+        replaceHeader('X-METHOD-OVERRIDE', verb);
+        XHTTPMethod && replaceHeader('X-HTTP-Method', verb);
       }
     }
 
     function getHeader(headers, name) {
-      for (var key in headers) {
-        if (key.toLowerCase() === name.toLowerCase() && headers[key])
-          return headers[key];
+      var key = name.toLowerCase();
+
+      for (var k in headers) {
+        if (k.toLowerCase() === key && headers[k])
+          return headers[k];
       }
+    }
+
+    function replaceHeader(name, value) {
+      var headers = options.headers,
+          key     = name.toLowerCase();
+
+      for (var k in headers) {
+        if (k.toLowerCase() === key)
+          delete headers[k];
+      }
+      headers[name] = value;
     }
 
     function setRequestHeader(name, value) {
@@ -165,6 +177,7 @@
 
         setHeader(target, key, v);
       }
+      return target;
     }
 
     function setHeader(headers, name, value) {
@@ -468,7 +481,8 @@
         xhr.multipart = true;
 
       // https://bugs.chromium.org/p/chromium/issues/detail?id=128323#c3
-      // https://support.microsoft.com/en-us/help/832414/
+      // https://technet.microsoft.com/library/security/ms04-004
+
       xhr.open(options.method, options.url, true);
 
       if (options.responseType) {
@@ -906,10 +920,27 @@
     request.hook = function (name, handler) {
       hooks[name] = handler;
 
-      return {
-        hook: request.hook,
-        done: request.done
-      };
+      return this;
+    };
+
+    request.pass = function (name, value) {
+      var headers = options.headers;
+
+      if (isHeaders(name))
+        options.headers = name;
+      else if (name === Object(name)) {
+        if (isHeaders(headers))
+          for (var key in name) headers.append(key, name[key]);
+        else
+          options.headers = assignHeaders({}, assignHeaders(headers, name));
+      } else if (String.isString(name)) {
+        if (isHeaders(headers))
+          headers.set(name, value);
+        else
+          replaceHeader(name, value);
+      }
+
+      return this;
     };
 
     function addVerb(verb) {
