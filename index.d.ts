@@ -8,7 +8,7 @@ type RequestBody =
     | BodyInit
     | Document
 
-type Type =
+type ResponseType =
     | XMLHttpRequestResponseType
     | 'formdata'
     | 'moz-chunked-arraybuffer'
@@ -25,15 +25,19 @@ type RequestURL =
     | string
     | URL
 
+type RequestHeaders =
+    | Record<string, string>
+    | Headers
+
 interface RequestOptions {
     url: RequestURL
     method: string
-    headers: Record<string, string> | Headers
+    headers: RequestHeaders
     parameters: Parameters
     body: RequestBody
     credentials: RequestCredentials
     mode: 'cors' | 'no-cors' | 'same-origin'
-    responseType: Type
+    responseType: ResponseType
     responseMediaType: string
     timeout: number
     username: string
@@ -95,39 +99,45 @@ interface Done {
     }): Abort
 }
 
-interface Tail {
-    hook: Hook
-    done: Done
+interface Pass<T> {
+    (name: string, value: string): T
+    (headers: RequestHeaders): T
 }
 
-interface Hook {
+interface Hook<T> {
     (
         name: 'loadstart',
         handler: () => boolean | void
-    ): Tail
+    ): T
     (
         name: 'download',
         handler: (event: ProgressEvent) => any
-    ): Tail
+    ): T
     (
         name: 'loadend',
         handler: Callback
-    ): Tail
+    ): T
 }
 
-interface Querier extends Tail {
-    query: (parameters?: Parameters) => Tail
+interface Common {
+    pass: Pass<this>
+    hook: Hook<this>
+    done: Done
 }
 
-interface Sender extends Tail {
-    send: (body?: RequestBody) => Tail
+interface Querier extends Common {
+    query: (parameters?: Parameters) => Common
+}
+
+interface Sender extends Common {
+    send: (body?: RequestBody) => Common
 }
 
 interface Verb<T> {
     (url?: RequestURL): T
 }
 
-interface Methods extends Tail {
+interface Methods extends Common {
     get: Verb<Querier>
     delete: Verb<Querier>
     head: Verb<Querier>

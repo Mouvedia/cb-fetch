@@ -130,9 +130,9 @@
         headers.set('X-METHOD-OVERRIDE', verb);
         XHTTPMethod && headers.set('X-HTTP-Method', verb);
       } else {
-        replaceHeader('X-HTTP-Method-Override', verb);
-        replaceHeader('X-METHOD-OVERRIDE', verb);
-        XHTTPMethod && replaceHeader('X-HTTP-Method', verb);
+        setHeader('X-HTTP-Method-Override', verb);
+        setHeader('X-METHOD-OVERRIDE', verb);
+        XHTTPMethod && setHeader('X-HTTP-Method', verb);
       }
     }
 
@@ -145,7 +145,7 @@
       }
     }
 
-    function replaceHeader(name, value) {
+    function setHeader(name, value) {
       var headers = options.headers,
           key     = name.toLowerCase();
 
@@ -175,12 +175,12 @@
         if (keys[k]) key = keys[k];
         else keys[k] = key;
 
-        setHeader(target, key, v);
+        appendHeader(target, key, v);
       }
       return target;
     }
 
-    function setHeader(headers, name, value) {
+    function appendHeader(headers, name, value) {
       var separator = name.toLowerCase() === 'cookie' ? '; ' : ', ';
 
       if (value)
@@ -196,7 +196,7 @@
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1108181
       if (instance.entries) {
         entries = instance.entries();
-        while (!(pair = entries.next()).done) setHeader(headers, pair.value[0], pair.value[1]);
+        while (!(pair = entries.next()).done) appendHeader(headers, pair.value[0], pair.value[1]);
       } else
         errorHandler('The Header instance is not iterable.');
       return headers;
@@ -482,7 +482,6 @@
 
       // https://bugs.chromium.org/p/chromium/issues/detail?id=128323#c3
       // https://technet.microsoft.com/library/security/ms04-004
-
       xhr.open(options.method, options.url, true);
 
       if (options.responseType) {
@@ -937,7 +936,7 @@
         if (isHeaders(headers))
           headers.set(name, value);
         else
-          replaceHeader(name, value);
+          setHeader(name, value);
       }
 
       return this;
