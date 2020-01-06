@@ -947,7 +947,11 @@
       request[verb] = function (url) {
         var supportBody = !/^(get|head|delete)$/.test(verb),
             action      = supportBody ? 'send' : 'query',
-            context     = {};
+            context     = {
+              done: request.done,
+              hook: request.hook,
+              pass: request.pass
+            };
 
         if (isAbsolute(url))
           processURL(url);
@@ -965,11 +969,10 @@
           }
           return {
             done: request.done,
-            hook: request.hook
+            hook: request.hook,
+            pass: request.pass
           };
         };
-        context.done = request.done;
-        context.hook = request.hook;
 
         return context;
       };
