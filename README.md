@@ -1,6 +1,6 @@
 ![min+gzip size](https://img.shields.io/bundlephobia/minzip/cb-fetch.svg)
 ![min size](https://img.shields.io/bundlephobia/min/cb-fetch.svg)
-![Flow](https://badgen.net/badge/_/≥0.42.0/3F6EFB?icon=flow&label)
+![Flow](https://badgen.net/badge/_/≥0.37.0/3F6EFB?icon=flow&label)
 ![TypeScript](https://badgen.net/badge/_/≥2.3.0/1E7ACC?icon=typescript&label)
 <a href="http://www.npmjs.com/package/cb-fetch">
   <img alt="npm version" align="right" src="https://badge.fury.io/js/cb-fetch.svg" />
@@ -15,59 +15,51 @@ A truly **c**ross-**b**rowser and forward-compatible library to do asynchronous 
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Features](#features)
-- [Importation](#importation)
-- [Examples](#examples)
-- [API](#api)
+- [Usage](#usage)
+  - [Installation](#installation)
+  - [Importation](#importation)
+  - [Examples](#examples)
+- [Support](#support)
+- [Methods](#methods)
 - [Properties](#properties)
 - [Gotchas](#gotchas)
 - [License](#license)
 
-## Installation
+## Usage
 
-### npm
+### Installation
+
+#### npm
 
 ~~~sh
 npm install --save cb-fetch
 ~~~
 
-### yarn
+#### yarn
 
 ~~~sh
 yarn add cb-fetch
 ~~~
 
-### jspm
+#### jspm
 
 ~~~sh
 jspm install cb-fetch
 ~~~
 
-### bower
+#### bower
 
 ~~~sh
 bower install --save cb-fetch
 ~~~
 
-### jsDelivr
+#### jsDelivr
 
 ~~~xml
 <script src="//cdn.jsdelivr.net/combine/npm/@string/isstring/isString.min.js,npm/cb-fetch/index.min.js" type="text/javascript"></script>
 ~~~
 
-## Features
-
-- [x] `fetch`
-- [x] `XMLHttpRequest`
-- [x] `XDomainRequest`
-- [x] [Universal Module Definition](#importation)
-- [x] [fluent API](#map)
-- [x] [normalized response](#response)
-- [x] [interceptors](#hook)
-- [x] WebDAV
-
-## Importation
+### Importation
 
 <details>
   <summary><abbr title="Asynchronous Module Definition">AMD</abbr></summary>
@@ -114,7 +106,7 @@ bower install --save cb-fetch
   <p>If none of the previously listed module registration methods are supported, a global variable named <code>request</code> will be exposed.</p>
 </details>
 
-## Examples
+### Examples
 
 ~~~js
 // here's your typical request
@@ -133,10 +125,10 @@ let abort = request({
   parameters:   new URLSearchParams('_csrf=TOKEN'),
   mode:         'cors',
   credentials:  'include',
-  responseType: 'json',
-  headers:      { 'Content-Type': 'application/json' }
+  responseType: 'json'
 }).get('/segment')
   .query({ foo: ['bar', 'qux'] })
+  .pass('Content-Type', 'application/json')
   .hook('download', e => { /* … */ })
   .done({
     success: onSuccessCallback,
@@ -148,75 +140,77 @@ let abort = request({
 abort();
 ~~~
 
-## API
+## Support
 
-### Map
+- [x] `fetch`
+- [x] `XMLHttpRequest`
+- [x] `XDomainRequest`
+- [x] Universal Module Definition
+- [x] WebDAV
+- [x] TypeScript
+- [x] Flow
 
-~~~
-(?: Options | Options.url)
-=> Object ┬─────────────────○ done
-          ├──────● hookⁿ ───○ done
-          │  ┌────────┐
-          ├──┤ get    │
-          │  │ head   │
-          │  │ delete │
-          │  └─┬──────┘
-          │    ├────────────○ done
-          │    ├─● hookⁿ ───○ done
-          │    └─● query ───○ done
-          │      └─● hookⁿ ─○ done
-          │  ┌───────┐
-          └──┤ patch │
-             │ post  │
-             │ put   │
-             └─┬─────┘
-               ├────────────○ done
-               ├─● hookⁿ ───○ done
-               └─● send ────○ done
-                 └─● hookⁿ ─○ done
-~~~
+## Methods
 
-### Method Signatures
-
-#### HTTP verbs
+### HTTP verbs
 
 ~~~
 (Options.url?) => Object
 ~~~
 
-#### query
+### query
 
 ~~~
 (Options.parameters?) => Object
 ~~~
 
-#### send
+### send
 
 ~~~
 (Options.body?) => Object
 ~~~
 
-#### hook
+### hook
 
-##### loadstart
+#### loadstart
 
 ~~~
 ('loadstart', () => Boolean | Void) => Object
 ~~~
 
-<h5>download<img align="right" src="https://badges.herokuapp.com/browsers?firefox=%E2%89%A50.9.3&opera=%E2%89%A512&iexplore=%E2%89%A58&googlechrome=%E2%89%A51&safari=%E2%89%A54&labels=none&line=true" /></h5>
+<h4>download<img align="right" src="https://badges.herokuapp.com/browsers?firefox=%E2%89%A50.9.3&opera=%E2%89%A512&iexplore=%E2%89%A58&googlechrome=%E2%89%A51&safari=%E2%89%A54&labels=none&line=true" /></h4>
 
 ~~~
 ('download', (Object) => Any) => Object
 ~~~
 
-##### loadend
+#### loadend
 
 ~~~
 ('loadend', () => Any) => Object
 ~~~
 
-#### done
+### pass
+
+~~~
+{
+  (name: String, value: String),
+  (headers: Object | Headers)
+} => Object
+~~~
+
+~~~js
+  // overwrites the headers option
+  .pass(new Headers({ key: 'value' }))
+
+  // appends headers
+  .pass({ key: 'value' })
+
+  // sets header
+  .pass('key', 'value')
+~~~
+
+### done
 
 ~~~
 {
