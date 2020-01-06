@@ -882,6 +882,7 @@
       options.username    = options.username || null;
       options.password    = options.password || null;
       options.redirect    = options.redirect || 'follow';
+      options.signal      = null;
 
       // https://bugzilla.mozilla.org/show_bug.cgi?id=484396
       options.url || setURL(self.location.href);

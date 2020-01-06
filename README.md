@@ -152,7 +152,7 @@ abort();
 
 ## Methods
 
-### HTTP verbs
+### get / head / delete / post / patch / put
 
 ~~~
 (Options.url?) => Object
@@ -181,7 +181,7 @@ abort();
 <h4>download<img align="right" src="https://badges.herokuapp.com/browsers?firefox=%E2%89%A50.9.3&opera=%E2%89%A512&iexplore=%E2%89%A58&googlechrome=%E2%89%A51&safari=%E2%89%A54&labels=none&line=true" /></h4>
 
 ~~~
-('download', (Object) => Any) => Object
+('download', Object => Any) => Object
 ~~~
 
 #### loadend
@@ -200,13 +200,13 @@ abort();
 ~~~
 
 ~~~js
-  // overwrites the headers option
+  // assigns
   .pass(new Headers({ key: 'value' }))
 
-  // appends headers
+  // appends
   .pass({ key: 'value' })
 
-  // sets header
+  // sets
   .pass('key', 'value')
 ~~~
 
