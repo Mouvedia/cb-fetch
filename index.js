@@ -279,7 +279,7 @@
         var response = typeof xhr.response == 'undefined' ? xhr.responseText : xhr.response;
 
         if (typeof chunked != 'boolean')
-          chunked = typeof xhr.responseType == 'string' && ~xhr.responseType.indexOf('chunked');
+          chunked = typeof xhr.responseType == 'string' && !!~xhr.responseType.indexOf('chunked');
         if (aggregate) {
           chunk = chunked ? response : sliceResponse(response, aggregate);
           aggregate = chunked ? concatResponse(response, aggregate) : response;
