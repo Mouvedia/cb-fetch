@@ -117,13 +117,17 @@
         for (var key in parameters) append(key, parameters[key]);
     }
 
+    function setFormMethod(verb) {
+      // https://www.iana.org/assignments/http-methods/http-methods.xhtml
+      options.method = /^(GET|HEAD|OPTIONS|PROPFIND|REPORT|SEARCH)$/.test(verb) ? 'GET' : 'POST';
+    }
+
     function overrideMethod() {
       var headers     = options.headers,
           verb        = options.method,
-          isSafe      = /^(HEAD|OPTIONS|PROPFIND|REPORT|SEARCH)$/.test(verb),
           XHTTPMethod = /^(PUT|MERGE|PATCH|DELETE)$/.test(verb);
 
-      options.method = isSafe ? 'GET' : 'POST';
+      setFormMethod(verb);
 
       if (isHeaders(headers)) {
         headers.set('X-HTTP-Method-Override', verb);
@@ -373,6 +377,7 @@
       };
       if (options.timeout)
         xdr.timeout = options.timeout;
+      setFormMethod(options.method);
       xdr.open(options.method, qualifyURL(options.url));
       // prevents premature garbage collection
       processedResponse.instance = xdr;
